@@ -1,0 +1,36 @@
+{
+  "name": "wideias_app",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/gaturama/wideias_app#readme",
+  "bugs": {
+    "url": "https://github.com/gaturama/wideias_app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaturama/wideias_app.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint",
+    "reset-project": "node ./scripts/reset-project.js"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
+    "@types/react": "^19.2.0",
+    "expo": "^54.0.12",
+    "react": "^19.2.0",
+    "react-native": "^0.81.4",
+    "react-native-navigation": "^8.3.2",
+    "react-native-vector-icons": "^10.3.0",
+    "react-navigation": "^5.0.0",
+    "typescript": "^5.9.3"
+  }
+}
