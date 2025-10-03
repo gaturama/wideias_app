@@ -14,7 +14,7 @@ export default function Login() {
         <View style={styles.container}>
             <Image 
                 style={styles.image}
-                source={require("../assets/ic_user.png")}
+                source={require("../assets/marca_android.png")}
             />
             <Text style={styles.title}>Login</Text>
             <TextInput 

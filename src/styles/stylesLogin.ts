@@ -26,14 +26,14 @@ export const styles = StyleSheet.create({
 
   image: {
     padding: 20,
-    width: 80,
+    width:320,
     height: 80,
     alignSelf: "center",
     marginBottom: 20,
   },
 
   button: {
-    backgroundColor: "#00008B",
+    backgroundColor: "#2020cfff",
     padding: 12,
     borderRadius: 25,
     alignItems: "center",
