@@ -28,14 +28,14 @@ export const styles = StyleSheet.create({
 
   image: {
     padding: 20,
-    width:320,
-    height: 80,
+    width: 280,
+    height: 70,
     alignSelf: "center",
     marginBottom: 50,
   },
 
   button: {
-    backgroundColor: "#ff6a00",
+    backgroundColor: "#00A36C",
     padding: 12,
     borderRadius: 25,
     alignItems: "center",
@@ -71,5 +71,14 @@ export const styles = StyleSheet.create({
   passwordContainer: {
     position: "relative",
     marginBottom: 15,
+  },
+
+  textCadastro: {
+    fontSize: 16,
+    color: "#0059FF",
+    fontWeight: "bold",
+    marginTop: 20,
+    alignSelf: "center",
+    alignItems: "center"
   },
 });

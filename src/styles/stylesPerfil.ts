@@ -8,12 +8,16 @@ export const styles = StyleSheet.create({
     backgroundColor: "#EAEAEA ",
   },
 
+  head: {
+    width: "100%",
+  },
+
   title: {
     fontSize: 20,
     fontWeight: "bold",
     alignSelf: "center",
     marginBottom: 30,
-    color: "#ff6a00",
+    color: "#000",
   },
 
   input: {
@@ -41,8 +45,22 @@ export const styles = StyleSheet.create({
 
   buttonText: {
     fontWeight: "bold",
-    color: "#ff6a00",
+    color: "#000",
     fontSize: 18,
+  },
+
+  editButton: {
+    backgroundColor: "#00A36C",
+    borderRadius: 20,
+    paddingVertical: 10,
+    marginTop: 10,
+    alignItems: "center",
+  },
+
+  editButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 
   line: {
@@ -73,10 +91,17 @@ export const styles = StyleSheet.create({
     height: 60,
   },
 
+  iconLoggout: {
+    width: 25,
+    height: 25,
+    tintColor: "#000",
+    margin: 20,
+  },
+
   exit: {
     width: 40,
     height: 40,
     marginRight: 8,
-    tintColor: "#ff6a00"
+    tintColor: "#000",
   },
 });

@@ -1,18 +1,11 @@
 import { useState } from "react";
+import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPerfil";
-import { RootStackParamList } from "../navigation/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Button,
-} from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { RootStackParamList } from "../navigation/types";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -25,6 +18,19 @@ export default function Perfil({ navigation }: Props) {
 
   const handleLogin = () => {
     navigation.navigate("Login");
+  };
+
+  const handleHome = () => {
+    navigation.navigate("Home");
+  };
+
+  const handleEdit = () => {
+    if (!name || !email || !password || !phoneNumber) {
+      alert("Preencha todos os campos antes de salvar!");
+      return;
+    }
+
+    alert("Informações atualizadas com sucesso!");
   };
 
   async function pickImage() {
@@ -47,8 +53,17 @@ export default function Perfil({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
+    <View style={{ flex: 1 }}>
+      <Appbar.Header style={styles.head}>
+        <TouchableOpacity onPress={handleHome}>
+          <Image
+            source={require("../assets/ic_back.png")}
+            style={styles.iconLoggout}
+          />
+        </TouchableOpacity>
+      </Appbar.Header>
+
+      <View style={styles.container}>
         <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
           {image ? (
             <Image source={{ uri: image }} style={styles.avatar} />
@@ -84,7 +99,7 @@ export default function Perfil({ navigation }: Props) {
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="Senha"
+          placeholder="Senha" 
           style={styles.input}
           value={password}
           onChangeText={setPassword}
@@ -99,7 +114,11 @@ export default function Perfil({ navigation }: Props) {
           onChangeText={setPhoneNumber}
         />
 
-        <View style={styles.line}/>
+        <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+          <Text style={styles.editButtonText}>Editar</Text>
+        </TouchableOpacity>
+
+        <View style={styles.line} />
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <View style={styles.buttonContent}>
@@ -110,7 +129,7 @@ export default function Perfil({ navigation }: Props) {
             <Text style={styles.buttonText}>Sair</Text>
           </View>
         </TouchableOpacity>
-      </SafeAreaView>
-    </SafeAreaProvider>
+      </View>
+    </View>
   );
 }

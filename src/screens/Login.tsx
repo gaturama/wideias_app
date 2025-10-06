@@ -18,6 +18,10 @@ export default function Login({ navigation }: Props) {
     navigation.navigate("Home");
   };
 
+  const handleCadastro = () => {
+    navigation.navigate("Cadastro");
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -54,12 +58,13 @@ export default function Login({ navigation }: Props) {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.button}onPress={handleHome}>
+        <TouchableOpacity style={styles.button} onPress={handleHome}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
         {/* <TouchableOpacity style={styles.button} onPress={() => {}}>
                 <Text style={styles.buttonText}>Cadastrar</Text>
             </TouchableOpacity> */}
+        <Text style={styles.textCadastro} onPress={handleCadastro}>Realizar Cadastro</Text>
       </SafeAreaView>
     </SafeAreaProvider>
   );

@@ -2,43 +2,80 @@ import { styles } from "../styles/stylesHome";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { Appbar } from "react-native-paper";
+import { useState } from "react";
 
 const dummyProducts = [
   {
     id: "1",
     name: "Hambúrguer",
-    price: 25.9,
+    price: 25.90,
     image: require("../assets/ic_product.png"),
   },
   {
     id: "2",
     name: "Pizza",
-    price: 49.9,
+    price: 49.90,
     image: require("../assets/ic_product.png"),
   },
   {
     id: "3",
     name: "Suco Natural",
-    price: 8.5,
+    price: 8.50,
     image: require("../assets/ic_product.png"),
   },
   {
     id: "4",
     name: "Prato Executivo",
-    price: 32.0,
+    price: 32.00,
     image: require("../assets/ic_product.png"),
   },
   {
     id: "5",
     name: "Refrigerante",
-    price: 6.0,
+    price: 6.00,
     image: require("../assets/ic_product.png"),
   },
   {
     id: "6",
     name: "Sushi",
-    price: 34.0,
+    price: 34.00,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "7",
+    name: "Cerveja",
+    price: 8.00,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "8",
+    name: "Whisky",
+    price: 21.00,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "9",
+    name: "Tônica",
+    price: 5.00,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "10",
+    name: "Água sem gás",
+    price: 2.00,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "11",
+    name: "Água com gás",
+    price: 2.50,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "12",
+    name: "Sorvete",
+    price: 7.50,
     image: require("../assets/ic_product.png"),
   },
 ];
@@ -51,32 +88,71 @@ export default function Home({ navigation }: Props) {
       <Image source={require("../assets/ic_product.png")} />
       <Text style={styles.productName}>{item.name}</Text>
       <Text style={styles.productPrice}>R$ {item.price.toFixed(2)}</Text>
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
         <Text style={styles.addButtonText}>Adicionar</Text>
       </TouchableOpacity>
     </View>
   );
 
+  const [cart, setCart] = useState([]);
+
+  const addToCart = (item) => {
+    setCart((prev) => [...prev, item]);
+  };
+
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+
   const handlePerfil = () => {
     navigation.navigate("Perfil");
   };
 
-  return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <TouchableOpacity onPress={handlePerfil} style={styles.iconContent}>
-          <Image source={require("../assets/ic_user.png")} style={styles.icon}/>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Wideias APP</Text>
+  const handleLogin = () => {
+    navigation.navigate("Login");
+  };
 
-        <FlatList
-          data={dummyProducts}
-          numColumns={2}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.productsGrid}
-          renderItem={renderProduct}
-        />
-      </SafeAreaView>
-    </SafeAreaProvider>
+  const handleCarrinho = () => {
+    navigation.navigate("Carrinho");
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Appbar.Header style={styles.head}>
+        <TouchableOpacity onPress={handleLogin}>
+          <Image
+            source={require("../assets/ic_loggout.png")}
+            style={styles.iconLoggout}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handlePerfil}>
+          <Image
+            source={require("../assets/ic_user.png")}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </Appbar.Header>
+
+      <Text style={styles.headerTitle}>Wideias App</Text>
+
+      <FlatList
+        data={dummyProducts}
+        numColumns={2}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+        renderItem={renderProduct}
+        showsVerticalScrollIndicator={false}
+      />
+
+      {cart.length > 0 && (
+        <TouchableOpacity
+          style={styles.cartFooter}
+          onPress={() => navigation.navigate("Carrinho", { cart })}
+        >
+          <Text style={styles.cartText}>
+            {cart.length} item{cart.length > 1 && "s"} • Total: R$ {total.toFixed(2)}
+          </Text>
+          <Text style={styles.cartAction}>Ver carrinho</Text>
+        </TouchableOpacity>
+      )}
+    </View>
   );
 }

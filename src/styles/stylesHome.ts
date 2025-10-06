@@ -8,6 +8,12 @@ export const styles = StyleSheet.create({
     backgroundColor: "#EAEAEA",
   },
 
+  head: {
+    width: "100%",
+    flexDirection: "row",
+    gap: 8,
+  },
+
   image: {
     width: 40,
     height: 40,
@@ -17,7 +23,8 @@ export const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     alignSelf: "center",
-    color: "#ff6a00",
+    color: "#000",
+    marginTop: 50,
   },
 
   headerButton: { padding: 8 },
@@ -77,11 +84,36 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  icon: {
-    width: 40,
-    height: 40,
-    tintColor: "#fff",
+  iconLoggout: {
+    width: 35,
+    height: 35,
+    tintColor: "#000",
+    margin: 20,
   },
+
+  icon: {
+    width: 35,
+    height: 35,
+    tintColor: "#000",
+    marginLeft: 270,
+  },
+
+  cartFooter: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: "#00A36C",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    elevation: 5,
+  },
+  cartText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  cartAction: { color: "#fff", fontWeight: "600" },
 
   addButtonText: { color: "#fff", fontWeight: "bold" },
 });
