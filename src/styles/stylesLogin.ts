@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   },
 
   input: {
-    width: "80%",
+    width: "100%",
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "#7a7a7aff",
@@ -35,14 +35,14 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#2020cfff",
+    backgroundColor: "#ff6a00",
     padding: 12,
     borderRadius: 25,
     alignItems: "center",
     alignSelf: "center",
     marginTop: 10,
     marginBottom: 5,
-    width: "80%",
+    width: "100%",
   },
 
   buttonText: {
@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
   },
 
   inputPassword: {
-    width: "80%",
+    width: "100%",
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "#7a7a7aff",
@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
 
   icon: {
     position: "absolute",
-    right: 50,
+    right: 10,
     top: "35%",
     transform: [{ translateY: -11 }],
     padding: 5,

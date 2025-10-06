@@ -17,7 +17,6 @@ export const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     alignSelf: "center",
-    marginTop: 20,
     color: "#ff6a00",
   },
 
@@ -66,6 +65,22 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     backgroundColor: "#ff6a00",
     borderRadius: 20,
+  },
+
+  iconContent: {
+    width: 60,
+    height: 60,
+    borderRadius: 50,
+    backgroundColor: "#ff6a00",
+    alignSelf: "flex-end",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  icon: {
+    width: 40,
+    height: 40,
+    tintColor: "#fff",
   },
 
   addButtonText: { color: "#fff", fontWeight: "bold" },

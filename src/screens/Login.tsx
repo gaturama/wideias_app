@@ -15,7 +15,7 @@ export default function Login({ navigation }: Props) {
   };
 
   const handleHome = () => {
-    navigation.navigate("Login");
+    navigation.navigate("Home");
   };
 
   return (
@@ -38,7 +38,7 @@ export default function Login({ navigation }: Props) {
             autoCorrect={false}
             autoCapitalize="none"
             secureTextEntry={!showPassword}
-            placeholder="Password"
+            placeholder="Senha"
             style={styles.inputPassword}
             onChangeText={(text) => {}}
             keyboardType="numeric"
@@ -54,8 +54,8 @@ export default function Login({ navigation }: Props) {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <Text style={styles.buttonText} onPress={handleHome}>Entrar</Text>
+        <TouchableOpacity style={styles.button}onPress={handleHome}>
+          <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
         {/* <TouchableOpacity style={styles.button} onPress={() => {}}>
                 <Text style={styles.buttonText}>Cadastrar</Text>

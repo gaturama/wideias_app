@@ -57,18 +57,15 @@ export default function Home({ navigation }: Props) {
     </View>
   );
 
-  const handleLogin = () => {
-    navigation.navigate("Login");
+  const handlePerfil = () => {
+    navigation.navigate("Perfil");
   };
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <TouchableOpacity onPress={handleLogin}>
-          <Image
-            style={styles.image}
-            source={require("../assets/ic_loggout.png")}
-          />
+        <TouchableOpacity onPress={handlePerfil} style={styles.iconContent}>
+          <Image source={require("../assets/ic_user.png")} style={styles.icon}/>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Wideias APP</Text>
 
