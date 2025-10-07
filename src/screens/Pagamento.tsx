@@ -32,16 +32,16 @@ export default function Pagamento({ navigation }: Props) {
 
   async function openGoogleWallet() {
     try {
-        const googleIntent =
-          "intent:#Intent;package=com.google.android.apps.walletnfcrel;end";
-        const supported = await Linking.canOpenURL(googleIntent);
-        if (supported) {
-          await Linking.openURL(googleIntent);
-        } else {
-          await Linking.openURL(
-            "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel"
-          );
-        }
+      const googleIntent =
+        "intent:#Intent;package=com.google.android.apps.walletnfcrel;end";
+      const supported = await Linking.canOpenURL(googleIntent);
+      if (supported) {
+        await Linking.openURL(googleIntent);
+      } else {
+        await Linking.openURL(
+          "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel"
+        );
+      }
     } catch (err) {
       console.log("Erro abrindo Google Wallet:", err);
       Alert.alert("Ops", "Não foi possível abrir o Google Pay.");
@@ -50,16 +50,16 @@ export default function Pagamento({ navigation }: Props) {
 
   async function openSamsungPay() {
     try {
-        const samsungIntent =
-          "intent:#Intent;package=com.samsung.android.spay;end";
-        const supported = await Linking.canOpenURL(samsungIntent);
-        if (supported) {
-          await Linking.openURL(samsungIntent);
-        } else {
-          await Linking.openURL(
-            "https://play.google.com/store/apps/details?id=com.samsung.android.spay"
-          );
-        }
+      const samsungIntent =
+        "intent:#Intent;package=com.samsung.android.spay;end";
+      const supported = await Linking.canOpenURL(samsungIntent);
+      if (supported) {
+        await Linking.openURL(samsungIntent);
+      } else {
+        await Linking.openURL(
+          "https://play.google.com/store/apps/details?id=com.samsung.android.spay"
+        );
+      }
     } catch (err) {
       console.log("Erro abrindo Samsung Pay:", err);
       Alert.alert("Ops", "Não foi possível abrir o Samsung Pay.");
@@ -68,17 +68,15 @@ export default function Pagamento({ navigation }: Props) {
 
   async function openApplePay() {
     try {
-      
-        const scheme =
-          "shoebox://";
-        const supported = await Linking.canOpenURL(scheme);
-        if (supported) {
-          await Linking.openURL(scheme);
-        } else {
-          await Linking.openURL(
-            "https://apps.apple.com/app/apple-wallet/id915056765"
-          );
-        }
+      const scheme = "shoebox://";
+      const supported = await Linking.canOpenURL(scheme);
+      if (supported) {
+        await Linking.openURL(scheme);
+      } else {
+        await Linking.openURL(
+          "https://apps.apple.com/app/apple-wallet/id915056765"
+        );
+      }
     } catch (err) {
       console.log("Erro abrindo Apple Pay:", err);
       Alert.alert("Ops", "Não foi possível abrir o Apple Pay.");
@@ -101,7 +99,10 @@ export default function Pagamento({ navigation }: Props) {
           style={styles.iconPay}
         />
         <Text style={styles.pagamentoText}>Pagamento</Text>
-        <TouchableOpacity style={styles.buttonContent} onPress={() => navigation.navigate("Pix", { pedido: pedidoTeste })}>
+        <TouchableOpacity
+          style={styles.buttonContent}
+          onPress={() => navigation.navigate("Pix", { pedido: pedidoTeste })}
+        >
           <Image
             source={require("../assets/ic_pix.png")}
             style={styles.iconContent}

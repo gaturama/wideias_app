@@ -48,10 +48,10 @@ export default function Cadastro({ navigation }: Props) {
 
       <View style={styles.container}>
         <View style={styles.avatarContainer}>
-        <Image 
-          source={require("../assets/ic_user.png")}
-          style={styles.icon}
-        />
+          <Image
+            source={require("../assets/ic_user.png")}
+            style={styles.icon}
+          />
         </View>
 
         <Text style={styles.title}>Cadastro</Text>

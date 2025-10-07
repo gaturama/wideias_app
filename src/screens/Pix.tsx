@@ -14,20 +14,25 @@ export default function Pix({ route }) {
 
   const handleCopy = () => {
     Clipboard.setString(pixCode);
-    Alert.alert("Copiado!", "O código Pix foi copiado para a área de transferência.");
+    Alert.alert(
+      "Copiado!",
+      "O código Pix foi copiado para a área de transferência."
+    );
   };
 
   return (
     <View style={styles.container}>
-        <Text style={styles.title}>Pagamento via PIX</Text>
+      <Text style={styles.title}>Pagamento via PIX</Text>
 
-        <View style={styles.qrContainer}>
-            <QRCode value={pixCode} size={220} />
-        </View>
+      <View style={styles.qrContainer}>
+        <QRCode value={pixCode} size={220} />
+      </View>
 
-        <Text style={styles.amount}>Total: R$ {pedido.valorTotal.toFixed(2)}</Text>
+      <Text style={styles.amount}>
+        Total: R$ {pedido.valorTotal.toFixed(2)}
+      </Text>
 
-        <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
+      <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
         <Text style={styles.copyText}>Copiar código Pix</Text>
       </TouchableOpacity>
 
@@ -37,6 +42,5 @@ export default function Pix({ route }) {
         Escaneie o QR Code no app do seu banco para concluir o pagamento.
       </Text>
     </View>
-  )
-
+  );
 }

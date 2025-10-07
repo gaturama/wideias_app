@@ -14,4 +14,5 @@ export type RootStackParamList = {
   };
   Cadastro: undefined
   Pix: { pedido: any };
+  Mesa: undefined
 }

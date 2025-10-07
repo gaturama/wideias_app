@@ -99,7 +99,7 @@ export default function Perfil({ navigation }: Props) {
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="Senha" 
+          placeholder="Senha"
           style={styles.input}
           value={password}
           onChangeText={setPassword}

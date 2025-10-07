@@ -5,17 +5,31 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
+const users = [
+  { id: 1, email: "teste@email.com", password: 1234 },
+  { id: 2, email: "teste2@email.com", password: 456 },
+];
+
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function Login({ navigation }: Props) {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
 
   const handleHome = () => {
-    navigation.navigate("Home");
+    const user = users.find(
+      (u) => u.email === email && u.password.toString() === password
+    );
+    if (user) {
+      navigation.navigate("Home");
+    } else {
+      alert("Email ou senha incorretos!");
+    }
   };
 
   const handleCadastro = () => {
@@ -34,7 +48,8 @@ export default function Login({ navigation }: Props) {
           autoCapitalize="none"
           placeholder="Email"
           style={styles.input}
-          onChangeText={(text) => {}}
+          value={email}
+          onChangeText={setEmail}
           keyboardType="email-address"
         />
         <View style={styles.passwordContainer}>
@@ -43,8 +58,9 @@ export default function Login({ navigation }: Props) {
             autoCapitalize="none"
             secureTextEntry={!showPassword}
             placeholder="Senha"
+            value={password}
             style={styles.inputPassword}
-            onChangeText={(text) => {}}
+            onChangeText={setPassword}
             keyboardType="numeric"
           />
 
@@ -64,7 +80,9 @@ export default function Login({ navigation }: Props) {
         {/* <TouchableOpacity style={styles.button} onPress={() => {}}>
                 <Text style={styles.buttonText}>Cadastrar</Text>
             </TouchableOpacity> */}
-        <Text style={styles.textCadastro} onPress={handleCadastro}>Realizar Cadastro</Text>
+        <Text style={styles.textCadastro} onPress={handleCadastro}>
+          Realizar Cadastro
+        </Text>
       </SafeAreaView>
     </SafeAreaProvider>
   );
