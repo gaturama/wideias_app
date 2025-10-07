@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { styles } from "../styles/stylesLogin";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 
 const users = [
   { id: 1, email: "teste@email.com", password: 1234 },
@@ -20,6 +21,13 @@ export default function Login({ navigation }: Props) {
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      setEmail("");
+      setPassword("");
+    }, [])
+  );
 
   const handleHome = () => {
     const user = users.find(
@@ -77,9 +85,6 @@ export default function Login({ navigation }: Props) {
         <TouchableOpacity style={styles.button} onPress={handleHome}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.button} onPress={() => {}}>
-                <Text style={styles.buttonText}>Cadastrar</Text>
-            </TouchableOpacity> */}
         <Text style={styles.textCadastro} onPress={handleCadastro}>
           Realizar Cadastro
         </Text>

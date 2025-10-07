@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
 
   productCard: {
     flex: 1,
-    margin: 8,
+    margin: 10,
     backgroundColor: "#fff",
     borderRadius: 8,
     padding: 8,
@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
   },
 
   productName: {
-    marginTop: 8,
+    marginTop: 5,
     fontWeight: "bold",
     fontSize: 14,
     textAlign: "center",
