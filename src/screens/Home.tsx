@@ -8,8 +8,8 @@ import { useState } from "react";
 const dummyProducts = [
   {
     id: "1",
-    name: "Hambúrguer",
-    price: 25.9,
+    name: "Hamburguer",
+    price: 24.9,
     image: require("../assets/ic_product.png"),
   },
   {
@@ -109,23 +109,10 @@ export default function Home({ navigation }: Props) {
     navigation.navigate("Perfil");
   };
 
-  const handleLogin = () => {
-    navigation.navigate("Login");
-  };
-
-  const handleCarrinho = () => {
-    navigation.navigate("Carrinho");
-  };
-
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header style={styles.head}>
-        <TouchableOpacity onPress={handleLogin}>
-          <Image
-            source={require("../assets/ic_loggout.png")}
-            style={styles.iconLoggout}
-          />
-        </TouchableOpacity>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
         <TouchableOpacity onPress={handlePerfil}>
           <Image
             source={require("../assets/ic_user.png")}
@@ -148,13 +135,13 @@ export default function Home({ navigation }: Props) {
       {cart.length > 0 && (
         <TouchableOpacity
           style={styles.cartFooter}
-          onPress={() => navigation.navigate("Carrinho", { cart })}
+          onPress={() => navigation.navigate("DescricaoProduto")}
         >
           <Text style={styles.cartText}>
             {cart.length} item{cart.length > 1 && "s"} • Total: R${" "}
             {total.toFixed(2)}
           </Text>
-          <Text style={styles.cartAction}>Ver carrinho</Text>
+          <Text style={styles.cartAction}>Continuar</Text>
         </TouchableOpacity>
       )}
     </View>

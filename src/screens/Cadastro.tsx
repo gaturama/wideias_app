@@ -38,12 +38,7 @@ export default function Cadastro({ navigation }: Props) {
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header style={styles.head}>
-        <TouchableOpacity onPress={handleLogin}>
-          <Image
-            source={require("../assets/ic_back.png")}
-            style={styles.iconExit}
-          />
-        </TouchableOpacity>
+         <Appbar.BackAction onPress={() => navigation.goBack()} />
       </Appbar.Header>
 
       <View style={styles.container}>

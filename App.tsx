@@ -11,6 +11,7 @@ import Pagamento from "./src/screens/Pagamento";
 import { RootStackParamList } from "./src/navigation/types";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import DescricaoProduto from "./src/screens/DescricaoProduto";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -23,6 +24,7 @@ export default function App() {
         <Stack.Screen name="Cadastro" component={Cadastro} options={{headerShown: false}}/>
         <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
         <Stack.Screen name="Perfil" component={Perfil} options={{headerShown: false}}/>
+        <Stack.Screen name="DescricaoProduto" component={DescricaoProduto} options={{headerShown: false}}/>
         {/* <Stack.Screen name="Carrinho" component={Carrinho} options={{headerShown: false}}/> */}
         <Stack.Screen name="Pagamento" component={Pagamento} options={{headerShown: false}}/>
         <Stack.Screen name="QrCode" component={QRCodeScreen} options={{headerShown: false}}/>

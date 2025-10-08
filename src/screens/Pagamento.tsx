@@ -1,4 +1,5 @@
 import React from "react";
+import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPagamento";
 import { RootStackParamList } from "../navigation/types";
 import {
@@ -11,7 +12,6 @@ import {
   Alert,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Appbar } from "react-native-paper";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -49,21 +49,21 @@ export default function Pagamento({ navigation }: Props) {
   }
 
   async function openSamsungPay() {
-    try {
-      const samsungIntent =
-        "intent:#Intent;package=com.samsung.android.spay;end";
-      const supported = await Linking.canOpenURL(samsungIntent);
-      if (supported) {
-        await Linking.openURL(samsungIntent);
-      } else {
-        await Linking.openURL(
-          "https://play.google.com/store/apps/details?id=com.samsung.android.spay"
-        );
-      }
-    } catch (err) {
-      console.log("Erro abrindo Samsung Pay:", err);
-      Alert.alert("Ops", "Não foi possível abrir o Samsung Pay.");
+   try {
+    const samsungScheme = "samsungpay://";
+    const supported = await Linking.canOpenURL(samsungScheme);
+
+    if (supported) {
+      await Linking.openURL(samsungScheme);
+    } else {
+      await Linking.openURL(
+        "https://play.google.com/store/apps/details?id=com.samsung.android.spay"
+      );
     }
+  } catch (err) {
+    console.log("Erro abrindo Samsung Pay:", err);
+    Alert.alert("Não foi possível abrir o Samsung Pay.");
+  }
   }
 
   async function openApplePay() {
@@ -86,12 +86,7 @@ export default function Pagamento({ navigation }: Props) {
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header>
-        <TouchableOpacity onPress={handleHome}>
-          <Image
-            source={require("../assets/ic_back.png")}
-            style={styles.iconExit}
-          />
-        </TouchableOpacity>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
       </Appbar.Header>
       <View style={styles.container}>
         <Image

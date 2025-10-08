@@ -55,12 +55,7 @@ export default function Perfil({ navigation }: Props) {
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header style={styles.head}>
-        <TouchableOpacity onPress={handleHome}>
-          <Image
-            source={require("../assets/ic_back.png")}
-            style={styles.iconLoggout}
-          />
-        </TouchableOpacity>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
       </Appbar.Header>
 
       <View style={styles.container}>
