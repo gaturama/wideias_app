@@ -17,6 +17,8 @@ export const styles = StyleSheet.create({
   },
 
   input: {
+    width: "100%",
+    alignSelf: "center",
     borderWidth: 1,
     borderColor: "#7a7a7aff",
     padding: 10,
@@ -26,19 +28,20 @@ export const styles = StyleSheet.create({
 
   image: {
     padding: 20,
-    width:320,
-    height: 80,
+    width: 280,
+    height: 70,
     alignSelf: "center",
-    marginBottom: 20,
+    marginBottom: 50,
   },
 
   button: {
-    backgroundColor: "#2020cfff",
+    backgroundColor: "#00A36C",
     padding: 12,
     borderRadius: 25,
     alignItems: "center",
     alignSelf: "center",
     marginTop: 10,
+    marginBottom: 5,
     width: "100%",
   },
 
@@ -48,6 +51,8 @@ export const styles = StyleSheet.create({
   },
 
   inputPassword: {
+    width: "100%",
+    alignSelf: "center",
     borderWidth: 1,
     borderColor: "#7a7a7aff",
     borderRadius: 20,
@@ -58,7 +63,7 @@ export const styles = StyleSheet.create({
   icon: {
     position: "absolute",
     right: 10,
-    top: "40%",
+    top: "35%",
     transform: [{ translateY: -11 }],
     padding: 5,
   },
@@ -66,5 +71,14 @@ export const styles = StyleSheet.create({
   passwordContainer: {
     position: "relative",
     marginBottom: 15,
+  },
+
+  textCadastro: {
+    fontSize: 16,
+    color: "#0059FF",
+    fontWeight: "bold",
+    marginTop: 20,
+    alignSelf: "center",
+    alignItems: "center"
   },
 });
