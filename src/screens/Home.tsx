@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
 import { Appbar } from "react-native-paper";
 import { useState } from "react";
 
+{/* Mockup de produtos para teste */}
 const dummyProducts = [
   {
     id: "1",
@@ -83,6 +84,7 @@ const dummyProducts = [
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function Home({ navigation }: Props) {
+  {/* Função para renderizar os produtos teste e adicionar ao card flutuante na tela de Home */}
   const renderProduct = ({ item }: any) => (
     <View style={styles.productCard}>
       <Image source={require("../assets/ic_product.png")} />
@@ -111,6 +113,7 @@ export default function Home({ navigation }: Props) {
 
   return (
     <View style={{ flex: 1 }}>
+      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <TouchableOpacity onPress={handlePerfil}>
@@ -123,6 +126,7 @@ export default function Home({ navigation }: Props) {
 
       <Text style={styles.headerTitle}>Wideias App</Text>
 
+    {/* Lista dos produtos */}
       <FlatList
         data={dummyProducts}
         numColumns={2}

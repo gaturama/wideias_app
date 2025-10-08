@@ -20,10 +20,7 @@ export default function Perfil({ navigation }: Props) {
     navigation.navigate("Login");
   };
 
-  const handleHome = () => {
-    navigation.navigate("Home");
-  };
-
+  {/* Função para que seja possível a edição do perfil do usuário */}
   const handleEdit = () => {
     if (!name || !email || !password || !phoneNumber) {
       alert("Preencha todos os campos antes de salvar!");
@@ -33,6 +30,7 @@ export default function Perfil({ navigation }: Props) {
     alert("Informações atualizadas com sucesso!");
   };
 
+  {/* Função para selecionar uma foto da galeria do celular do usuário */}
   async function pickImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -54,6 +52,7 @@ export default function Perfil({ navigation }: Props) {
 
   return (
     <View style={{ flex: 1 }}>
+      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
       </Appbar.Header>
@@ -72,6 +71,7 @@ export default function Perfil({ navigation }: Props) {
 
         <Text style={styles.title}>Editar Perfil</Text>
 
+        {/* Input's da tela de perfil */}
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"

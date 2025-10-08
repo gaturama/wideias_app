@@ -37,6 +37,7 @@ export default function Cadastro({ navigation }: Props) {
 
   return (
     <View style={{ flex: 1 }}>
+      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
          <Appbar.BackAction onPress={() => navigation.goBack()} />
       </Appbar.Header>
@@ -51,6 +52,7 @@ export default function Cadastro({ navigation }: Props) {
 
         <Text style={styles.title}>Cadastro</Text>
 
+        {/* Input's de cadastro*/}
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"

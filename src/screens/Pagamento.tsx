@@ -16,6 +16,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function Pagamento({ navigation }: Props) {
+  {/* Mockup de teste do pedido */}
   const pedidoTeste = {
     id: "WID-20251006-001",
     usuario: "gabriel",
@@ -26,10 +27,7 @@ export default function Pagamento({ navigation }: Props) {
     valorTotal: 78.5,
   };
 
-  const handleHome = () => {
-    navigation.navigate("Home");
-  };
-
+  {/* Funções para quando o usuário clicar na opção da carteira digital desejada, abri-la diretamente */}
   async function openGoogleWallet() {
     try {
       const googleIntent =
@@ -85,6 +83,7 @@ export default function Pagamento({ navigation }: Props) {
 
   return (
     <View style={{ flex: 1 }}>
+      {/* Header customizável */}
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
       </Appbar.Header>
@@ -94,6 +93,8 @@ export default function Pagamento({ navigation }: Props) {
           style={styles.iconPay}
         />
         <Text style={styles.pagamentoText}>Pagamento</Text>
+
+        {/* Botões de carteiras digitais e PIX */}
         <TouchableOpacity
           style={styles.buttonContent}
           onPress={() => navigation.navigate("Pix", { pedido: pedidoTeste })}

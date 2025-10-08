@@ -5,6 +5,7 @@ import QRCode from "react-native-qrcode-svg";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useMesa } from "../context/MesaContext";
 
+{/* Função para gerar o QR Code */}
 export default function QRCodeScreen({ route }) {
   const { pedido } = route.params;
   const { mesa } = useMesa();

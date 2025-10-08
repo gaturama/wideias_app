@@ -17,6 +17,7 @@ interface Adicional {
 }
 
 export default function DescricaoProduto({ route, navigation }) {
+{/* Mockup de produtos para testes */}
   const [ingredientes, setIngredientes] = useState<Ingrediente[]>([
     { id: 1, nome: "Pão Brioche", incluso: true },
     { id: 2, nome: "Carne 160g", incluso: true },
@@ -76,6 +77,7 @@ export default function DescricaoProduto({ route, navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
+        {/* Header customizado */}
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Descrição do Produto" />
@@ -89,6 +91,7 @@ export default function DescricaoProduto({ route, navigation }) {
         <Text style={styles.productName}>{produto.nome}</Text>
         <Text style={styles.productDesc}>{produto.descricao}</Text>
 
+        {/* Ingredientes selecionáveis */}
         <Text style={styles.titleSection}>Ingredientes</Text>
         {ingredientes.map((item) => (
           <TouchableOpacity
@@ -110,6 +113,7 @@ export default function DescricaoProduto({ route, navigation }) {
           </TouchableOpacity>
         ))}
 
+        {/* Ingredientes adicionais */}
         <Text style={styles.titleSection}>Adicionais</Text>
         {adicionais.map((item) => (
           <TouchableOpacity
@@ -128,6 +132,7 @@ export default function DescricaoProduto({ route, navigation }) {
           </TouchableOpacity>
         ))}
 
+        {/* Observações */}
         <Text style={styles.titleSection}>Observações</Text>
         <TextInput
           mode="outlined"

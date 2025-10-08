@@ -7,6 +7,7 @@ export default function Mesa({ navigation }) {
   const { setMesa } = useMesa();
   const [mesaLocal, setMesaLocal] = useState("");
 
+  {/* Função para informar o número da mesa */}
   const handleConfirm = () => {
     if (!mesaLocal) {
       Alert.alert("Informe o número da mesa!");
@@ -20,6 +21,7 @@ export default function Mesa({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Informe sua mesa</Text>
+      {/* Input da mesa */}
       <TextInput
         style={styles.input}
         placeholder="Número da mesa"
