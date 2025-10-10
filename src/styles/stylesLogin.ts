@@ -1,13 +1,6 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "center",
-    backgroundColor: "#EAEAEA ",
-  },
-
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -20,8 +13,8 @@ export const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     borderWidth: 1,
-    borderColor: "#7a7a7aff",
-    padding: 10,
+    borderColor: "#cccbcbff",
+    padding: 20,
     marginBottom: 15,
     borderRadius: 20,
   },
@@ -35,37 +28,39 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#00A36C",
-    padding: 12,
+    backgroundColor: "#008b8b",
+    padding: 18,
     borderRadius: 25,
     alignItems: "center",
     alignSelf: "center",
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 5,
     width: "100%",
   },
 
   buttonText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 20,
   },
 
   inputPassword: {
     width: "100%",
     alignSelf: "center",
     borderWidth: 1,
-    borderColor: "#7a7a7aff",
+    borderColor: "#cccbcbff",
     borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    marginTop: 10,
   },
 
   icon: {
     position: "absolute",
-    right: 10,
+    right: 15,
     top: "35%",
     transform: [{ translateY: -11 }],
     padding: 5,
+    marginTop: 10,
   },
 
   passwordContainer: {

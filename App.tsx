@@ -12,6 +12,8 @@ import { RootStackParamList } from "./src/navigation/types";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DescricaoProduto from "./src/screens/DescricaoProduto";
+import Localizacao from "./src/screens/Localizacao";
+import TipoLocal from "./src/screens/TipoLocal";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -30,6 +32,8 @@ export default function App() {
         <Stack.Screen name="QrCode" component={QRCodeScreen} options={{headerShown: false}}/>
         <Stack.Screen name="Pix" component={Pix} options={{headerShown: false}}/>
         <Stack.Screen name="Mesa" component={Mesa} options={{headerShown: false}}/>
+        <Stack.Screen name="Localizacao" component={Localizacao} options={{headerShown: false}} />
+        <Stack.Screen name="TipoLocal" component={TipoLocal} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

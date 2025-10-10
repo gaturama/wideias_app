@@ -84,8 +84,9 @@ export default function Pagamento({ navigation }: Props) {
   return (
     <View style={{ flex: 1 }}>
       {/* Header customizável */}
-      <Appbar.Header>
+      <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
+          <Appbar.Content title="Realizar pagamento"/>
       </Appbar.Header>
       <View style={styles.container}>
         <Image

@@ -5,8 +5,14 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f2ebe0",
   },
+
+  head: {
+    width: "100%",
+     backgroundColor: "#d9bea7",
+  },
+
 
   pagamentoText: {
     fontSize: 24,

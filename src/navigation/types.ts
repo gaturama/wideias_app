@@ -1,6 +1,6 @@
 export type RootStackParamList = {
   Login: undefined
-  Home: undefined
+  Home: { tipo?: "restaurante" | "evento"}
   Perfil: undefined
   Carrinho: {cart: any[] };
   Pagamento: undefined
@@ -16,4 +16,6 @@ export type RootStackParamList = {
   Pix: { pedido: any };
   Mesa: undefined
   DescricaoProduto: undefined
+  Localizacao: undefined
+  TipoLocal: undefined
 }

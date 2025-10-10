@@ -78,7 +78,7 @@ export default function DescricaoProduto({ route, navigation }) {
   return (
     <View style={{ flex: 1 }}>
         {/* Header customizado */}
-      <Appbar.Header>
+      <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Descrição do Produto" />
       </Appbar.Header>

@@ -5,7 +5,14 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f2ebe0",
+  },
+
+  head: {
+    width: "100%",
+    flexDirection: "row",
+    gap: 8,
+    backgroundColor: "#d9bea7",
   },
 
   productImage: {
@@ -35,8 +42,8 @@ export const styles = StyleSheet.create({
   },
 
   option: {
-    backgroundColor: "#f6f6f6",
-    borderRadius: 8,
+    backgroundColor: "#fff",
+    borderRadius: 20,
     padding: 12,
     marginBottom: 8,
     flexDirection: "row",
@@ -88,14 +95,14 @@ export const styles = StyleSheet.create({
   totalText: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#ff6a00"
   },
 
   button: {
-    backgroundColor: "#00A36C",
+    backgroundColor: "#ff6a00",
     paddingVertical: 12,
     paddingHorizontal: 24,
-    borderRadius: 8,
-   
+    borderRadius: 20,
   },
 
   textButton: {

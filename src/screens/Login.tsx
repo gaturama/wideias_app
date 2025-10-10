@@ -3,7 +3,6 @@ import { styles } from "../styles/stylesLogin";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 
 {/* Mockup de usuários para teste */}
@@ -33,12 +32,12 @@ export default function Login({ navigation }: Props) {
   );
 
   {/* Função para acessar tela de home caso o login for concluído com sucesso */}
-  const handleHome = () => {
+  const handleLocalizacao = () => {
     const user = users.find(
       (u) => u.email === email && u.password.toString() === password
     );
     if (user) {
-      navigation.navigate("Home");
+      navigation.navigate("Localizacao");
     } else {
       alert("Email ou senha incorretos!");
     }
@@ -50,8 +49,7 @@ export default function Login({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
+      <View style={{ flex: 1, backgroundColor: "#f2ebe0", justifyContent: "center", padding: 20 }}>
         <Image
           style={styles.image}
           source={require("../assets/marca_android.png")}
@@ -89,13 +87,12 @@ export default function Login({ navigation }: Props) {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleHome}>
+        <TouchableOpacity style={styles.button} onPress={handleLocalizacao}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
         <Text style={styles.textCadastro} onPress={handleCadastro}>
           Realizar Cadastro
         </Text>
-      </SafeAreaView>
-    </SafeAreaProvider>
+      </View>
   );
 }

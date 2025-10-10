@@ -3,7 +3,6 @@ import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPerfil";
 import * as ImagePicker from "expo-image-picker";
 import { RootStackParamList } from "../navigation/types";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 
@@ -51,13 +50,13 @@ export default function Perfil({ navigation }: Props) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[styles.container, { backgroundColor: "#f2ebe0" }]}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
       </Appbar.Header>
 
-      <View style={styles.container}>
+      <View style={styles.containerBody}>
         <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
           {image ? (
             <Image source={{ uri: image }} style={styles.avatar} />
