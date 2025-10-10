@@ -3,46 +3,51 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#f2ebe0",
+    paddingTop: 20,
   },
 
   head: {
     width: "100%",
-     backgroundColor: "#d9bea7",
+    backgroundColor: "#d9bea7",
   },
 
-
   pagamentoText: {
-    fontSize: 24,
-    marginBottom: 30,
+    fontSize: 26,
+    marginVertical: 20,
     fontWeight: "bold",
+    color: "#333",
   },
 
   buttonContent: {
     backgroundColor: "#fff",
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 15,
     alignItems: "center",
-    alignSelf: "center",
-    marginTop: 10,
-    width: "80%",
     flexDirection: "row",
-    gap: 8,
+    gap: 15,
+    width: "85%",
     marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  
+
   textContent: {
     color: "#000",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginLeft: 10,
+    fontSize: 20,
+    fontWeight: "600",
   },
 
   iconContent: {
     width: 50,
     height: 50,
+    resizeMode: "contain",
   },
 
   iconExit: {
@@ -55,6 +60,7 @@ export const styles = StyleSheet.create({
   iconPay: {
     width: 100,
     height: 100,
-    marginBottom: 10,
+    marginBottom: 15,
+    resizeMode: "contain",
   },
 });

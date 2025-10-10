@@ -70,6 +70,10 @@ export default function Home({ navigation, route }: Props) {
   const handlePerfil = () => {
     navigation.navigate("Perfil");
   };
+
+  const handleAddCredit = () => {
+    navigation.navigate("AdicionarCredito")
+  }
   
   {/* Função para renderizar os produtos teste e adicionar ao card flutuante na tela de Home */}
   const renderProduct = ({ item }: any) => (
@@ -95,6 +99,12 @@ export default function Home({ navigation, route }: Props) {
           <Image
             source={require("../assets/ic_user.png")}
             style={styles.icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleAddCredit}>
+          <Image 
+            source={require("../assets/ic_credito.png")}
+            style={styles.iconCredito}
           />
         </TouchableOpacity>
       </Appbar.Header>

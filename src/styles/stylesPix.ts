@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f2ebe0",
     paddingHorizontal: 20,
   },
   title: {

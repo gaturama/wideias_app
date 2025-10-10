@@ -14,6 +14,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DescricaoProduto from "./src/screens/DescricaoProduto";
 import Localizacao from "./src/screens/Localizacao";
 import TipoLocal from "./src/screens/TipoLocal";
+import AdicionarCredito from "./src/screens/AdicionarCredito";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,7 +22,7 @@ export default function App() {
   return (
     <NavigationContainer>
       {/*Inicialização definida para tela de Login || Para testes, substituir para a tela desejada*/}
-      <Stack.Navigator initialRouteName="Login" id={undefined}> 
+      <Stack.Navigator initialRouteName="Home" id={undefined}> 
         <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
         <Stack.Screen name="Cadastro" component={Cadastro} options={{headerShown: false}}/>
         <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
@@ -34,6 +35,7 @@ export default function App() {
         <Stack.Screen name="Mesa" component={Mesa} options={{headerShown: false}}/>
         <Stack.Screen name="Localizacao" component={Localizacao} options={{headerShown: false}} />
         <Stack.Screen name="TipoLocal" component={TipoLocal} options={{headerShown: false}} />
+        <Stack.Screen name="AdicionarCredito" component={AdicionarCredito} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

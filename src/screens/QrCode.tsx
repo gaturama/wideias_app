@@ -3,12 +3,15 @@ import { styles } from "../styles/stylesQrCode";
 import { View, Text } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { useMesa } from "../context/MesaContext";
+import { RouteProp } from "@react-navigation/native";
+import { RootStackParamList } from "../navigation/types";
 
-{/* Função para gerar o QR Code */}
-export default function QRCodeScreen({ route }) {
-  const { pedido } = route.params;
-  const { mesa } = useMesa();
+type Props = {
+  route: RouteProp<RootStackParamList, "QrCode">;
+};
+
+export default function QRCodeScreen({ route }: Props) {
+  const { pedido } = route.params || {};
 
   if (!pedido) {
     return (
@@ -23,7 +26,6 @@ export default function QRCodeScreen({ route }) {
     usuario: pedido.usuario,
     produtos: pedido.produtos.map((p) => p.nome),
     valorTotal: pedido.valorTotal,
-    mesa: mesa,
   });
 
   return (
@@ -35,7 +37,6 @@ export default function QRCodeScreen({ route }) {
             <QRCode value={qrData} size={220} />
           </View>
           <Text style={styles.info}>Pedido #{pedido.id}</Text>
-          <Text style={styles.subtext}>Mesa: {mesa}</Text>
           <Text style={styles.subtext}>
             Total: R$ {pedido.valorTotal.toFixed(2)}
           </Text>

@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 40 ,
+    fontSize: 40,
     fontWeight: "bold",
     alignSelf: "center",
     color: "#ff6a00",
@@ -98,6 +98,13 @@ export const styles = StyleSheet.create({
     marginLeft: 290,
   },
 
+  iconCredito: {
+    width: 35,
+    height: 35,
+    tintColor: "#000",
+    right: 100,
+  },
+
   cartFooter: {
     position: "absolute",
     bottom: 20,
@@ -124,5 +131,26 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 8,
     opacity: 0.8,
-  }
+  },
+
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 70,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#d9bea7",
+    paddingHorizontal: 16,
+  },
+
+  textFooter: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
+    textAlign: "center",
+    marginBottom: 10,
+  },
 });
