@@ -18,5 +18,5 @@ export type RootStackParamList = {
   DescricaoProduto: undefined;
   Localizacao: undefined;
   TipoLocal: undefined;
-  AdicionarCredito: undefined;
+  Credito: undefined;
 };

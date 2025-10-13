@@ -7,6 +7,10 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f2ebe0",
   },
 
+  containerProduto: {
+    flexDirection: "row",
+  },
+
   head: {
     width: "100%",
     flexDirection: "row",
@@ -95,14 +99,15 @@ export const styles = StyleSheet.create({
     width: 35,
     height: 35,
     tintColor: "#000",
-    marginLeft: 290,
+    margin: 2,
+    right: 15,
   },
 
-  iconCredito: {
+  iconMenu: {
     width: 35,
     height: 35,
     tintColor: "#000",
-    right: 100,
+    marginStart: 280,
   },
 
   cartFooter: {
@@ -119,6 +124,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 5,
   },
+  
   cartText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   cartAction: { color: "#fff", fontWeight: "600" },
 
