@@ -36,8 +36,8 @@ export default function Credito({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Adicionar Crédito" />
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
+        <Appbar.Content title="Adicionar Crédito" color="white"/>
       </Appbar.Header>
 
       <View style={styles.container}>

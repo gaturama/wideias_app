@@ -118,10 +118,6 @@ export default function Home({ navigation, route }) {
 
   const addToCart = (item) => {
     setCart((prev) => [...prev, item]);
-
-    if (tipoLocal === "evento") {
-      navigation.navigate("Carrinho", { cart: [...cart, item] });
-    }
   };
 
   const total = cart.reduce((sum, item) => sum + item.price, 0);
@@ -157,13 +153,19 @@ export default function Home({ navigation, route }) {
     <View style={styles.container}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.navigate("Login")} />
-        <Appbar.Content title="Menu" />
+        <Appbar.BackAction onPress={() => navigation.navigate("Login")} color="white"/>
+        <Appbar.Content title="Home" color="white"/>
         <TouchableOpacity onPress={handlePerfil}>
-          <Image source={require("../assets/ic_user.png")} style={styles.icon}/>
+          <Image
+            source={require("../assets/ic_user.png")}
+            style={styles.icon}
+          />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleCredit}>
-          <Image source={require("../assets/ic_moeda.png")} style={styles.icon}/>
+          <Image
+            source={require("../assets/ic_moeda.png")}
+            style={styles.icon}
+          />
         </TouchableOpacity>
       </Appbar.Header>
 
@@ -184,7 +186,13 @@ export default function Home({ navigation, route }) {
       {cart.length > 0 && (
         <TouchableOpacity
           style={styles.cartFooter}
-          onPress={() => navigation.navigate("DescricaoProduto")}
+          onPress={() => {
+            if (tipoLocal === "evento") {
+              navigation.navigate("Carrinho", { cart });
+          } else {
+            navigation.navigate("DescricaoProduto", { produtos, cart })
+          }
+        }}
         >
           <Text style={styles.cartText}>
             {cart.length} item{cart.length > 1 && "s"} • Total: R${" "}

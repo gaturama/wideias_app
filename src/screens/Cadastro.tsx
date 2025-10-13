@@ -35,8 +35,8 @@ export default function Cadastro({ navigation }: Props) {
     <View style={{ flex: 1, backgroundColor: "#f2ebe0"}}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-         <Appbar.BackAction onPress={() => navigation.goBack()} />
-          <Appbar.Content title="Criar conta"/>
+         <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
+          <Appbar.Content title="Criar conta" color="white"/>
       </Appbar.Header>
 
       <View style={styles.container}>

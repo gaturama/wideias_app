@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     gap: 8,
-    backgroundColor: "#d9bea7",
+    backgroundColor: "#b38c7d",
   },
 
   productImage: {

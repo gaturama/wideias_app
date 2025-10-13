@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     gap: 8,
-    backgroundColor: "#d9bea7",
+    backgroundColor: "#b38c7d",
   },
 
   image: {
@@ -98,7 +98,7 @@ export const styles = StyleSheet.create({
   icon: {
     width: 35,
     height: 35,
-    tintColor: "#000",
+    tintColor: "#fff",
     margin: 2,
     right: 15,
   },

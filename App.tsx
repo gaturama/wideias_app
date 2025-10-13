@@ -22,13 +22,13 @@ export default function App() {
   return (
     <NavigationContainer>
       {/*Inicialização definida para tela de Login || Para testes, substituir para a tela desejada*/}
-      <Stack.Navigator initialRouteName="Home" id={undefined}> 
+      <Stack.Navigator initialRouteName="Login" id={undefined}> 
         <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
         <Stack.Screen name="Cadastro" component={Cadastro} options={{headerShown: false}}/>
         <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
         <Stack.Screen name="Perfil" component={Perfil} options={{headerShown: false}}/>
         <Stack.Screen name="DescricaoProduto" component={DescricaoProduto} options={{headerShown: false}}/>
-        {/* <Stack.Screen name="Carrinho" component={Carrinho} options={{headerShown: false}}/> */}
+        <Stack.Screen name="Carrinho" component={Carrinho} options={{headerShown: false}}/>
         <Stack.Screen name="Pagamento" component={Pagamento} options={{headerShown: false}}/>
         <Stack.Screen name="QrCode" component={QRCodeScreen} options={{headerShown: false}}/>
         <Stack.Screen name="Pix" component={Pix} options={{headerShown: false}}/>
