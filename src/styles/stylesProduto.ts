@@ -95,13 +95,6 @@ export const styles = StyleSheet.create({
     margin: 20,
   },
 
-  icon: {
-    width: 35,
-    height: 35,
-    tintColor: "#fff",
-    margin: 2,
-    right: 15,
-  },
 
   iconMenu: {
     width: 35,

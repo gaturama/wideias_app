@@ -1,8 +1,7 @@
 import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
 import { Appbar } from "react-native-paper";
-import { useEffect, useState } from "react";
-import * as Location from "expo-location";
-import { styles } from "../styles/stylesHome";
+import { useState } from "react";
+import { styles } from "../styles/stylesProduto";
 
 //Mockup de produtos para teste
 
@@ -86,35 +85,10 @@ const mockProdutosEvento = [
 
 export default function Home({ navigation, route }) {
   const [cart, setCart] = useState([]);
-  const [localizacao, setLocalizacao] = useState<string | null>(null);
 
   const tipoLocal = route?.params?.tipo || "restaurante";
   const produtos =
     tipoLocal === "evento" ? mockProdutosEvento : mockProdutosRestaurante;
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-
-        if (status !== "granted") return;
-
-        const pos = await Location.getCurrentPositionAsync({});
-        const [endereco] = await Location.reverseGeocodeAsync({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-        });
-
-        if (endereco) {
-          const cidade = endereco.city || endereco.subregion || "";
-          const estado = endereco.region || "";
-          setLocalizacao(`${cidade} - ${estado}`);
-        }
-      } catch (error) {
-        console.log("Erro ao obter localização:", error);
-      }
-    })();
-  }, []);
 
   const addToCart = (item) => {
     setCart((prev) => [...prev, item]);
@@ -122,13 +96,6 @@ export default function Home({ navigation, route }) {
 
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-  const handlePerfil = () => {
-    navigation.navigate("Perfil");
-  };
-
-  const handleCredit = () => {
-    navigation.navigate("Credito");
-  };
 
   // Função para renderizar os produtos teste e adicionar ao card flutuante na tela de Home
 
@@ -153,25 +120,8 @@ export default function Home({ navigation, route }) {
     <View style={styles.container}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.navigate("Login")} color="white"/>
-        <Appbar.Content title="Home" color="white"/>
-        <TouchableOpacity onPress={handlePerfil}>
-          <Image
-            source={require("../assets/ic_user.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleCredit}>
-          <Image
-            source={require("../assets/ic_moeda.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
+        <Appbar.Content title="Produtos" color="white"/>
       </Appbar.Header>
-
-      {localizacao && <Text style={styles.local}>📍{localizacao}</Text>}
-
-      <Text style={styles.headerTitle}>Wideias App</Text>
 
       {/* Lista dos produtos */}
       <FlatList

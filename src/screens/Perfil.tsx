@@ -6,7 +6,7 @@ import { RootStackParamList } from "../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = NativeStackScreenProps<RootStackParamList, "Produto">;
 
 export default function Perfil({ navigation }: Props) {
   const [name, setName] = useState("");

@@ -1,9 +1,10 @@
 import React from "react";
 import Pix from "./src/screens/Pix";
 import Mesa from "./src/screens/Mesa";
-import Home from "./src/screens/Home";
+import Home from "./src/screens/Produto";
 import Login from "./src/screens/Login";
 import Perfil from "./src/screens/Perfil";
+import Pedido from "./src/screens/Pedido";
 import Credito from "./src/screens/Credito";
 import Carrinho from "./src/screens/Carrinho";
 import Cadastro from "./src/screens/Cadastro";
@@ -15,6 +16,7 @@ import { RootStackParamList } from "./src/navigation/types";
 import DescricaoProduto from "./src/screens/DescricaoProduto";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import TabsNavigator from "./src/navigation/TabsNavigator";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -25,7 +27,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Login" id={undefined}> 
         <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
         <Stack.Screen name="Cadastro" component={Cadastro} options={{headerShown: false}}/>
-        <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
+        <Stack.Screen name="Main" component={TabsNavigator} options={{headerShown: false}} />
         <Stack.Screen name="Perfil" component={Perfil} options={{headerShown: false}}/>
         <Stack.Screen name="DescricaoProduto" component={DescricaoProduto} options={{headerShown: false}}/>
         <Stack.Screen name="Carrinho" component={Carrinho} options={{headerShown: false}}/>
@@ -36,6 +38,7 @@ export default function App() {
         <Stack.Screen name="Localizacao" component={Localizacao} options={{headerShown: false}} />
         <Stack.Screen name="TipoLocal" component={TipoLocal} options={{headerShown: false}} />
         <Stack.Screen name="Credito" component={Credito} options={{headerShown: false}}/>
+        <Stack.Screen name="Pedido" component={Pedido} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
 
   pagamentoText: {
     fontSize: 26,
-    marginVertical: 20,
+    marginVertical: 5,
     fontWeight: "bold",
     color: "#333",
   },
@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 15,
     width: "85%",
-    marginBottom: 25,
+    marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
@@ -75,6 +75,7 @@ export const styles = StyleSheet.create({
   iconPay: {
     width: 100,
     height: 100,
+    marginBottom: 25,
   },
 
   textValue: {

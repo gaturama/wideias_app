@@ -17,6 +17,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Pagamento">;
 
 export default function Pagamento({ navigation, route }: Props) {
   const tipoLocal = route.params?.tipoLocal || "evento";
+  const cartItems = route.params?.cart || [];
   {
     /* Mockup de teste do pedido */
   }
@@ -29,6 +30,32 @@ export default function Pagamento({ navigation, route }: Props) {
     ],
 
     valorTotal: 30.0,
+  };
+
+  const finalizarPagamento = () => {
+    if (cartItems.length === 0) {
+      Alert.alert(
+        "Carrinho vazio",
+        "Adicione produtos antes de finalizar o pagamento"
+      );
+      return;
+    }
+
+    // Transforma os produtos no formato que Pedido espera
+    const produtosParaPedido = cartItems.map((item) => ({
+      nome: item.name,
+      quantidade: item.quantidade || 1,
+    }));
+
+    // Mostra alert de sucesso
+    Alert.alert("Pix", "Pagamento realizado com sucesso!");
+
+    // Navega para a tela Pedido passando os produtos
+    setTimeout(() => {
+      navigation.navigate("Pedido", {
+        pedidos: produtosParaPedido,
+      });
+    }, 500);
   };
 
   {
@@ -104,14 +131,7 @@ export default function Pagamento({ navigation, route }: Props) {
         {/* Botões de carteiras digitais e PIX */}
         <TouchableOpacity
           style={styles.buttonContent}
-          onPress={() => {
-            Alert.alert("Pix", "Pagamento realizado com sucesso!");
-
-            setTimeout(() => {
-              if (tipoLocal === "evento")
-              navigation.navigate("QrCode", { pedido: pedidoTeste });
-            }, 1000);
-          }}
+          onPress={finalizarPagamento}
         >
           <Image
             source={require("../assets/ic_pix.png")}

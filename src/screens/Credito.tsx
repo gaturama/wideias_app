@@ -39,7 +39,6 @@ export default function Credito({ navigation }) {
     <View style={{ flex: 1 }}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
         <Appbar.Content title="Adicionar Crédito" color="white"/>
       </Appbar.Header>
 
@@ -48,9 +47,6 @@ export default function Credito({ navigation }) {
           source={require("../assets/ic_credito.png")}
           style={styles.iconPay}
         />
-        <Text style={styles.pagamentoText}>
-          Saldo atual: R$ {saldo.toFixed(2)}
-        </Text>
 
         {/* Botões de valores pré-definidos */}
         <View style={{ flexDirection: "row", gap: 10, marginBottom: 20 }}>

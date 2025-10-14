@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function QRCodeScreen({ route }: Props) {
-  const { pedido } = route.params || {};
+  const pedido  = route.params?.pedido;
 
   // Verifica se o pedido existe
   if (!pedido) {

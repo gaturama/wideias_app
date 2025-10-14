@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
   containerBody: {
     flex: 1,
     padding: 20,
-    marginTop: 40,
+  
   },
 
   head: {
