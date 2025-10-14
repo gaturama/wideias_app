@@ -13,10 +13,13 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = NativeStackScreenProps<RootStackParamList, "Pagamento">;
 
-export default function Pagamento({ navigation }: Props) {
-  {/* Mockup de teste do pedido */}
+export default function Pagamento({ navigation, route }: Props) {
+  const tipoLocal = route.params?.tipoLocal;
+  {
+    /* Mockup de teste do pedido */
+  }
   const pedidoTeste = {
     id: "WID-20251006-001",
     usuario: "gabriel",
@@ -24,11 +27,13 @@ export default function Pagamento({ navigation }: Props) {
       { nome: "Suco de Laranja", quantidade: 2 },
       { nome: "Energético Red Bull", quantidade: 1 },
     ],
-    
-    valorTotal: 30.00,
+
+    valorTotal: 30.0,
   };
 
-  {/* Funções para quando o usuário clicar na opção da carteira digital desejada, abri-la diretamente */}
+  {
+    /* Funções para quando o usuário clicar na opção da carteira digital desejada, abri-la diretamente */
+  }
   async function openGoogleWallet() {
     try {
       const googleIntent =
@@ -48,21 +53,21 @@ export default function Pagamento({ navigation }: Props) {
   }
 
   async function openSamsungPay() {
-   try {
-    const samsungScheme = "samsungpay://";
-    const supported = await Linking.canOpenURL(samsungScheme);
+    try {
+      const samsungScheme = "samsungpay://";
+      const supported = await Linking.canOpenURL(samsungScheme);
 
-    if (supported) {
-      await Linking.openURL(samsungScheme);
-    } else {
-      await Linking.openURL(
-        "https://play.google.com/store/apps/details?id=com.samsung.android.spay"
-      );
+      if (supported) {
+        await Linking.openURL(samsungScheme);
+      } else {
+        await Linking.openURL(
+          "https://play.google.com/store/apps/details?id=com.samsung.android.spay"
+        );
+      }
+    } catch (err) {
+      console.log("Erro abrindo Samsung Pay:", err);
+      Alert.alert("Não foi possível abrir o Samsung Pay.");
     }
-  } catch (err) {
-    console.log("Erro abrindo Samsung Pay:", err);
-    Alert.alert("Não foi possível abrir o Samsung Pay.");
-  }
   }
 
   async function openApplePay() {
@@ -86,8 +91,8 @@ export default function Pagamento({ navigation }: Props) {
     <View style={{ flex: 1 }}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
-          <Appbar.Content title="Realizar pagamento" color="white"/>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content title="Realizar pagamento" color="white" />
       </Appbar.Header>
       <View style={styles.container}>
         <Image
@@ -99,7 +104,14 @@ export default function Pagamento({ navigation }: Props) {
         {/* Botões de carteiras digitais e PIX */}
         <TouchableOpacity
           style={styles.buttonContent}
-          onPress={() => navigation.navigate("Pix", { pedido: pedidoTeste })}
+          onPress={() => {
+            Alert.alert("Pix", "Pagamento realizado com sucesso!");
+
+            setTimeout(() => {
+              if (route.params?.tipoLocal === "evento")
+              navigation.navigate("QrCode", { pedido: pedidoTeste });
+            }, 1000);
+          }}
         >
           <Image
             source={require("../assets/ic_pix.png")}

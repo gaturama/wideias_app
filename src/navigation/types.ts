@@ -3,7 +3,7 @@ export type RootStackParamList = {
   Home: { tipo?: "restaurante" | "evento" };
   Perfil: undefined;
   Carrinho: { cart: any[] };
-  Pagamento: undefined;
+  Pagamento: {cart: any[]; tipoLocal?: "retaurante" | "evento"};
   QrCode: {
     pedido: {
       id: string;

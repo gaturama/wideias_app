@@ -12,6 +12,7 @@ import { Appbar } from "react-native-paper";
 export default function Carrinho({ navigation, route }: any) {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [observacoes, setObservacoes] = useState("");
+  const tipoLocal = route.params?.tipoLocal;
 
   // Função p/ agrupar itens iguais do carrinho e soma a quantidade
   useEffect(() => {
@@ -109,13 +110,13 @@ export default function Carrinho({ navigation, route }: any) {
         </Text>
         <TouchableOpacity
           style={styles.nextButton}
-          onPress={() =>
-            navigation.navigate("Pagamento", {
-              cart: cartItems,
-              total,
-              observacoes,
-            })
-          }
+          onPress={() => {
+            if (tipoLocal === "restaurante") {
+              navigation.navigate("Mesa", { cart: cartItems, tipoLocal });
+            } else {
+              navigation.navigate("Pagamento", { cart: cartItems, tipoLocal });
+            }
+          }}
         >
           <Text style={styles.nextButtonText}>Próximo</Text>
         </TouchableOpacity>

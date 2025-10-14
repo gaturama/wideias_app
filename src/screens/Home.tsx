@@ -190,7 +190,7 @@ export default function Home({ navigation, route }) {
             if (tipoLocal === "evento") {
               navigation.navigate("Carrinho", { cart });
           } else {
-            navigation.navigate("DescricaoProduto", { produtos, cart })
+            navigation.navigate("DescricaoProduto", { produtos, cart, tipoLocal: "restaurante" })
           }
         }}
         >

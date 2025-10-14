@@ -31,9 +31,7 @@ export default function QRCodeScreen({ route }: Props) {
   });
 
   return (
-    <SafeAreaProvider>
-      {/* Usando SafeAreaView para evitar áreas não seguras */}
-      <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         <View style={styles.container}>
           <Text style={styles.title}>Mostre este QR Code no balcão</Text>
           <View style={styles.qrContainer}>
@@ -45,7 +43,6 @@ export default function QRCodeScreen({ route }: Props) {
             Total: R$ {pedido.valorTotal.toFixed(2)}
           </Text>
         </View>
-      </SafeAreaView>
-    </SafeAreaProvider>
+      </View>
   );
 }

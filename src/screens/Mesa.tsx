@@ -3,11 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useMesa } from "../context/MesaContext";
 import { styles } from "../styles/stylesMesa";
 
-export default function Mesa({ navigation }) {
+export default function Mesa({ navigation, route }) {
   const { setMesa } = useMesa();
   const [mesaLocal, setMesaLocal] = useState("");
+  const tipoLocal = route.params?.tipoLocal;
 
-  {/* Função para informar o número da mesa */}
+  // Função para informar o número da mesa
   const handleConfirm = () => {
     if (!mesaLocal) {
       Alert.alert("Informe o número da mesa!");
@@ -15,7 +16,7 @@ export default function Mesa({ navigation }) {
     }
     setMesa(mesaLocal);
     Alert.alert("Mesa selecionada!", `Você escolheu a mesa ${mesaLocal}`);
-    navigation.navigate("Home");
+    navigation.navigate("Pagamento", { tipoLocal });
   };
 
   return (
@@ -24,7 +25,7 @@ export default function Mesa({ navigation }) {
       {/* Input da mesa */}
       <TextInput
         style={styles.input}
-        placeholder="Número da mesa"
+        placeholder="MESA"
         keyboardType="numeric"
         value={mesaLocal}
         onChangeText={setMesaLocal}

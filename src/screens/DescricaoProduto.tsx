@@ -17,6 +17,7 @@ interface Adicional {
 }
 
 export default function DescricaoProduto({ route, navigation }) {
+  const tipoLocal = route.params?.tipoLocal;
   {
     /* Mockup de produtos para testes */
   }
@@ -73,7 +74,7 @@ export default function DescricaoProduto({ route, navigation }) {
     };
 
     const novoCarrinho = [...cartAtual, novoProduto];
-    navigation.navigate("Carrinho", { cart: novoCarrinho });
+    navigation.navigate("Carrinho", { cart: novoCarrinho, tipoLocal: route.params?.tipoLocal });
   };
 
   const produto = {
