@@ -3,7 +3,6 @@ import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPerfil";
 import * as ImagePicker from "expo-image-picker";
 import { RootStackParamList } from "../navigation/types";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 
@@ -20,10 +19,7 @@ export default function Perfil({ navigation }: Props) {
     navigation.navigate("Login");
   };
 
-  const handleHome = () => {
-    navigation.navigate("Home");
-  };
-
+  {/* Função para que seja possível a edição do perfil do usuário */}
   const handleEdit = () => {
     if (!name || !email || !password || !phoneNumber) {
       alert("Preencha todos os campos antes de salvar!");
@@ -33,6 +29,7 @@ export default function Perfil({ navigation }: Props) {
     alert("Informações atualizadas com sucesso!");
   };
 
+  {/* Função para selecionar uma foto da galeria do celular do usuário */}
   async function pickImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -53,12 +50,14 @@ export default function Perfil({ navigation }: Props) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[styles.container, { backgroundColor: "#f2ebe0" }]}>
+      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
+        <Appbar.Content title="Perfil" color="white"/>
       </Appbar.Header>
 
-      <View style={styles.container}>
+      <View style={styles.containerBody}>
         <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
           {image ? (
             <Image source={{ uri: image }} style={styles.avatar} />
@@ -72,6 +71,7 @@ export default function Perfil({ navigation }: Props) {
 
         <Text style={styles.title}>Editar Perfil</Text>
 
+        {/* Input's da tela de perfil */}
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"

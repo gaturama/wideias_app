@@ -3,15 +3,19 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     justifyContent: "center",
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f2ebe0",
+  },
+
+  containerProduto: {
+    flexDirection: "row",
   },
 
   head: {
     width: "100%",
     flexDirection: "row",
     gap: 8,
+    backgroundColor: "#b38c7d",
   },
 
   image: {
@@ -20,11 +24,11 @@ export const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: "bold",
     alignSelf: "center",
-    color: "#000",
-    marginTop: 50,
+    color: "#ff6a00",
+    marginTop: 30,
   },
 
   headerButton: { padding: 8 },
@@ -41,14 +45,14 @@ export const styles = StyleSheet.create({
     margin: 10,
     backgroundColor: "#fff",
     borderRadius: 8,
-    padding: 8,
+    padding: 20,
     alignItems: "center",
     elevation: 2,
   },
 
   productImage: {
-    width: "100%",
-    height: 100,
+    width: 120,
+    height: 120,
     resizeMode: "cover",
     borderRadius: 8,
   },
@@ -94,8 +98,16 @@ export const styles = StyleSheet.create({
   icon: {
     width: 35,
     height: 35,
+    tintColor: "#fff",
+    margin: 2,
+    right: 15,
+  },
+
+  iconMenu: {
+    width: 35,
+    height: 35,
     tintColor: "#000",
-    marginLeft: 270,
+    marginStart: 280,
   },
 
   cartFooter: {
@@ -103,7 +115,7 @@ export const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: "#00A36C",
+    backgroundColor: "#008b8b",
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 30,
@@ -112,8 +124,39 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 5,
   },
+  
   cartText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   cartAction: { color: "#fff", fontWeight: "600" },
 
   addButtonText: { color: "#fff", fontWeight: "bold" },
+
+  local: {
+    textAlign: "left",
+    left: 15,
+    color: "#444",
+    fontSize: 12,
+    marginTop: 8,
+    opacity: 0.8,
+  },
+
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 70,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#d9bea7",
+    paddingHorizontal: 16,
+  },
+
+  textFooter: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
+    textAlign: "center",
+    marginBottom: 10,
+  },
 });

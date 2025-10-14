@@ -6,12 +6,14 @@ import QRCode from "react-native-qrcode-svg";
 export default function Pix({ route }) {
   const { pedido } = route.params;
 
+  {/* Mockup do qr code para teste */}
   const [pixCode] = useState(
     `00020126580014BR.GOV.BCB.PIX0136chavepix@empresa.com520400005303986540${pedido.valorTotal
       .toFixed(2)
       .replace(".", "")}5802BR5912Wideias App6009Joinville62070503***6304ABCD`
   );
 
+  {/* Função para copiar para área de transferênciar o código do QR Code */}
   const handleCopy = () => {
     Clipboard.setString(pixCode);
     Alert.alert(

@@ -3,13 +3,18 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     justifyContent: "center",
-    backgroundColor: "#EAEAEA ",
+  },
+
+  containerBody: {
+    flex: 1,
+    padding: 20,
+    marginTop: 40,
   },
 
   head: {
     width: "100%",
+    backgroundColor: "#b38c7d",
   },
 
   title: {
@@ -25,6 +30,7 @@ export const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     marginBottom: 25,
+    borderColor: "#cccbcbff",
   },
 
   button: {
@@ -50,9 +56,9 @@ export const styles = StyleSheet.create({
   },
 
   editButton: {
-    backgroundColor: "#00A36C",
+    backgroundColor: "#008b8b",
     borderRadius: 20,
-    paddingVertical: 10,
+    padding: 18,
     marginTop: 10,
     alignItems: "center",
   },

@@ -17,12 +17,16 @@ interface Adicional {
 }
 
 export default function DescricaoProduto({ route, navigation }) {
+  const tipoLocal = route.params?.tipoLocal;
+  {
+    /* Mockup de produtos para testes */
+  }
   const [ingredientes, setIngredientes] = useState<Ingrediente[]>([
     { id: 1, nome: "Pão Brioche", incluso: true },
     { id: 2, nome: "Carne 160g", incluso: true },
     { id: 3, nome: "Queijo Cheddar", incluso: true },
-    { id: 5, nome: "Alface", incluso: true},
-    { id: 6, nome: "Tomate", incluso: true},
+    { id: 5, nome: "Alface", incluso: true },
+    { id: 6, nome: "Tomate", incluso: true },
     { id: 7, nome: "Cebola Roxa", incluso: true },
     { id: 8, nome: "Molho da Casa", incluso: true },
   ]);
@@ -33,6 +37,7 @@ export default function DescricaoProduto({ route, navigation }) {
     { id: 3, nome: "Maionese Caseira", preco: 1.5, selecionado: false },
   ]);
 
+  const cartAtual = route.params?.cart || [];
   const [observacao, setObservacao] = useState("");
 
   const toggleIngrediente = (id: number) => {
@@ -59,26 +64,31 @@ export default function DescricaoProduto({ route, navigation }) {
       .reduce((sum, a) => sum + a.preco, 0);
 
   const handleAddToCart = () => {
-    const pedido = {
-        ...produto,
-        ingredientes,
-        adicionais,
-        observacao
+    const novoProduto = {
+      id: Date.now().toString(),
+      name: produto.nome,
+      price: precoTotal,
+      ingredientes: ingredientes.filter((i) => i.incluso),
+      adicionais: adicionais.filter((a) => a.selecionado),
+      observacao,
     };
 
-   navigation.navigate("Carrinho", {pedido});
+    const novoCarrinho = [...cartAtual, novoProduto];
+    navigation.navigate("Carrinho", { cart: novoCarrinho, tipoLocal: route.params?.tipoLocal });
   };
 
   const produto = {
     nome: "Smash da Casa",
-    descricao: "Pão brioche, carne 160g, cheddar, alface, tomate, cebola roxa e molho da casa.",
+    descricao:
+      "Pão brioche, carne 160g, cheddar, alface, tomate, cebola roxa e molho da casa.",
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Descrição do Produto" />
+      {/* Header customizado */}
+      <Appbar.Header style={styles.head}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
+        <Appbar.Content title="Descrição do Produto" color="white"/>
       </Appbar.Header>
 
       <ScrollView style={styles.container}>
@@ -89,6 +99,7 @@ export default function DescricaoProduto({ route, navigation }) {
         <Text style={styles.productName}>{produto.nome}</Text>
         <Text style={styles.productDesc}>{produto.descricao}</Text>
 
+        {/* Ingredientes selecionáveis */}
         <Text style={styles.titleSection}>Ingredientes</Text>
         {ingredientes.map((item) => (
           <TouchableOpacity
@@ -110,6 +121,7 @@ export default function DescricaoProduto({ route, navigation }) {
           </TouchableOpacity>
         ))}
 
+        {/* Ingredientes adicionais */}
         <Text style={styles.titleSection}>Adicionais</Text>
         {adicionais.map((item) => (
           <TouchableOpacity
@@ -128,6 +140,7 @@ export default function DescricaoProduto({ route, navigation }) {
           </TouchableOpacity>
         ))}
 
+        {/* Observações */}
         <Text style={styles.titleSection}>Observações</Text>
         <TextInput
           mode="outlined"

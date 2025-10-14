@@ -20,10 +20,6 @@ export default function Cadastro({ navigation }: Props) {
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  const handleLogin = () => {
-    navigation.navigate("Login");
-  };
-
   const handleCadastro = () => {
     if (!name || !email || !password || !phoneNumber) {
       Alert.alert("Erro", "Preencha todos os campos!");
@@ -36,9 +32,11 @@ export default function Cadastro({ navigation }: Props) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#f2ebe0"}}>
+      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-         <Appbar.BackAction onPress={() => navigation.goBack()} />
+         <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
+          <Appbar.Content title="Criar conta" color="white"/>
       </Appbar.Header>
 
       <View style={styles.container}>
@@ -49,40 +47,44 @@ export default function Cadastro({ navigation }: Props) {
           />
         </View>
 
-        <Text style={styles.title}>Cadastro</Text>
-
+        {/* Input's de cadastro*/}
+        <Text style={styles.inputText}>Nome Completo</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="Nome"
+
+          placeholder="Seu nome"
           style={styles.input}
           value={name}
           onChangeText={setName}
         />
 
+        <Text style={styles.inputText}>E-mail</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="Email"
+          placeholder="seu@email.com"
           style={styles.input}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
         />
 
+        <Text style={styles.inputText}>Senha</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="Senha"
+          placeholder="******"
           style={styles.input}
           value={password}
           onChangeText={setPassword}
         />
 
+        <Text style={styles.inputText}>Telefone</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="Telefone"
+          placeholder="(47) 99999-9999"
           style={styles.input}
           value={phoneNumber}
           onChangeText={setPhoneNumber}

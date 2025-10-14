@@ -1,9 +1,9 @@
 export type RootStackParamList = {
-  Login: undefined
-  Home: undefined
-  Perfil: undefined
-  Carrinho: {cart: any[] };
-  Pagamento: undefined
+  Login: undefined;
+  Home: { tipo?: "restaurante" | "evento" };
+  Perfil: undefined;
+  Carrinho: { cart: any[] };
+  Pagamento: {cart: any[]; tipoLocal?: "retaurante" | "evento"};
   QrCode: {
     pedido: {
       id: string;
@@ -12,8 +12,11 @@ export type RootStackParamList = {
       valorTotal: number;
     };
   };
-  Cadastro: undefined
+  Cadastro: undefined;
   Pix: { pedido: any };
-  Mesa: undefined
-  DescricaoProduto: undefined
-}
+  Mesa: undefined;
+  DescricaoProduto: undefined;
+  Localizacao: undefined;
+  TipoLocal: undefined;
+  Credito: undefined;
+};

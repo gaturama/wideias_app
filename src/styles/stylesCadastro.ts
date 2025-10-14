@@ -5,11 +5,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#EAEAEA ",
+    backgroundColor: "#f2ebe0 ",
   },
 
   head: {
     width: "100%",
+     backgroundColor: "#b38c7d",
   },
 
   title: {
@@ -24,16 +25,19 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 20,
     borderRadius: 20,
-    marginBottom: 25,
+    marginBottom: 15,
+    borderColor: "#cccbcbff",
   },
 
   button: {
-    backgroundColor: "#00A36C",
+    backgroundColor: "#008b8b",
     padding: 12,
     borderRadius: 25,
     justifyContent: "center",
     alignSelf: "center",
+    alignItems: "center",
     width: "100%",
+    height: 60,
     flexDirection: "row",
     marginTop: 30,
     gap: 8,
@@ -52,23 +56,22 @@ export const styles = StyleSheet.create({
   },
 
   avatarContainer: {
-    width: 120,
-    height: 120,
+    width: 110,
+    height: 110,
     borderRadius: 60,
     backgroundColor: "#e6e6e6ff",
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom: 15,
   },
 
   icon: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     alignSelf: "center",
     justifyContent: "center",
-    marginBottom: 10,
-    tintColor: "#000"
+    tintColor: "#cccbcbff"
   },
 
   iconExit: {
@@ -77,4 +80,11 @@ export const styles = StyleSheet.create({
     tintColor: "#000",
     margin: 20,
   },
+
+  inputText: {
+    fontWeight: "bold",
+    fontSize: 14,
+    marginBottom: 10,
+    left: 5,
+  }
 });

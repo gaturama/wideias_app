@@ -4,14 +4,17 @@ import Mesa from "./src/screens/Mesa";
 import Home from "./src/screens/Home";
 import Login from "./src/screens/Login";
 import Perfil from "./src/screens/Perfil";
-import Cadastro from "./src/screens/Cadastro";
+import Credito from "./src/screens/Credito";
 import Carrinho from "./src/screens/Carrinho";
-import QRCodeScreen from "./src/screens/QrCode";
+import Cadastro from "./src/screens/Cadastro";
 import Pagamento from "./src/screens/Pagamento";
+import TipoLocal from "./src/screens/TipoLocal";
+import QRCodeScreen from "./src/screens/QrCode";
+import Localizacao from "./src/screens/Localizacao";
 import { RootStackParamList } from "./src/navigation/types";
+import DescricaoProduto from "./src/screens/DescricaoProduto";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import DescricaoProduto from "./src/screens/DescricaoProduto";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -25,11 +28,14 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
         <Stack.Screen name="Perfil" component={Perfil} options={{headerShown: false}}/>
         <Stack.Screen name="DescricaoProduto" component={DescricaoProduto} options={{headerShown: false}}/>
-        {/* <Stack.Screen name="Carrinho" component={Carrinho} options={{headerShown: false}}/> */}
+        <Stack.Screen name="Carrinho" component={Carrinho} options={{headerShown: false}}/>
         <Stack.Screen name="Pagamento" component={Pagamento} options={{headerShown: false}}/>
         <Stack.Screen name="QrCode" component={QRCodeScreen} options={{headerShown: false}}/>
         <Stack.Screen name="Pix" component={Pix} options={{headerShown: false}}/>
         <Stack.Screen name="Mesa" component={Mesa} options={{headerShown: false}}/>
+        <Stack.Screen name="Localizacao" component={Localizacao} options={{headerShown: false}} />
+        <Stack.Screen name="TipoLocal" component={TipoLocal} options={{headerShown: false}} />
+        <Stack.Screen name="Credito" component={Credito} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
