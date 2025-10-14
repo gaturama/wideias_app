@@ -16,7 +16,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 type Props = NativeStackScreenProps<RootStackParamList, "Pagamento">;
 
 export default function Pagamento({ navigation, route }: Props) {
-  const tipoLocal = route.params?.tipoLocal;
+  const tipoLocal = route.params?.tipoLocal || "evento";
   {
     /* Mockup de teste do pedido */
   }
@@ -108,7 +108,7 @@ export default function Pagamento({ navigation, route }: Props) {
             Alert.alert("Pix", "Pagamento realizado com sucesso!");
 
             setTimeout(() => {
-              if (route.params?.tipoLocal === "evento")
+              if (tipoLocal === "evento")
               navigation.navigate("QrCode", { pedido: pedidoTeste });
             }, 1000);
           }}
