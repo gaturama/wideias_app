@@ -28,7 +28,7 @@
     "@react-navigation/drawer": "^7.5.10",
     "@react-navigation/native-stack": "^7.3.26",
     "@types/react": "~19.1.10",
-    "expo": "^54.0.12",
+    "expo": "^54.0.13",
     "expo-image-picker": "~17.0.8",
     "expo-intent-launcher": "~13.0.7",
     "expo-location": "~19.0.7",

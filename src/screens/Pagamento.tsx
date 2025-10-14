@@ -24,7 +24,8 @@ export default function Pagamento({ navigation }: Props) {
       { nome: "Suco de Laranja", quantidade: 2 },
       { nome: "Energético Red Bull", quantidade: 1 },
     ],
-    valorTotal: 78.5,
+    
+    valorTotal: 30.00,
   };
 
   {/* Funções para quando o usuário clicar na opção da carteira digital desejada, abri-la diretamente */}

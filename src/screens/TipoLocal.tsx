@@ -5,6 +5,7 @@ export default function TipoLocal ({navigation, route}) {
 
     const {location} = route.params;
 
+    // Função para navegar para a tela Home com o tipo selecionado
     const handleEscolha = (tipo) => {
         navigation.navigate("Home", {tipo, location});
     };
@@ -13,6 +14,7 @@ export default function TipoLocal ({navigation, route}) {
         <View style={styles.container} >
             <Text style={styles.textLocal}>Onde você está?</Text>
 
+            {/* Botões para escolher o tipo de local */}
             <TouchableOpacity style={styles.buttonLocal} onPress={() => handleEscolha("restaurante")}>
                 <Text style={styles.textButton}>Restaurante</Text>
             </TouchableOpacity>

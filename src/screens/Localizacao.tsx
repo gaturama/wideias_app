@@ -17,6 +17,7 @@ export default function Localizacao({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [detalhe, setDetalhe] = useState("Obtendo localização...");
 
+  // Solicita permissão e obtém a localização
   useEffect(() => {
     (async () => {
       try {
@@ -30,6 +31,7 @@ export default function Localizacao({ navigation }) {
           return;
         }
 
+        // Tenta obter a localização com timeout
         const locResult = await Promise.race([
           Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.Highest,
@@ -40,6 +42,7 @@ export default function Localizacao({ navigation }) {
           ),
         ]);
 
+        // Verifica se a localização foi obtida corretamente
         if ("coords" in locResult && locResult.coords) {
           const coords = locResult.coords;
           setLocation(coords);
@@ -71,6 +74,7 @@ export default function Localizacao({ navigation }) {
     })();
   }, []);
 
+  // Renderização condicional com base no estado de carregamento
   if (loading) {
     return (
       <View style={styles.container}>
@@ -82,8 +86,11 @@ export default function Localizacao({ navigation }) {
 
   return (
     <View style={styles.container}>
+       {/* Exibe o endereço ou uma mensagem de erro */}
+
       <Text style={styles.textLocal}>Você está em:</Text>
 
+    {/* Se o endereço foi obtido, exibe os detalhes */}
       {endereco ? (
         <View style={{ alignItems: "center" }}>
           <Text style={styles.textRua}>

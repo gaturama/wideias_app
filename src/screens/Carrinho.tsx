@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
-  Image,
   Text,
   TextInput,
   TouchableOpacity,
@@ -14,6 +13,7 @@ export default function Carrinho({ navigation, route }: any) {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [observacoes, setObservacoes] = useState("");
 
+  // Função p/ agrupar itens iguais do carrinho e soma a quantidade
   useEffect(() => {
     if (route.params?.cart && Array.isArray(route.params.cart)) {
       const grouped = route.params.cart.reduce((acc, item) => {
@@ -29,6 +29,7 @@ export default function Carrinho({ navigation, route }: any) {
     }
   }, [route.params?.cart]);
 
+  // função para aumentar o número de produtos no carrinho
   const handleIncrease = (id: string) => {
     setCartItems((prev) =>
       prev.map((item) =>
@@ -37,6 +38,7 @@ export default function Carrinho({ navigation, route }: any) {
     );
   };
 
+  // função para diminuir o número de produtos no carrinho
   const handleDecrease = (id: string) => {
     setCartItems((prev) =>
       prev
@@ -49,11 +51,13 @@ export default function Carrinho({ navigation, route }: any) {
 
   return (
     <View style={styles.container}>
+      {/* Header customizável */}
       <Appbar.Header style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
         <Appbar.Content title="Carrinho" color="#fff" />
       </Appbar.Header>
 
+      {/* Lista para mostrar os produtos */}
       <FlatList
         data={cartItems}
         keyExtractor={(item) => item.id}
@@ -65,6 +69,7 @@ export default function Carrinho({ navigation, route }: any) {
               <Text style={styles.itemPrice}>R$ {item.price.toFixed(2)}</Text>
             </View>
 
+            {/* Botões para acrescentar e diminuir qtd de produtos */}
             <View style={styles.qtyContainer}>
               <TouchableOpacity
                 style={styles.qtyButton}
@@ -86,6 +91,7 @@ export default function Carrinho({ navigation, route }: any) {
         )}
       />
 
+        {/* Caixa de texto para observações */}
       <View style={styles.obsContainer}>
         <Text style={styles.obsLabel}>Observações</Text>
         <TextInput
@@ -96,6 +102,7 @@ export default function Carrinho({ navigation, route }: any) {
         />
       </View>
 
+        {/* Footer de toal + botão para tela de Pagamento */}
       <View style={styles.footer}>
         <Text style={styles.totalText}>
           Total: <Text style={styles.totalValue}>R$ {total.toFixed(2)}</Text>

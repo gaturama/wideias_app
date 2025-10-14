@@ -14,11 +14,13 @@ export default function Credito({ navigation }) {
   const [valor, setValor] = useState<string>("");
   const [saldo, setSaldo] = useState<number>(50.0);
 
+  // Mockup de adicionar saldo
   const addSaldoMock = (valor: number) => {
     setSaldo((prev) => prev + valor);
     Alert.alert("Sucesso", `R$ ${valor.toFixed(2)} adicionados ao seu saldo!`);
   };
 
+  // Função para adicionar crédito ao saldo
   const handleAdicionarCredito = () => {
     const valorNum = parseFloat(valor);
     if (!valorNum || valorNum <= 0) {
@@ -35,6 +37,7 @@ export default function Credito({ navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
+      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
         <Appbar.Content title="Adicionar Crédito" color="white"/>
@@ -49,6 +52,7 @@ export default function Credito({ navigation }) {
           Saldo atual: R$ {saldo.toFixed(2)}
         </Text>
 
+        {/* Botões de valores pré-definidos */}
         <View style={{ flexDirection: "row", gap: 10, marginBottom: 20 }}>
           {[20, 50, 100].map((valor) => (
             <TouchableOpacity
@@ -61,6 +65,7 @@ export default function Credito({ navigation }) {
           ))}
         </View>
 
+        {/* Input para valor customizado */}
         <TextInput
           placeholder="Digite o valor"
           keyboardType="numeric"
@@ -69,6 +74,7 @@ export default function Credito({ navigation }) {
           style={styles.textValue}
         />
 
+        {/* Botões de carteiras digitais e PIX */}
         <TouchableOpacity
           style={styles.buttonContent}
           onPress={handleAdicionarCredito}
