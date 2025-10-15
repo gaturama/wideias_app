@@ -14,7 +14,7 @@ export default function TabsNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#b38c7d",
+          backgroundColor: "#2E78A6",
           borderTopWidth: 0,
           elevation: 10,
           height: 70,
@@ -22,7 +22,7 @@ export default function TabsNavigator() {
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap = "home";
 
-          if (route.name === "Pedido") iconName = "home";
+          if (route.name === "Home") iconName = "home";
           else if (route.name === "Produto") iconName = "fast-food";
           else if (route.name === "Credito") iconName = "wallet";
 
@@ -32,7 +32,7 @@ export default function TabsNavigator() {
         tabBarInactiveTintColor: "#fff",
       })}
     >
-      <Tab.Screen name="Pedido" component={Pedido} />
+      <Tab.Screen name="Home" component={Pedido} />
       <Tab.Screen name="Produto" component={Produto} />
       <Tab.Screen name="Credito" component={Credito} />
     </Tab.Navigator>

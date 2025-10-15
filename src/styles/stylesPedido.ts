@@ -3,11 +3,11 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f2ebe0",
+    backgroundColor: "#EAEAEA",
   },
 
   head: {
-    backgroundColor: "#b38c7d",
+    backgroundColor: "#2E78A6",
     elevation: 4,
   },
 
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   },
 
   cardCredito: {
-    backgroundColor: "#008b8b",
+    backgroundColor: "#73AABF",
     marginHorizontal: 16,
     marginVertical: 10,
     padding: 16,

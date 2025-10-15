@@ -7,7 +7,6 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  Platform,
   Linking,
   Alert,
 } from "react-native";
@@ -52,8 +51,9 @@ export default function Pagamento({ navigation, route }: Props) {
 
     // Navega para a tela Pedido passando os produtos
     setTimeout(() => {
-      navigation.navigate("Pedido", {
-        pedidos: produtosParaPedido,
+      navigation.navigate("Main", {
+        screen: "Pedido",
+        params: { pedidos: produtosParaPedido },
       });
     }, 500);
   };

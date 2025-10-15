@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
 
   head: {
     width: "100%",
-    backgroundColor: "#b38c7d",
+    backgroundColor: "#2E78A6",
   },
 
   title: {

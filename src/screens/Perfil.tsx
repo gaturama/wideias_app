@@ -50,7 +50,7 @@ export default function Perfil({ navigation }: Props) {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: "#f2ebe0" }]}>
+    <View style={[styles.container, { backgroundColor: "#EAEAEA" }]}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>

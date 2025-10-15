@@ -7,6 +7,7 @@ export default function Mesa({ navigation, route }) {
   const { setMesa } = useMesa();
   const [mesaLocal, setMesaLocal] = useState("");
   const tipoLocal = route.params?.tipoLocal;
+  const cartItems = route.params?.cart;
 
   // Função para informar o número da mesa
   const handleConfirm = () => {
@@ -16,7 +17,7 @@ export default function Mesa({ navigation, route }) {
     }
     setMesa(mesaLocal);
     Alert.alert("Mesa selecionada!", `Você escolheu a mesa ${mesaLocal}`);
-    navigation.navigate("Pagamento", { tipoLocal });
+    navigation.navigate("Pagamento", { tipoLocal, cart: route.params?.cart });
   };
 
   return (

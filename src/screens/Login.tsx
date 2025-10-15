@@ -11,7 +11,7 @@ const users = [
   { id: 2, email: "teste2@email.com", password: 456 },
 ];
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function Login({ navigation }: Props) {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +49,7 @@ export default function Login({ navigation }: Props) {
   };
 
   return (
-      <View style={{ flex: 1, backgroundColor: "#f2ebe0", justifyContent: "center", padding: 20 }}>
+      <View style={{ flex: 1, backgroundColor: "#EAEAEA", justifyContent: "center", padding: 20 }}>
         <Image
           style={styles.image}
           source={require("../assets/marca_android.png")}

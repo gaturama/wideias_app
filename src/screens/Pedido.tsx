@@ -1,10 +1,27 @@
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPedido";
+import { useEffect, useState } from "react";
+
+let pedidosGlobais: any[] = [];
 
 export default function Pedido({ navigation, route }) {
-  const pedidos = route.params?.pedidos || [];
+  const [pedidos, setPedidos] = useState<any[]>(pedidosGlobais);
+  const novosPedidos = route.params?.pedidos || [];
   const credito = route.params?.credito ?? 100.0;
+
+  useEffect(() => {
+    if (novosPedidos.length > 0) {
+      const novos = novosPedidos.filter(
+        (novo) => !pedidosGlobais.some((antigo) => antigo.nome === novo.nome)
+      );
+
+      pedidosGlobais = [...pedidosGlobais, ...novos];
+      setPedidos(pedidosGlobais);
+
+      navigation.setParams({ pedidos: undefined });
+    }
+  }, [route.params?.pedidos]);
 
   const handlePerfil = () => {
     navigation.navigate("Perfil");
@@ -42,7 +59,16 @@ export default function Pedido({ navigation, route }) {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => navigation.navigate("QrCode", { pedido: item })}
+              onPress={() =>
+                navigation.navigate("QrCode", {
+                  pedido: {
+                    id: "fakeId" + item.nome,
+                    usuario: "Gabriel",
+                    produtos: [item],
+                    valorTotal: item.preco || 0,
+                  },
+                })
+              }
             >
               <Image
                 source={require("../assets/ic_product.png")}

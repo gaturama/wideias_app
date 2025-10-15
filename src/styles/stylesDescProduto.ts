@@ -5,14 +5,14 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#f2ebe0",
+    backgroundColor: "#EAEAEA",
   },
 
   head: {
     width: "100%",
     flexDirection: "row",
     gap: 8,
-    backgroundColor: "#b38c7d",
+    backgroundColor: "#2E78A6",
   },
 
   productImage: {

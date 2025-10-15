@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 20,
-        backgroundColor: "#f2ebe0"
+        backgroundColor: "#EAEAEA"
     },
 
     textLocal: {
