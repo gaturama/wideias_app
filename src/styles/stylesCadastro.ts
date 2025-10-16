@@ -5,12 +5,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f5f5f5",
   },
 
   head: {
     width: "100%",
-     backgroundColor: "#2E78A6",
+     backgroundColor: "#1e7d67",
   },
 
   title: {
@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#008b8b",
+    backgroundColor: "#1e7d67",
     padding: 12,
     borderRadius: 25,
     justifyContent: "center",

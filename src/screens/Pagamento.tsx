@@ -17,9 +17,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "Pagamento">;
 export default function Pagamento({ navigation, route }: Props) {
   const tipoLocal = route.params?.tipoLocal || "evento";
   const cartItems = route.params?.cart || [];
-  {
-    /* Mockup de teste do pedido */
-  }
+
+  // Mockup de teste do pedido
   const pedidoTeste = {
     id: "WID-20251006-001",
     usuario: "gabriel",
@@ -58,9 +57,8 @@ export default function Pagamento({ navigation, route }: Props) {
     }, 500);
   };
 
-  {
-    /* Funções para quando o usuário clicar na opção da carteira digital desejada, abri-la diretamente */
-  }
+  
+  //Funções para quando o usuário clicar na opção da carteira digital desejada, abri-la diretamente 
   async function openGoogleWallet() {
     try {
       const googleIntent =

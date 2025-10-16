@@ -2,6 +2,7 @@ import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPedido";
 import { useEffect, useState } from "react";
+import { StatusBar } from "expo-status-bar";
 
 let pedidosGlobais: any[] = [];
 
@@ -10,6 +11,7 @@ export default function Pedido({ navigation, route }) {
   const novosPedidos = route.params?.pedidos || [];
   const credito = route.params?.credito ?? 100.0;
 
+  // Atualiza a lista de pedidos quando novos pedidos são recebidos
   useEffect(() => {
     if (novosPedidos.length > 0) {
       const novos = novosPedidos.filter(

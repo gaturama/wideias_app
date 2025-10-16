@@ -19,7 +19,7 @@ export default function Perfil({ navigation }: Props) {
     navigation.navigate("Login");
   };
 
-  {/* Função para que seja possível a edição do perfil do usuário */}
+  // Função para que seja possível a edição do perfil do usuário 
   const handleEdit = () => {
     if (!name || !email || !password || !phoneNumber) {
       alert("Preencha todos os campos antes de salvar!");
@@ -29,7 +29,7 @@ export default function Perfil({ navigation }: Props) {
     alert("Informações atualizadas com sucesso!");
   };
 
-  {/* Função para selecionar uma foto da galeria do celular do usuário */}
+  // Função para selecionar uma foto da galeria do celular do usuário 
   async function pickImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {

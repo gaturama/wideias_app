@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center", 
     alignItems: "center", 
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f5f5f5",
     paddingHorizontal: 16,
   },
   title: {
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   qrContainer: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#EAEAEA",
     padding: 20,
     borderRadius: 20,
     elevation: 4,

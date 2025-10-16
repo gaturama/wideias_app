@@ -102,7 +102,7 @@ export default function Home({ navigation, route }) {
   const renderProduct = ({ item }: any) => (
     <View style={styles.productCard}>
       <Image
-        source={require("../assets/ic_product.png")}
+        source={require("../assets/ic_coca_cola.png")}
         style={styles.productImage}
       />
       <Text style={styles.productName}>{item.name}</Text>
@@ -111,6 +111,7 @@ export default function Home({ navigation, route }) {
         style={styles.addButton}
         onPress={() => addToCart(item)}
       >
+        <Image source={require("../assets/ic_carrinho.png")} style={styles.iconCarrinho}/>
         <Text style={styles.addButtonText}>Adicionar</Text>
       </TouchableOpacity>
     </View>

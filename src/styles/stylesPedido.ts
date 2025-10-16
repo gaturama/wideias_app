@@ -3,11 +3,11 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f5f5f5",
   },
 
   head: {
-    backgroundColor: "#2E78A6",
+    backgroundColor: "#1e7d67",
     elevation: 4,
   },
 
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   },
 
   cardCredito: {
-    backgroundColor: "#73AABF",
+    backgroundColor: "#fe8b05",
     marginHorizontal: 16,
     marginVertical: 10,
     padding: 16,
@@ -39,9 +39,9 @@ export const styles = StyleSheet.create({
 
   valorCredito: {
     color: "#fff",
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
-    marginTop: 4,
+    marginTop: 4
   },
 
   emptyContainer: {
@@ -87,19 +87,5 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
     marginTop: 2,
-  },
-
-  footerButton: {
-    backgroundColor: "#00ADB5",
-    paddingVertical: 14,
-    margin: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-
-  footerText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });

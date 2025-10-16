@@ -18,9 +18,9 @@ interface Adicional {
 
 export default function DescricaoProduto({ route, navigation }) {
   const tipoLocal = route.params?.tipoLocal;
-  {
-    /* Mockup de produtos para testes */
-  }
+  
+  //Mockup de produtos para testes 
+  
   const [ingredientes, setIngredientes] = useState<Ingrediente[]>([
     { id: 1, nome: "Pão Brioche", incluso: true },
     { id: 2, nome: "Carne 160g", incluso: true },
@@ -40,6 +40,7 @@ export default function DescricaoProduto({ route, navigation }) {
   const cartAtual = route.params?.cart || [];
   const [observacao, setObservacao] = useState("");
 
+  // Funções para selecionar/deselecionar ingredientes e adicionais
   const toggleIngrediente = (id: number) => {
     setIngredientes((prev) =>
       prev.map((item) =>
@@ -63,6 +64,7 @@ export default function DescricaoProduto({ route, navigation }) {
       .filter((a) => a.selecionado)
       .reduce((sum, a) => sum + a.preco, 0);
 
+  // Função para adicionar o produto ao carrinho
   const handleAddToCart = () => {
     const novoProduto = {
       id: Date.now().toString(),

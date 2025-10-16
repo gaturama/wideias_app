@@ -5,13 +5,13 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f5f5f5",
     paddingTop: 20,
   },
 
   head: {
     width: "100%",
-    backgroundColor: "#2E78A6",
+    backgroundColor: "#1e7d67",
   },
 
   pagamentoText: {
@@ -61,6 +61,7 @@ export const styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginBottom: 15,
+    marginTop: 30,
     resizeMode: "contain",
   },
 });

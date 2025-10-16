@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f5f5f5",
   },
 
   containerProduto: {
@@ -15,20 +15,12 @@ export const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     gap: 8,
-    backgroundColor: "#2E78A6",
+    backgroundColor: "#1e7d67",
   },
 
   image: {
     width: 40,
     height: 40,
-  },
-
-  headerTitle: {
-    fontSize: 40,
-    fontWeight: "bold",
-    alignSelf: "center",
-    color: "#ff6a00",
-    marginTop: 30,
   },
 
   headerButton: { padding: 8 },
@@ -51,8 +43,8 @@ export const styles = StyleSheet.create({
   },
 
   productImage: {
-    width: 120,
-    height: 120,
+    width: 40,
+    height: 75,
     resizeMode: "cover",
     borderRadius: 8,
   },
@@ -66,7 +58,7 @@ export const styles = StyleSheet.create({
 
   productPrice: {
     marginTop: 4,
-    color: "#ff6a00",
+    color: "#e67d05ff",
     fontWeight: "bold",
   },
 
@@ -74,18 +66,9 @@ export const styles = StyleSheet.create({
     marginTop: 8,
     paddingVertical: 6,
     paddingHorizontal: 12,
-    backgroundColor: "#ff6a00",
+    backgroundColor: "#fe8b05",
     borderRadius: 20,
-  },
-
-  iconContent: {
-    width: 60,
-    height: 60,
-    borderRadius: 50,
-    backgroundColor: "#ff6a00",
-    alignSelf: "flex-end",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: "row",
   },
 
   iconLoggout: {
@@ -94,7 +77,6 @@ export const styles = StyleSheet.create({
     tintColor: "#000",
     margin: 20,
   },
-
 
   iconMenu: {
     width: 35,
@@ -108,7 +90,7 @@ export const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: "#008b8b",
+    backgroundColor: "#1c7a64ff",
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 30,
@@ -117,19 +99,18 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 5,
   },
-  
+
   cartText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   cartAction: { color: "#fff", fontWeight: "600" },
 
   addButtonText: { color: "#fff", fontWeight: "bold" },
 
-  local: {
-    textAlign: "left",
-    left: 15,
-    color: "#444",
-    fontSize: 12,
-    marginTop: 8,
-    opacity: 0.8,
+  iconCarrinho: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+    marginTop: 1,
+    tintColor: "#fff",
   },
 
   footer: {

@@ -9,12 +9,12 @@ export const styles = StyleSheet.create({
   containerBody: {
     flex: 1,
     padding: 20,
-  
+    marginTop: 20,
   },
 
   head: {
     width: "100%",
-    backgroundColor: "#2E78A6",
+    backgroundColor: "#1e7d67",
   },
 
   title: {
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
   },
 
   editButton: {
-    backgroundColor: "#008b8b",
+    backgroundColor: "#1e7d67",
     borderRadius: 20,
     padding: 18,
     marginTop: 10,

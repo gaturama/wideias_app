@@ -3,11 +3,11 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f5f5f5",
   },
 
   header: {
-    backgroundColor: "#2E78A6",
+    backgroundColor: "#1e7d67",
     elevation: 2,
   },
 
@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
 
   qtySymbol: {
     fontSize: 18,
-    color: "#b05c47",
+    color: "#fe8b05",
     fontWeight: "bold",
   },
 
@@ -109,12 +109,12 @@ export const styles = StyleSheet.create({
   },
 
   totalValue: {
-    color: "#e67300",
+    color: "#fe8b05",
     fontWeight: "bold",
   },
 
   nextButton: {
-    backgroundColor: "#f28c38",
+    backgroundColor: "#fe8b05",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,

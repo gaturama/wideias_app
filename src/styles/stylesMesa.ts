@@ -5,7 +5,7 @@ container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#f5f5f5",
     paddingHorizontal: 16,
   },
   title: {
@@ -28,7 +28,7 @@ container: {
   button: {
     width: "60%",
     height: 50,
-    backgroundColor: "#008b8b",
+    backgroundColor: "#1e7d67",
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",

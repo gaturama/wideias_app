@@ -5,14 +5,14 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#EAEAEA",
+    backgroundColor: "#F5F5F5",
   },
 
   head: {
     width: "100%",
     flexDirection: "row",
     gap: 8,
-    backgroundColor: "#2E78A6",
+    backgroundColor: "#1e7d67",
   },
 
   productImage: {
@@ -63,11 +63,11 @@ export const styles = StyleSheet.create({
 
   removedOption: {
     backgroundColor: "#fdecea",
-    borderColor: "#f44336",
+    borderColor: "#fe8b05",
   },
 
   textRemovedOption: {
-    color: "#f44336",
+    color: "#fe8b05",
   },
 
   selectedOption: {

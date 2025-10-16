@@ -12,7 +12,7 @@ import {
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = NativeStackScreenProps<RootStackParamList, "Pedido">;
 
 export default function Cadastro({ navigation }: Props) {
   const [name, setName] = useState("");

@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 20,
-        backgroundColor: "#EAEAEA"
+        backgroundColor: "#f5f5f5"
     },
 
     textLocal: {
@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
     },
 
     buttonLocal: {
-        backgroundColor: "#008b8b",
+        backgroundColor: "#1e7d67",
         padding: 20,
         borderRadius: 20,
         width: 280,

@@ -14,7 +14,7 @@ export default function TabsNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#2E78A6",
+          backgroundColor: "#1e7d67",
           borderTopWidth: 0,
           elevation: 10,
           height: 70,
@@ -37,4 +37,5 @@ export default function TabsNavigator() {
       <Tab.Screen name="Credito" component={Credito} />
     </Tab.Navigator>
   );
+  4;
 }

@@ -56,7 +56,7 @@ export default function Credito({ navigation }) {
               style={[styles.buttonCredito, { paddingHorizontal: 15 }]}
               onPress={() => addSaldoMock(valor)}
             >
-              <Text style={styles.textContent}>R$ {valor} </Text>
+              <Text style={styles.textSaldo}>R$ {valor} </Text>
             </TouchableOpacity>
           ))}
         </View>
