@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
 
   head: {
     width: "100%",
-     backgroundColor: "#1e7d67",
+     backgroundColor: "#11658f",
   },
 
   title: {
@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#1e7d67",
+    backgroundColor: "#11658f",
     padding: 12,
     borderRadius: 25,
     justifyContent: "center",

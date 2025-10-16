@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
 
   head: {
     width: "100%",
-    backgroundColor: "#1e7d67",
+    backgroundColor: "#11658f",
   },
 
   title: {
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
   },
 
   editButton: {
-    backgroundColor: "#1e7d67",
+    backgroundColor: "#11658f",
     borderRadius: 20,
     padding: 18,
     marginTop: 10,

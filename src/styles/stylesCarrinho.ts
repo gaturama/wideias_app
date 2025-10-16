@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
   },
 
   header: {
-    backgroundColor: "#1e7d67",
+    backgroundColor: "#11658f",
     elevation: 2,
   },
 

@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     gap: 8,
-    backgroundColor: "#1e7d67",
+    backgroundColor: "#11658f",
   },
 
   image: {
@@ -90,7 +90,7 @@ export const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: "#1c7a64ff",
+    backgroundColor: "#0f5172ff",
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 30,

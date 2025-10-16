@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
     },
 
     buttonLocal: {
-        backgroundColor: "#1e7d67",
+        backgroundColor: "#11658f",
         padding: 20,
         borderRadius: 20,
         width: 280,
