@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPagamento";
 import { RootStackParamList } from "../navigation/types";
@@ -11,54 +11,86 @@ import {
   Alert,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import * as Location from "expo-location";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Pagamento">;
 
 export default function Pagamento({ navigation, route }: Props) {
-  const tipoLocal = route.params?.tipoLocal || "evento";
   const cartItems = route.params?.cart || [];
+  const [loading, setLoading] = useState(false);
 
-  // Mockup de teste do pedido
-  const pedidoTeste = {
-    id: "WID-20251006-001",
-    usuario: "gabriel",
-    produtos: [
-      { nome: "Suco de Laranja", quantidade: 2 },
-      { nome: "Energético Red Bull", quantidade: 1 },
-    ],
+  const finalizarPagamento = async () => {
+  if (cartItems.length === 0) {
+    Alert.alert("Carrinho vazio", "Adicione produtos antes de finalizar o pagamento");
+    return;
+  }
 
-    valorTotal: 30.0,
-  };
+  setLoading(true);
 
-  const finalizarPagamento = () => {
-    if (cartItems.length === 0) {
+  try {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
       Alert.alert(
-        "Carrinho vazio",
-        "Adicione produtos antes de finalizar o pagamento"
+        "Permissão negada",
+        "Autorize o acesso à localização nas configurações do seu aparelho para continuar."
       );
+      setLoading(false);
       return;
     }
 
-    // Transforma os produtos no formato que Pedido espera
+    let localizacao = null;
+
+    try {
+      const locationPromise = Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      const timeoutPromise = new Promise<Location.LocationObject>((_, reject) =>
+        setTimeout(() => reject(new Error("Localização: tempo limite excedido")), 5000)
+      );
+      const location = await Promise.race([locationPromise, timeoutPromise]);
+      
+      localizacao = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+    } catch (err) {
+      console.warn("AVISO: Não foi possível obter a localização. O pedido prosseguirá sem ela.", err);
+    }
+
     const produtosParaPedido = cartItems.map((item) => ({
       nome: item.name,
+      preco: item.price,
       quantidade: item.quantidade || 1,
     }));
 
-    // Mostra alert de sucesso
-    Alert.alert("Pix", "Pagamento realizado com sucesso!");
+    Alert.alert(
+      "Pix",
+      "Pagamento realizado com sucesso!",
+      [
+        {
+          text: "OK",
+          onPress: () =>
+            navigation.navigate("Main", {
+              screen: "Pedido",
+              params: {
+                pedidos: produtosParaPedido,
+                localizacao,
+              },
+            }),
+        },
+      ],
+      { cancelable: false }
+    );
 
-    // Navega para a tela Pedido passando os produtos
-    setTimeout(() => {
-      navigation.navigate("Main", {
-        screen: "Pedido",
-        params: { pedidos: produtosParaPedido },
-      });
-    }, 500);
-  };
+  } catch (error) {
+    
+    console.error("Erro crítico no processo de pagamento:", error);
+    Alert.alert("Erro", "Ocorreu um problema inesperado. Tente novamente.");
+  } finally {
+    setLoading(false); 
+  }
+};
 
-  
-  //Funções para quando o usuário clicar na opção da carteira digital desejada, abri-la diretamente 
   async function openGoogleWallet() {
     try {
       const googleIntent =

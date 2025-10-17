@@ -4,30 +4,53 @@ import { styles } from "../styles/stylesPedido";
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 
-let pedidosGlobais: any[] = [];
+interface PedidoItem {
+  nome: string;
+  preco?: number;
+  quantidade: number;
+}
 
+interface Localizacao {
+  latitude: number;
+  longitude: number;
+}
 export default function Pedido({ navigation, route }) {
-  const [pedidos, setPedidos] = useState<any[]>(pedidosGlobais);
-  const novosPedidos = route.params?.pedidos || [];
+  const [pedidos, setPedidos] = useState<PedidoItem[]>([]);
+  const novosPedidos: PedidoItem[] = route.params?.pedidos || [];
+  const localizacao: Localizacao | undefined = route.params?.localizacao;
   const credito = route.params?.credito ?? 100.0;
 
   // Atualiza a lista de pedidos quando novos pedidos são recebidos
   useEffect(() => {
     if (novosPedidos.length > 0) {
-      const novos = novosPedidos.filter(
-        (novo) => !pedidosGlobais.some((antigo) => antigo.nome === novo.nome)
-      );
+      setPedidos((prev) => {
+        const atualizado = [...prev];
 
-      pedidosGlobais = [...pedidosGlobais, ...novos];
-      setPedidos(pedidosGlobais);
+        novosPedidos.forEach((novo) => {
+          const existente = atualizado.find((p) => p.nome === novo.nome);
+          if (existente) {
+            existente.quantidade += novo.quantidade;
 
+            existente.preco = novo.preco ?? existente.preco; 
+          } else {
+            atualizado.push(novo);
+          }
+        });
+
+        return atualizado;
+      });
       navigation.setParams({ pedidos: undefined });
     }
-  }, [route.params?.pedidos]);
+  }, [novosPedidos]);
 
   const handlePerfil = () => {
     navigation.navigate("Perfil");
   };
+
+  const totalValor = pedidos.reduce(
+    (sum, p) => sum + (p.preco || 0) * p.quantidade,
+    0
+  );
 
   return (
     <View style={styles.container}>
@@ -64,10 +87,11 @@ export default function Pedido({ navigation, route }) {
               onPress={() =>
                 navigation.navigate("QrCode", {
                   pedido: {
-                    id: "fakeId" + item.nome,
+                    id: "fakeId" + Date.now(),
                     usuario: "Gabriel",
-                    produtos: [item],
-                    valorTotal: item.preco || 0,
+                    produtos: pedidos,
+                    valorTotal: totalValor,
+                    localizacao,
                   },
                 })
               }

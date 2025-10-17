@@ -16,6 +16,7 @@ export default function Localizacao({ navigation }) {
     useState<Location.LocationGeocodedAddress | null>(null);
   const [loading, setLoading] = useState(true);
   const [detalhe, setDetalhe] = useState("Obtendo localização...");
+  const pedidosAtuais = [];
 
   // Solicita permissão e obtém a localização
   useEffect(() => {
@@ -55,9 +56,9 @@ export default function Localizacao({ navigation }) {
 
           if (reverse) {
             setEndereco(reverse);
-            navigation.replace("TipoLocal", {
-              location: coords,
-              endereco: reverse,
+            navigation.navigate("Main", {
+              screen: "Pedido",
+              params: { pedidos: pedidosAtuais, localizacao: coords, endereco: reverse}
             });
           } else {
             setDetalhe("Não conseguimos identificar o local.");
