@@ -24,4 +24,5 @@ export type RootStackParamList = {
   Credito: undefined;
   Pedido: { pedidos?: any[]; localizacao?: { latitude: number; longitude: number } };
   Localizacao: undefined;
+  QrScanner: undefined;
 };

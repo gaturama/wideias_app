@@ -74,7 +74,7 @@ export const styles = StyleSheet.create({
   icon: {
     width: 45,
     height: 45,
-    marginRight: 14,
+    marginRight: 18,
   },
 
   title: {
@@ -87,5 +87,11 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
     marginTop: 2,
+  },
+
+  qrButton: {
+    left: -8,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

@@ -1,14 +1,8 @@
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPedido";
-import { use, useEffect, useState } from "react";
 import { usePedidos } from "../context/PedidosContext";
-
-interface PedidoItem {
-  nome: string;
-  preco?: number;
-  quantidade: number;
-}
+import { Ionicons } from "@expo/vector-icons";
 
 interface Localizacao {
   latitude: number;
@@ -42,6 +36,9 @@ export default function Pedido({ navigation, route }) {
             source={require("../assets/ic_user.png")}
             style={styles.iconPerfil}
           />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.qrButton} onPress={() => navigation.navigate("QrScanner")}>
+          <Ionicons name="qr-code" size={30} color="white" />
         </TouchableOpacity>
       </Appbar.Header>
 

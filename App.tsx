@@ -16,6 +16,7 @@ import DescricaoProduto from "./src/screens/DescricaoProduto";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { PedidosProvider } from "./src/context/PedidosContext";
+import QrScanner from "./src/screens/QrScanner";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -89,6 +90,11 @@ export default function App() {
             name="Pedido"
             component={Pedido}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="QrScanner"
+            component={QrScanner}
+            options={{headerShown: false}}
           />
         </Stack.Navigator>
       </NavigationContainer>

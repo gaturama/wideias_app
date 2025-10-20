@@ -79,13 +79,12 @@ export default function Pagamento({ navigation, route }: Props) {
         quantidade: item.quantidade || 1,
       }));
 
-      addPedidos(produtosParaPedido)
+      addPedidos(produtosParaPedido);
 
       Alert.alert("Pix", "Pagamento realizado com sucesso!");
       setTimeout(() => {
         navigation.navigate("Main", { screen: "Pedido" });
       }, 200);
-      
     } catch (error) {
       console.error("Erro crítico no processo de pagamento:", error);
       Alert.alert("Erro", "Ocorreu um problema inesperado. Tente novamente.");
