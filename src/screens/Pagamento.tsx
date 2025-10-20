@@ -12,85 +12,89 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Location from "expo-location";
+import { usePedidos, Pedido as PedidoType } from "../context/PedidosContext";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Pagamento">;
 
 export default function Pagamento({ navigation, route }: Props) {
   const cartItems = route.params?.cart || [];
   const [loading, setLoading] = useState(false);
+  const { addPedidos } = usePedidos();
 
+  // Função para finalizar o pagamento
   const finalizarPagamento = async () => {
-  if (cartItems.length === 0) {
-    Alert.alert("Carrinho vazio", "Adicione produtos antes de finalizar o pagamento");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
+    if (cartItems.length === 0) {
       Alert.alert(
-        "Permissão negada",
-        "Autorize o acesso à localização nas configurações do seu aparelho para continuar."
+        "Carrinho vazio",
+        "Adicione produtos antes de finalizar o pagamento"
       );
-      setLoading(false);
       return;
     }
 
-    let localizacao = null;
+    setLoading(true);
 
+    // Solicitar permissão de localização
     try {
-      const locationPromise = Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-      const timeoutPromise = new Promise<Location.LocationObject>((_, reject) =>
-        setTimeout(() => reject(new Error("Localização: tempo limite excedido")), 5000)
-      );
-      const location = await Promise.race([locationPromise, timeoutPromise]);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permissão negada",
+          "Autorize o acesso à localização nas configurações do seu aparelho para continuar."
+        );
+        setLoading(false);
+        return;
+      }
+
+      let localizacao = null;
+
+      // Obter localização com timeout
+      try {
+        const locationPromise = Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+        const timeoutPromise = new Promise<Location.LocationObject>(
+          (_, reject) =>
+            setTimeout(
+              () => reject(new Error("Localização: tempo limite excedido")),
+              5000
+            )
+        );
+        const location = await Promise.race([locationPromise, timeoutPromise]);
+
+        localizacao = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        };
+      } catch (err) {
+        console.warn(
+          "AVISO: Não foi possível obter a localização. O pedido prosseguirá sem ela.",
+          err
+        );
+      }
+
+      // Preparar dados do pedido
+      const produtosParaPedido = cartItems.map((item) => ({
+        nome: item.name,
+        preco: item.price,
+        quantidade: item.quantidade || 1,
+      }));
+
+      addPedidos(produtosParaPedido)
+
+      Alert.alert("Pix", "Pagamento realizado com sucesso!");
+      setTimeout(() => {
+        navigation.navigate("Main", { screen: "Pedido" });
+      }, 200);
       
-      localizacao = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-    } catch (err) {
-      console.warn("AVISO: Não foi possível obter a localização. O pedido prosseguirá sem ela.", err);
+    } catch (error) {
+      console.error("Erro crítico no processo de pagamento:", error);
+      Alert.alert("Erro", "Ocorreu um problema inesperado. Tente novamente.");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const produtosParaPedido = cartItems.map((item) => ({
-      nome: item.name,
-      preco: item.price,
-      quantidade: item.quantidade || 1,
-    }));
-
-    Alert.alert(
-      "Pix",
-      "Pagamento realizado com sucesso!",
-      [
-        {
-          text: "OK",
-          onPress: () =>
-            navigation.navigate("Main", {
-              screen: "Pedido",
-              params: {
-                pedidos: produtosParaPedido,
-                localizacao,
-              },
-            }),
-        },
-      ],
-      { cancelable: false }
-    );
-
-  } catch (error) {
-    
-    console.error("Erro crítico no processo de pagamento:", error);
-    Alert.alert("Erro", "Ocorreu um problema inesperado. Tente novamente.");
-  } finally {
-    setLoading(false); 
-  }
-};
-
+  // Funções para abrir carteiras digitais
   async function openGoogleWallet() {
     try {
       const googleIntent =

@@ -1,8 +1,8 @@
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPedido";
-import { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
+import { use, useEffect, useState } from "react";
+import { usePedidos } from "../context/PedidosContext";
 
 interface PedidoItem {
   nome: string;
@@ -14,34 +14,11 @@ interface Localizacao {
   latitude: number;
   longitude: number;
 }
+
 export default function Pedido({ navigation, route }) {
-  const [pedidos, setPedidos] = useState<PedidoItem[]>([]);
-  const novosPedidos: PedidoItem[] = route.params?.pedidos || [];
+  const { pedidos } = usePedidos();
   const localizacao: Localizacao | undefined = route.params?.localizacao;
   const credito = route.params?.credito ?? 100.0;
-
-  // Atualiza a lista de pedidos quando novos pedidos são recebidos
-  useEffect(() => {
-    if (novosPedidos.length > 0) {
-      setPedidos((prev) => {
-        const atualizado = [...prev];
-
-        novosPedidos.forEach((novo) => {
-          const existente = atualizado.find((p) => p.nome === novo.nome);
-          if (existente) {
-            existente.quantidade += novo.quantidade;
-
-            existente.preco = novo.preco ?? existente.preco; 
-          } else {
-            atualizado.push(novo);
-          }
-        });
-
-        return atualizado;
-      });
-      navigation.setParams({ pedidos: undefined });
-    }
-  }, [novosPedidos]);
 
   const handlePerfil = () => {
     navigation.navigate("Perfil");

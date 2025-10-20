@@ -3,6 +3,7 @@ export type RootStackParamList = {
   Main: {
     screen: "Pedido" | "Perfil" | "Produto" | "Credito";
     params?: { pedidos?: any[]; localizacao?: { latitude: number; longitude: number }};
+    merge?: boolean;
   };
   Produto: { tipo?: "restaurante" | "evento" };
   Perfil: undefined;
@@ -21,6 +22,6 @@ export type RootStackParamList = {
   Mesa: undefined;
   DescricaoProduto: undefined;
   Credito: undefined;
-  Pedido: { pedidos?: any[] };
+  Pedido: { pedidos?: any[]; localizacao?: { latitude: number; longitude: number } };
   Localizacao: undefined;
 };
