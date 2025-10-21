@@ -13,6 +13,7 @@ import {
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Location from "expo-location";
 import { usePedidos, Pedido as PedidoType } from "../context/PedidosContext";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Pagamento">;
 
@@ -155,10 +156,7 @@ export default function Pagamento({ navigation, route }: Props) {
         <Appbar.Content title="Realizar pagamento" color="white" />
       </Appbar.Header>
       <View style={styles.container}>
-        <Image
-          source={require("../assets/ic_pagamento.png")}
-          style={styles.iconPay}
-        />
+       <Ionicons name="card-outline" size={120} color="#000" style={styles.iconPay} />
         <Text style={styles.pagamentoText}>Pagamento</Text>
 
         {/* Botões de carteiras digitais e PIX */}

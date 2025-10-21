@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Pedido">;
 
@@ -32,27 +33,21 @@ export default function Cadastro({ navigation }: Props) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#f2ebe0"}}>
+    <View style={{ flex: 1, backgroundColor: "#f2ebe0" }}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-         <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
-          <Appbar.Content title="Criar conta" color="white"/>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content title="Criar conta" color="white" />
       </Appbar.Header>
 
       <View style={styles.container}>
-        <View style={styles.avatarContainer}>
-          <Image
-            source={require("../assets/ic_user.png")}
-            style={styles.icon}
-          />
-        </View>
+       <Ionicons name="person-add" size={80} color="#000" style={styles.icon} />
 
         {/* Input's de cadastro*/}
         <Text style={styles.inputText}>Nome Completo</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-
           placeholder="Seu nome"
           style={styles.input}
           value={name}

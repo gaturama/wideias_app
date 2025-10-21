@@ -12,11 +12,9 @@ export const styles = StyleSheet.create({
   },
 
   iconPerfil: {
-    width: 35,
-    height: 35,
     tintColor: "#fff",
     margin: 2,
-    right: 15,
+    right: 18,
   },
 
   cardCredito: {

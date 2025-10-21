@@ -5,6 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Produto">;
 
@@ -62,10 +63,7 @@ export default function Perfil({ navigation }: Props) {
           {image ? (
             <Image source={{ uri: image }} style={styles.avatar} />
           ) : (
-            <Image
-              source={require("../assets/ic_user.png")}
-              style={styles.icon}
-            />
+            <Ionicons name="person" size={60} color="#CCCCCC" />
           )}
         </TouchableOpacity>
 
@@ -117,10 +115,7 @@ export default function Perfil({ navigation }: Props) {
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <View style={styles.buttonContent}>
-            <Image
-              source={require("../assets/ic_loggout.png")}
-              style={styles.exit}
-            />
+            <Ionicons name="exit-outline" size={50} color="black" />
             <Text style={styles.buttonText}>Sair</Text>
           </View>
         </TouchableOpacity>

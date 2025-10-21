@@ -32,12 +32,12 @@ export default function Pedido({ navigation, route }) {
           color="white"
         />
         <TouchableOpacity onPress={handlePerfil}>
-          <Image
-            source={require("../assets/ic_user.png")}
-            style={styles.iconPerfil}
-          />
+          <Ionicons name="person" size={30} color="white" style={styles.iconPerfil} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.qrButton} onPress={() => navigation.navigate("QrScanner")}>
+        <TouchableOpacity
+          style={styles.qrButton}
+          onPress={() => navigation.navigate("QrScanner")}
+        >
           <Ionicons name="qr-code" size={30} color="white" />
         </TouchableOpacity>
       </Appbar.Header>

@@ -55,23 +55,10 @@ export const styles = StyleSheet.create({
     fontSize: 18,
   },
 
-  avatarContainer: {
-    width: 110,
-    height: 110,
-    borderRadius: 60,
-    backgroundColor: "#e6e6e6ff",
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 15,
-  },
-
   icon: {
-    width: 70,
-    height: 70,
+    marginBottom: 30,
     alignSelf: "center",
     justifyContent: "center",
-    tintColor: "#cccbcbff"
   },
 
   iconExit: {

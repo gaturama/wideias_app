@@ -4,6 +4,7 @@ import { RootStackParamList } from "../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, Image, TouchableOpacity, TextInput, StatusBar } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 // Mockup de usuários para teste 
 const users = [
@@ -79,13 +80,11 @@ export default function Login({ navigation }: Props) {
           />
 
           <TouchableOpacity onPress={toggleShowPassword} style={styles.icon}>
-            <Image
-              source={
-                showPassword
-                  ? require("../assets/ic_eye_closed.png")
-                  : require("../assets/ic_eye.png")
-              }
-            />
+            {showPassword ? (
+              <Ionicons name="eye-off" size={24} color="black" />
+            ) : (
+              <Ionicons name="eye" size={24} color="black" />
+            )}
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.button} onPress={handleLocalizacao}>

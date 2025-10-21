@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesCredito";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Credito({ navigation }) {
   const [valor, setValor] = useState<string>("");
@@ -43,10 +44,7 @@ export default function Credito({ navigation }) {
       </Appbar.Header>
 
       <View style={styles.container}>
-        <Image
-          source={require("../assets/ic_credito.png")}
-          style={styles.iconPay}
-        />
+        <Ionicons name="wallet-outline" size={100} color="#000" style={styles.iconPay} />
 
         {/* Botões de valores pré-definidos */}
         <View style={{ flexDirection: "row", gap: 10, marginBottom: 20 }}>
