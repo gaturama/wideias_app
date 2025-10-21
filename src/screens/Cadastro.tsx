@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
-  Image,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";

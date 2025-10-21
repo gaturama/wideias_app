@@ -2,7 +2,6 @@ import React from "react";
 import { styles } from "../styles/stylesQrCode";
 import { View, Text } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/types";
 

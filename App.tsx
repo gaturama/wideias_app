@@ -9,14 +9,14 @@ import Carrinho from "./src/screens/Carrinho";
 import Cadastro from "./src/screens/Cadastro";
 import Pagamento from "./src/screens/Pagamento";
 import QRCodeScreen from "./src/screens/QrCode";
+import QrScanner from "./src/screens/QrScanner";
 import Localizacao from "./src/screens/Localizacao";
 import TabsNavigator from "./src/navigation/TabsNavigator";
 import { RootStackParamList } from "./src/navigation/types";
 import DescricaoProduto from "./src/screens/DescricaoProduto";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { PedidosProvider } from "./src/context/PedidosContext";
-import QrScanner from "./src/screens/QrScanner";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -91,10 +91,10 @@ export default function App() {
             component={Pedido}
             options={{ headerShown: false }}
           />
-          <Stack.Screen 
+          <Stack.Screen
             name="QrScanner"
             component={QrScanner}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

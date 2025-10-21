@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   Alert,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { styles } from "../styles/stylesLocalizacao";

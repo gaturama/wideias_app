@@ -7,7 +7,6 @@ export default function Mesa({ navigation, route }) {
   const { setMesa } = useMesa();
   const [mesaLocal, setMesaLocal] = useState("");
   const tipoLocal = route.params?.tipoLocal;
-  const cartItems = route.params?.cart;
 
   // Função para informar o número da mesa
   const handleConfirm = () => {
