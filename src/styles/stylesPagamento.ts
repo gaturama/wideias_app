@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
 
   head: {
     width: "100%",
-    backgroundColor: "#11658f",
+    backgroundColor: "#0F6EA8",
   },
 
   pagamentoText: {

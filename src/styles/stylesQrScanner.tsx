@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   text: { color: "white", fontSize: 16, marginBottom: 12 },
 
   button: {
-    backgroundColor: "#11658f",
+    backgroundColor: "#0F6EA8",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,

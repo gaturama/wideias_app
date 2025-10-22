@@ -28,7 +28,7 @@ container: {
   button: {
     width: "60%",
     height: 50,
-    backgroundColor: "#11658f",
+    backgroundColor: "#0F6EA8",
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
