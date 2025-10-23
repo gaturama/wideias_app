@@ -77,7 +77,7 @@ export default function Credito({ navigation }) {
             source={require("../assets/ic_pix.png")}
             style={styles.iconContent}
           />
-          <Text style={styles.textContent}>Adicionar Crédito</Text>
+          <Text style={styles.textContent}>PIX</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.buttonContent}>

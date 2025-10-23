@@ -8,12 +8,14 @@ container: {
     backgroundColor: "#f5f5f5",
     paddingHorizontal: 16,
   },
+  
   title: {
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 30,
     textAlign: "center",
   },
+
   input: {
     width: "60%",
     height: 180,
@@ -25,6 +27,7 @@ container: {
     marginBottom: 20,
     textAlign: "center",
   },
+
   button: {
     width: "60%",
     height: 50,
@@ -34,6 +37,7 @@ container: {
     alignItems: "center",
     marginTop: 40,
   },
+
   buttonText: {
     color: "#fff",
     fontSize: 18,

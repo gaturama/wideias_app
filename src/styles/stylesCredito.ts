@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 10,
     alignItems: "center",
     flexDirection: "row",
     gap: 15,
@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
   textValue: {
     width: "80%",
     backgroundColor: "#fff",
-    borderRadius: 15,
+    borderRadius: 10,
     padding: 12,
     fontSize: 18,
     marginBottom: 30,

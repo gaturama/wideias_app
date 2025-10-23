@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
 
   option: {
     backgroundColor: "#fff",
-    borderRadius: 20,
+    borderRadius: 10,
     padding: 12,
     marginBottom: 8,
     flexDirection: "row",
@@ -63,11 +63,12 @@ export const styles = StyleSheet.create({
 
   removedOption: {
     backgroundColor: "#fdecea",
-    borderColor: "#fe8b05",
+    borderColor: "#FB9D80",
   },
 
   textRemovedOption: {
-    color: "#fe8b05",
+    color: "#9C0404",
+    fontWeight: "bold",
   },
 
   selectedOption: {
@@ -102,7 +103,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#ff6a00",
     paddingVertical: 12,
     paddingHorizontal: 24,
-    borderRadius: 20,
+    borderRadius: 10,
   },
 
   textButton: {

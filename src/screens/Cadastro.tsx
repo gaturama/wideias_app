@@ -19,6 +19,8 @@ export default function Cadastro({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [date, setDate] = useState("");
+  const [cpf, setCpf] = useState("");
 
   const handleCadastro = () => {
     if (!name || !email || !password || !phoneNumber) {
@@ -40,7 +42,7 @@ export default function Cadastro({ navigation }: Props) {
       </Appbar.Header>
 
       <View style={styles.container}>
-       <Ionicons name="person-add" size={80} color="#000" style={styles.icon} />
+       {/* <Ionicons name="person-add" size={80} color="#000" style={styles.icon} /> */}
 
         {/* Input's de cadastro*/}
         <Text style={styles.inputText}>Nome Completo</Text>
@@ -51,6 +53,16 @@ export default function Cadastro({ navigation }: Props) {
           style={styles.input}
           value={name}
           onChangeText={setName}
+        />
+
+        <Text style={styles.inputText}>CPF</Text>
+        <TextInput 
+          autoCorrect={false}
+          autoCapitalize="none"
+          placeholder="123.456.789-00"
+          style={styles.input}
+          value={cpf}
+          onChangeText={setCpf}
         />
 
         <Text style={styles.inputText}>E-mail</Text>
@@ -82,6 +94,16 @@ export default function Cadastro({ navigation }: Props) {
           style={styles.input}
           value={phoneNumber}
           onChangeText={setPhoneNumber}
+        />
+
+        <Text style={styles.inputText}>Data Nascimento</Text>
+        <TextInput 
+          autoCorrect={false}
+          autoCapitalize="none"
+          placeholder="01/01/2000"
+          style={styles.input}
+          value={date}
+          onChangeText={setDate}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleCadastro}>

@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 10,
     marginBottom: 25,
     borderColor: "#cccbcbff",
   },
@@ -36,7 +36,6 @@ export const styles = StyleSheet.create({
   button: {
     backgroundColor: "transparent",
     padding: 12,
-    borderRadius: 25,
     alignItems: "center",
     width: "25%",
     flexDirection: "row",
@@ -57,7 +56,7 @@ export const styles = StyleSheet.create({
 
   editButton: {
     backgroundColor: "#0F6EA8",
-    borderRadius: 20,
+    borderRadius: 15,
     padding: 18,
     marginTop: 10,
     alignItems: "center",
@@ -90,11 +89,6 @@ export const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-  },
-
-  icon: {
-    width: 60,
-    height: 60,
   },
 
   iconLoggout: {
