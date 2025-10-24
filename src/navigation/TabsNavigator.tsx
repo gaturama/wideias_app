@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Produto from "../screens/Produto";
 import Pedido from "../screens/Pedido";
 import Credito from "../screens/Credito";
+import Historico from "../screens/Historico";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -25,6 +26,7 @@ export default function TabsNavigator() {
           if (route.name === "Home") iconName = "home";
           else if (route.name === "Produto") iconName = "fast-food";
           else if (route.name === "Credito") iconName = "wallet";
+          else if (route.name === "Historico") iconName = "time";
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -35,6 +37,7 @@ export default function TabsNavigator() {
       <Tab.Screen name="Home" component={Pedido} />
       <Tab.Screen name="Produto" component={Produto} />
       <Tab.Screen name="Credito" component={Credito} />
+      <Tab.Screen name="Historico" component={Historico} />
     </Tab.Navigator>
   );
   4;

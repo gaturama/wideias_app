@@ -65,7 +65,7 @@ export default function QrScanner({ navigation }) {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#fff",
         alignItems: "center",
         justifyContent: "center",
       }}

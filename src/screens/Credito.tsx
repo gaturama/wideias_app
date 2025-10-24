@@ -83,7 +83,7 @@ export default function Credito({ navigation }) {
         <TouchableOpacity style={styles.buttonContent}>
           <Image
             source={require("../assets/ic_samsung.png")}
-            style={styles.iconContent}
+            style={[styles.iconContent, {backgroundColor: "#F5F5F5"}]}
           />
           <Text style={styles.textContent}>Samsung Pay</Text>
         </TouchableOpacity>

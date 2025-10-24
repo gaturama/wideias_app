@@ -1,4 +1,11 @@
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPedido";
 import { usePedidos } from "../context/PedidosContext";
@@ -10,12 +17,36 @@ interface Localizacao {
 }
 
 export default function Pedido({ navigation, route }) {
-  const { pedidos } = usePedidos();
+  const { pedidos, concluirPedido } = usePedidos();
   const localizacao: Localizacao | undefined = route.params?.localizacao;
   const credito = route.params?.credito ?? 100.0;
 
   const handlePerfil = () => {
     navigation.navigate("Perfil");
+  };
+
+  const handleRetirada = (pedido) => {
+    Alert.alert(
+      "Confirmar retirada",
+      `Você está retirando o pedido "${pedido.nome}"?`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Sim",
+          onPress: () => {
+            concluirPedido({
+              ...pedido,
+              local: "Estádio Municipal",
+            });
+            Alert.alert(
+              "Pedido retirado",
+              "Esse pedido foi movido para histórico!"
+            );
+            navigation.navigate("Historico");
+          },
+        },
+      ]
+    );
   };
 
   const totalValor = pedidos.reduce(
@@ -32,13 +63,18 @@ export default function Pedido({ navigation, route }) {
           color="white"
         />
         <TouchableOpacity onPress={handlePerfil}>
-          <Ionicons name="person" size={30} color="white" style={styles.iconPerfil} />
+          <Ionicons
+            name="person"
+            size={28}
+            color="white"
+            style={styles.iconPerfil}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.qrButton}
           onPress={() => navigation.navigate("QrScanner")}
         >
-          <Ionicons name="qr-code" size={30} color="white" />
+          <Ionicons name="qr-code" size={28} color="white" />
         </TouchableOpacity>
       </Appbar.Header>
 
@@ -56,32 +92,45 @@ export default function Pedido({ navigation, route }) {
           data={pedidos}
           keyExtractor={(item, index) => item.nome + index.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() =>
-                navigation.navigate("QrCode", {
-                  pedido: {
-                    id: "fakeId" + Date.now(),
-                    usuario: "Gabriel",
-                    produtos: pedidos,
-                    valorTotal: totalValor,
-                    localizacao,
-                  },
-                })
-              }
-            >
-              <Image
-                source={require("../assets/ic_product.png")}
-                style={styles.icon}
-              />
+            <View style={styles.card}>
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+                onPress={() =>
+                  navigation.navigate("QrCode", {
+                    pedido: {
+                      id: "fakeId" + Date.now(),
+                      usuario: "Gabriel",
+                      produtos: pedidos,
+                      valorTotal: totalValor,
+                      localizacao,
+                    },
+                  })
+                }
+              >
+                <Image
+                  source={require("../assets/ic_product.png")}
+                  style={styles.icon}
+                />
 
-              <View>
-                <Text style={styles.title}>{item.nome}</Text>
-                <Text style={styles.subtitle}>
-                  Quantidade: {item.quantidade}
-                </Text>
-              </View>
-            </TouchableOpacity>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.title}>{item.nome}</Text>
+                  <Text style={styles.subtitle}>
+                    Quantidade: {item.quantidade}
+                  </Text>
+                  <Text style={styles.subtitle}>
+                    Valor: R$ {(item.preco || 0).toFixed(2)}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              {/* Botão de concluir (retirar) */}
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => handleRetirada(item)}
+              >
+                <Ionicons name="checkmark-circle" size={28} color="#4CAF50" />
+              </TouchableOpacity>
+            </View>
           )}
         />
       )}

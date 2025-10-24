@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#FFF",
   },
 
   containerProduto: {
@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
   productCard: {
     flex: 1,
     margin: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F5F5",
     borderRadius: 10,
     padding: 20,
     alignItems: "center",

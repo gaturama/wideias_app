@@ -50,7 +50,7 @@ export default function Login({ navigation }: Props) {
   };
 
   return (
-      <View style={{ flex: 1, backgroundColor: "#F5F5F5", justifyContent: "center", padding: 20 }}>
+      <View style={{ flex: 1, backgroundColor: "#fff", justifyContent: "center", padding: 20 }}>
         <StatusBar barStyle="dark-content" translucent backgroundColor="transparent"/>
         <Image
           style={styles.image}

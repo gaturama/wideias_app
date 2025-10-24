@@ -85,7 +85,7 @@ export default function Perfil({ navigation }: Props) {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: "#EAEAEA" }]}>
+    <View style={[styles.container, { backgroundColor: "#fff" }]}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
@@ -95,7 +95,7 @@ export default function Perfil({ navigation }: Props) {
       <FlatList
         data={inputs}
         keyExtractor={(item) => item.key}
-        contentContainerStyle={{margin: 15, paddingBottom: 40 }}
+        contentContainerStyle={{ margin: 15, paddingBottom: 40 }}
         renderItem={({ item }) => (
           <TextInput
             placeholder={item.placeholder}
@@ -121,7 +121,7 @@ export default function Perfil({ navigation }: Props) {
               style={styles.avatarContainer}
             >
               {image ? (
-                <Image source={{ uri: image }} style={styles.avatar   } />
+                <Image source={{ uri: image }} style={styles.avatar} />
               ) : (
                 <Ionicons name="person" size={60} color="#CCC" />
               )}

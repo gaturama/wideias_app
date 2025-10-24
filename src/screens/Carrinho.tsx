@@ -31,19 +31,19 @@ export default function Carrinho({ navigation, route }: any) {
   }, [route.params?.cart]);
 
   // função para aumentar o número de produtos no carrinho
-  const handleIncrease = (id: string) => {
+  const handleIncrease = (id: string, custom: string) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, qty: item.qty + 1 } : item
+        item.id === id && item.custom === custom ?{ ...item, qty: item.qty + 1 } : item
       )
     );
   };
 
   // função para diminuir o número de produtos no carrinho
-  const handleDecrease = (id: string) => {
+  const handleDecrease = (id: string, custom: string) => {
     setCartItems((prev) =>
       prev
-        .map((item) => (item.id === id ? { ...item, qty: item.qty - 1 } : item))
+        .map((item) => (item.id === id && item.custom === custom ? { ...item, qty: item.qty - 1 } : item))
         .filter((item) => item.qty > 0)
     );
   };
@@ -61,12 +61,15 @@ export default function Carrinho({ navigation, route }: any) {
       {/* Lista para mostrar os produtos */}
       <FlatList
         data={cartItems}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id + item.custom}
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <View style={styles.itemCard}>
             <View style={styles.itemInfo}>
               <Text style={styles.itemName}>{item.name}</Text>
+              {item.custom ? (
+                <Text style={styles.itemCustom}>{item.custom}</Text>
+              ) : null}
               <Text style={styles.itemPrice}>R$ {item.price.toFixed(2)}</Text>
             </View>
 
@@ -74,7 +77,7 @@ export default function Carrinho({ navigation, route }: any) {
             <View style={styles.qtyContainer}>
               <TouchableOpacity
                 style={styles.qtyButton}
-                onPress={() => handleDecrease(item.id)}
+                onPress={() => handleDecrease(item.id, item.custom)}
               >
                 <Text style={styles.qtySymbol}>−</Text>
               </TouchableOpacity>
@@ -83,7 +86,7 @@ export default function Carrinho({ navigation, route }: any) {
 
               <TouchableOpacity
                 style={styles.qtyButton}
-                onPress={() => handleIncrease(item.id)}
+                onPress={() => handleIncrease(item.id, item.custom)}
               >
                 <Text style={styles.qtySymbol}>＋</Text>
               </TouchableOpacity>

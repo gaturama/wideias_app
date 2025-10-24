@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: "#e6e6e6ff",
+    backgroundColor: "#f5f5f5",
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",

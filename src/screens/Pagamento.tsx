@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPagamento";
-import { RootStackParamList } from "../navigation/types";
 import {
   View,
   Text,
@@ -10,17 +9,26 @@ import {
   Linking,
   Alert,
 } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Location from "expo-location";
-import { usePedidos, Pedido as PedidoType } from "../context/PedidosContext";
+import { usePedidos } from "../context/PedidosContext";
 import { Ionicons } from "@expo/vector-icons";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Pagamento">;
-
-export default function Pagamento({ navigation, route }: Props) {
+export default function Pagamento({ navigation, route }) {
   const cartItems = route.params?.cart || [];
   const [loading, setLoading] = useState(false);
   const { addPedidos } = usePedidos();
+  const [usarCredito, setUsarCredito] = useState(false);
+
+  const creditoUsuario = route.params?.credito ?? 100.00;
+
+  const totalCarrinho = cartItems.reduce(
+    (sum, item) => sum + item.price * (item.quantidade || 1),
+    0
+  );
+
+  const totalFinal = usarCredito
+    ? Math.max(totalCarrinho - creditoUsuario, 0)
+    : totalCarrinho;
 
   // Função para finalizar o pagamento
   const finalizarPagamento = async () => {
@@ -34,8 +42,8 @@ export default function Pagamento({ navigation, route }: Props) {
 
     setLoading(true);
 
-    // Solicitar permissão de localização
     try {
+      // Solicitar permissão de localização
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
@@ -47,30 +55,30 @@ export default function Pagamento({ navigation, route }: Props) {
       }
 
       let localizacao = null;
+      let localNome = "Local desconhecido";
 
-      // Obter localização com timeout
+      // Obter localização e converter em nome legível
       try {
-        const locationPromise = Location.getCurrentPositionAsync({
+        const location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.High,
         });
-        const timeoutPromise = new Promise<Location.LocationObject>(
-          (_, reject) =>
-            setTimeout(
-              () => reject(new Error("Localização: tempo limite excedido")),
-              5000
-            )
-        );
-        const location = await Promise.race([locationPromise, timeoutPromise]);
+        const [reverseGeocode] = await Location.reverseGeocodeAsync({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
 
         localizacao = {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         };
+
+        if (reverseGeocode) {
+          localNome = `${reverseGeocode.street || "Rua desconhecida"}, ${
+            reverseGeocode.city || "Cidade desconhecida"
+          }`;
+        }
       } catch (err) {
-        console.warn(
-          "AVISO: Não foi possível obter a localização. O pedido prosseguirá sem ela.",
-          err
-        );
+        console.warn("AVISO: Não foi possível obter a localização.", err);
       }
 
       // Preparar dados do pedido
@@ -78,13 +86,18 @@ export default function Pagamento({ navigation, route }: Props) {
         nome: item.name,
         preco: item.price,
         quantidade: item.quantidade || 1,
+        local: localNome,
       }));
 
+      // Adiciona no contexto
       addPedidos(produtosParaPedido);
 
       Alert.alert("Pix", "Pagamento realizado com sucesso!");
       setTimeout(() => {
-        navigation.navigate("Main", { screen: "Pedido" });
+        navigation.navigate("Main", {
+          screen: "Pedido",
+          params: { localizacao },
+        });
       }, 200);
     } catch (error) {
       console.error("Erro crítico no processo de pagamento:", error);
@@ -94,7 +107,6 @@ export default function Pagamento({ navigation, route }: Props) {
     }
   };
 
-  // Funções para abrir carteiras digitais
   async function openGoogleWallet() {
     try {
       const googleIntent =
@@ -150,16 +162,41 @@ export default function Pagamento({ navigation, route }: Props) {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title="Realizar pagamento" color="white" />
       </Appbar.Header>
+
       <View style={styles.container}>
-       <Ionicons name="card-outline" size={120} color="#000" style={styles.iconPay} />
+        <Ionicons
+          name="card-outline"
+          size={120}
+          color="#000"
+          style={styles.iconPay}
+        />
         <Text style={styles.pagamentoText}>Pagamento</Text>
 
-        {/* Botões de carteiras digitais e PIX */}
+        <TouchableOpacity
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            padding: 12,
+            backgroundColor: usarCredito ? "#d1f0d1" : "#f1f1f1",
+            borderRadius: 8,
+            marginBottom: 20,
+          }}
+          onPress={() => setUsarCredito(!usarCredito)}
+        >
+          <Ionicons
+            name={usarCredito ? "checkbox" : "square-outline"}
+            size={24}
+            color={usarCredito ? "green" : "black"}
+          />
+          <Text style={styles.textContent}>
+            Crédito Disponível R$ {creditoUsuario.toFixed(2)}
+          </Text>
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.buttonContent}
           onPress={finalizarPagamento}
@@ -168,8 +205,11 @@ export default function Pagamento({ navigation, route }: Props) {
             source={require("../assets/ic_pix.png")}
             style={styles.iconContent}
           />
-          <Text style={styles.textContent}>PIX</Text>
+          <Text style={styles.textContent}>
+            {loading ? "Processando..." : "PIX"}
+          </Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.buttonContent} onPress={openSamsungPay}>
           <Image
             source={require("../assets/ic_samsung.png")}
@@ -177,6 +217,7 @@ export default function Pagamento({ navigation, route }: Props) {
           />
           <Text style={styles.textContent}>Samsung Pay</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.buttonContent}
           onPress={openGoogleWallet}
@@ -187,6 +228,7 @@ export default function Pagamento({ navigation, route }: Props) {
           />
           <Text style={styles.textContent}>Google Pay</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.buttonContent} onPress={openApplePay}>
           <Image
             source={require("../assets/ic_apple.png")}

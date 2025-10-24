@@ -57,6 +57,11 @@ export default function DescricaoProduto({ route, navigation }) {
     );
   };
 
+  const custom = [
+    ...ingredientes.filter(i => !i.incluso).map(i => `- ${i.nome}`),
+    ...adicionais.filter(a => a.selecionado).map(a => `+ ${a.nome}`),
+  ].join(", ");
+
   const precoBase = 24.9;
   const precoTotal =
     precoBase +
@@ -70,6 +75,7 @@ export default function DescricaoProduto({ route, navigation }) {
       id: Date.now().toString(),
       name: produto.nome,
       price: precoTotal,
+      custom,
       ingredientes: ingredientes.filter((i) => i.incluso),
       adicionais: adicionais.filter((a) => a.selecionado),
       observacao,
