@@ -18,9 +18,9 @@ interface Adicional {
 
 export default function DescricaoProduto({ route, navigation }) {
   const tipoLocal = route.params?.tipoLocal;
-  
-  //Mockup de produtos para testes 
-  
+
+  //Mockup de produtos para testes
+
   const [ingredientes, setIngredientes] = useState<Ingrediente[]>([
     { id: 1, nome: "Pão Brioche", incluso: true },
     { id: 2, nome: "Carne 160g", incluso: true },
@@ -58,8 +58,8 @@ export default function DescricaoProduto({ route, navigation }) {
   };
 
   const custom = [
-    ...ingredientes.filter(i => !i.incluso).map(i => `- ${i.nome}`),
-    ...adicionais.filter(a => a.selecionado).map(a => `+ ${a.nome}`),
+    ...ingredientes.filter((i) => !i.incluso).map((i) => `- ${i.nome}`),
+    ...adicionais.filter((a) => a.selecionado).map((a) => `+ ${a.nome}`),
   ].join(", ");
 
   const precoBase = 24.9;
@@ -82,7 +82,10 @@ export default function DescricaoProduto({ route, navigation }) {
     };
 
     const novoCarrinho = [...cartAtual, novoProduto];
-    navigation.navigate("Carrinho", { cart: novoCarrinho, tipoLocal: route.params?.tipoLocal });
+    navigation.navigate("Carrinho", {
+      cart: novoCarrinho,
+      tipoLocal: route.params?.tipoLocal,
+    });
   };
 
   const produto = {
@@ -95,8 +98,8 @@ export default function DescricaoProduto({ route, navigation }) {
     <View style={{ flex: 1 }}>
       {/* Header customizado */}
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
-        <Appbar.Content title="Descrição do Produto" color="white"/>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content title="Descrição do Produto" color="white" />
       </Appbar.Header>
 
       <ScrollView style={styles.container}>

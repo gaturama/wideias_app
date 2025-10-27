@@ -29,9 +29,11 @@ export default function Historico({ navigation }) {
               />
               <View>
                 <Text style={styles.title}>{item.nome}</Text>
-                <Text style={styles.subtitle}>Qtd: {item.quantidade}</Text>
                 <Text style={styles.subtitle}>
-                    Valor: R$ {(item.preco ?? 0).toFixed(2)}
+                  Quantidade: {item.quantidade}
+                </Text>
+                <Text style={styles.subtitle}>
+                  Valor: R$ {(item.preco ?? 0).toFixed(2)}
                 </Text>
                 <Text style={styles.subtitle}>Local: {item.local}</Text>
                 <Text style={styles.subtitle}>Data: {item.dataHora}</Text>

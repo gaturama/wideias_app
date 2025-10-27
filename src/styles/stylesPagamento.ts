@@ -6,7 +6,6 @@ export const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#FFF",
-    paddingTop: 20,
   },
 
   head: {
@@ -60,5 +59,17 @@ export const styles = StyleSheet.create({
   iconPay: {
     marginTop: 30,
     resizeMode: "contain",
+  },
+
+  totalText: {
+    fontSize: 22,
+    fontWeight: "500",
+    color: "#000",
+  },
+
+  totalValor: {
+    fontSize: 40,
+    marginBottom: 20,
+    fontWeight: "800",
   },
 });

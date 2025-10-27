@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { styles } from "../styles/stylesCadastro";
 import { RootStackParamList } from "../navigation/types";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-} from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Alert } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -42,7 +36,7 @@ export default function Cadastro({ navigation }: Props) {
       </Appbar.Header>
 
       <View style={styles.container}>
-       {/* <Ionicons name="person-add" size={80} color="#000" style={styles.icon} /> */}
+        {/* <Ionicons name="person-add" size={80} color="#000" style={styles.icon} /> */}
 
         {/* Input's de cadastro*/}
         <Text style={styles.inputText}>Nome Completo</Text>
@@ -56,7 +50,7 @@ export default function Cadastro({ navigation }: Props) {
         />
 
         <Text style={styles.inputText}>CPF</Text>
-        <TextInput 
+        <TextInput
           autoCorrect={false}
           autoCapitalize="none"
           placeholder="123.456.789-00"
@@ -97,7 +91,7 @@ export default function Cadastro({ navigation }: Props) {
         />
 
         <Text style={styles.inputText}>Data Nascimento</Text>
-        <TextInput 
+        <TextInput
           autoCorrect={false}
           autoCapitalize="none"
           placeholder="01/01/2000"

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 export interface Pedido {
+  id: string;
   nome: string;
   preco?: number;
   quantidade: number;
@@ -12,7 +13,7 @@ interface PedidosContextType {
   pedidos: Pedido[];
   historico: Pedido[];
   addPedidos: (novosPedidos: Pedido[]) => void;
-  concluirPedido: (pedido : Pedido) => void;
+  concluirPedido: (pedido: Pedido) => void;
 }
 
 const PedidosContext = createContext<PedidosContextType>({
@@ -27,32 +28,22 @@ export const PedidosProvider = ({ children }: { children: ReactNode }) => {
   const [historico, setHistorico] = useState<Pedido[]>([]);
 
   const addPedidos = (novosPedidos: Pedido[]) => {
-    setPedidos((prev) => {
-      const atualizado = [...prev];
-      novosPedidos.forEach((novo) => {
-        const existente = atualizado.find((p) => p.nome === novo.nome);
-        if (existente) {
-          existente.quantidade += novo.quantidade;
-          existente.preco = novo.preco ?? existente.preco;
-        } else {
-          atualizado.push(novo);
-        }
-      });
-      return atualizado;
-    });
+    setPedidos((prev) => [...prev, ...novosPedidos]);
   };
 
   const concluirPedido = (pedido: Pedido) => {
-    const dataHora = new Date().toLocaleString("pt-BR")
+    const dataHora = new Date().toLocaleString("pt-BR");
     setHistorico((prev) => [
       ...prev,
       { ...pedido, dataHora, local: pedido.local ?? "Local desconhecido" },
     ]);
-    setPedidos((prev) => prev.filter((p) => p.nome !== pedido.nome))
+    setPedidos((prev) => prev.filter((p) => p.id !== pedido.id));
   };
 
   return (
-    <PedidosContext.Provider value={{ pedidos, historico, addPedidos, concluirPedido }}>
+    <PedidosContext.Provider
+      value={{ pedidos, historico, addPedidos, concluirPedido }}
+    >
       {children}
     </PedidosContext.Provider>
   );

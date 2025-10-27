@@ -18,6 +18,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { PedidosProvider } from "./src/context/PedidosContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Historico from "./src/screens/Historico";
+import DividirConta from "./src/screens/DividirConta";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -26,7 +27,7 @@ export default function App() {
     <PedidosProvider>
       <NavigationContainer>
         {/*Inicialização definida para tela de Login || Para testes, substituir para a tela desejada*/}
-        <Stack.Navigator initialRouteName="Pagamento" id={undefined}>
+        <Stack.Navigator initialRouteName="Login" id={undefined}>
           <Stack.Screen
             name="Login"
             component={Login}
@@ -97,9 +98,14 @@ export default function App() {
             component={QrScanner}
             options={{ headerShown: false }}
           />
-          <Stack.Screen 
+          <Stack.Screen
             name="Historico"
             component={Historico}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="DividirConta"
+            component={DividirConta}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

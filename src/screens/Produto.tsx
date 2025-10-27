@@ -96,7 +96,6 @@ export default function Home({ navigation, route }) {
 
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-
   // Função para renderizar os produtos teste e adicionar ao card flutuante na tela de Home
 
   const renderProduct = ({ item }: any) => (
@@ -111,7 +110,10 @@ export default function Home({ navigation, route }) {
         style={styles.addButton}
         onPress={() => addToCart(item)}
       >
-        <Image source={require("../assets/ic_carrinho.png")} style={styles.iconCarrinho}/>
+        <Image
+          source={require("../assets/ic_carrinho.png")}
+          style={styles.iconCarrinho}
+        />
         <Text style={styles.addButtonText}>Adicionar</Text>
       </TouchableOpacity>
     </View>
@@ -121,7 +123,7 @@ export default function Home({ navigation, route }) {
     <View style={styles.container}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-        <Appbar.Content title="Produtos" color="white"/>
+        <Appbar.Content title="Produtos" color="white" />
       </Appbar.Header>
 
       {/* Lista dos produtos */}
@@ -140,10 +142,14 @@ export default function Home({ navigation, route }) {
           onPress={() => {
             if (tipoLocal === "evento") {
               navigation.navigate("Carrinho", { cart });
-          } else {
-            navigation.navigate("DescricaoProduto", { produtos, cart, tipoLocal: "restaurante" })
-          }
-        }}
+            } else {
+              navigation.navigate("DescricaoProduto", {
+                produtos,
+                cart,
+                tipoLocal: "restaurante",
+              });
+            }
+          }}
         >
           <Text style={styles.cartText}>
             {cart.length} item{cart.length > 1 && "s"} • Total: R${" "}

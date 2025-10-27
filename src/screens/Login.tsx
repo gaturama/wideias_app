@@ -2,11 +2,18 @@ import { useCallback, useState } from "react";
 import { styles } from "../styles/stylesLogin";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { View, Text, Image, TouchableOpacity, TextInput, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  StatusBar,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
-// Mockup de usuários para teste 
+// Mockup de usuários para teste
 const users = [
   { id: 1, email: "teste@email.com", password: 1234 },
   { id: 2, email: "teste2@email.com", password: 456 },
@@ -18,8 +25,8 @@ export default function Login({ navigation }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
-  // Função para esconder a senha do usuário 
+
+  // Função para esconder a senha do usuário
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
@@ -32,7 +39,7 @@ export default function Login({ navigation }: Props) {
     }, [])
   );
 
-  // Função para acessar tela de home caso o login for concluído com sucesso 
+  // Função para acessar tela de home caso o login for concluído com sucesso
   const handleLocalizacao = () => {
     const user = users.find(
       (u) => u.email === email && u.password.toString() === password
@@ -50,49 +57,60 @@ export default function Login({ navigation }: Props) {
   };
 
   return (
-      <View style={{ flex: 1, backgroundColor: "#fff", justifyContent: "center", padding: 20 }}>
-        <StatusBar barStyle="dark-content" translucent backgroundColor="transparent"/>
-        <Image
-          style={styles.image}
-          source={require("../assets/marca_android.png")}
-        />
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#fff",
+        justifyContent: "center",
+        padding: 20,
+      }}
+    >
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <Image
+        style={styles.image}
+        source={require("../assets/marca_android.png")}
+      />
 
-        {/* Input's de login */}
+      {/* Input's de login */}
+      <TextInput
+        autoCorrect={false}
+        autoCapitalize="none"
+        placeholder="Email"
+        style={styles.input}
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+      <View style={styles.passwordContainer}>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="Email"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
+          secureTextEntry={!showPassword}
+          placeholder="Senha"
+          value={password}
+          style={styles.inputPassword}
+          onChangeText={setPassword}
+          keyboardType="numeric"
         />
-        <View style={styles.passwordContainer}>
-          <TextInput
-            autoCorrect={false}
-            autoCapitalize="none"
-            secureTextEntry={!showPassword}
-            placeholder="Senha"
-            value={password}
-            style={styles.inputPassword}
-            onChangeText={setPassword}
-            keyboardType="numeric"
-          />
 
-          <TouchableOpacity onPress={toggleShowPassword} style={styles.icon}>
-            {showPassword ? (
-              <Ionicons name="eye-off" size={24} color="black" />
-            ) : (
-              <Ionicons name="eye" size={24} color="black" />
-            )}
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.button} onPress={handleLocalizacao}>
-          <Text style={styles.buttonText}>Entrar</Text>
+        <TouchableOpacity onPress={toggleShowPassword} style={styles.icon}>
+          {showPassword ? (
+            <Ionicons name="eye-off" size={24} color="black" />
+          ) : (
+            <Ionicons name="eye" size={24} color="black" />
+          )}
         </TouchableOpacity>
-        <Text style={styles.textCadastro} onPress={handleCadastro}>
-          Realizar Cadastro
-        </Text>
       </View>
+      <TouchableOpacity style={styles.button} onPress={handleLocalizacao}>
+        <Text style={styles.buttonText}>Entrar</Text>
+      </TouchableOpacity>
+      <Text style={styles.textCadastro} onPress={handleCadastro}>
+        Realizar Cadastro
+      </Text>
+    </View>
   );
 }

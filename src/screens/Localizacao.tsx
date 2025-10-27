@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
-import {
-  ActivityIndicator,
-  Alert,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, Text, View } from "react-native";
 import { styles } from "../styles/stylesLocalizacao";
 
 export default function Localizacao({ navigation }) {
@@ -57,7 +52,11 @@ export default function Localizacao({ navigation }) {
             setEndereco(reverse);
             navigation.navigate("Main", {
               screen: "Pedido",
-              params: { pedidos: pedidosAtuais, localizacao: coords, endereco: reverse}
+              params: {
+                pedidos: pedidosAtuais,
+                localizacao: coords,
+                endereco: reverse,
+              },
             });
           } else {
             setDetalhe("Não conseguimos identificar o local.");
@@ -86,11 +85,11 @@ export default function Localizacao({ navigation }) {
 
   return (
     <View style={styles.container}>
-       {/* Exibe o endereço ou uma mensagem de erro */}
+      {/* Exibe o endereço ou uma mensagem de erro */}
 
       <Text style={styles.textLocal}>Você está em:</Text>
 
-    {/* Se o endereço foi obtido, exibe os detalhes */}
+      {/* Se o endereço foi obtido, exibe os detalhes */}
       {endereco ? (
         <View style={{ alignItems: "center" }}>
           <Text style={styles.textRua}>

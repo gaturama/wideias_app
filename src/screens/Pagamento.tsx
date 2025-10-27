@@ -19,7 +19,7 @@ export default function Pagamento({ navigation, route }) {
   const { addPedidos } = usePedidos();
   const [usarCredito, setUsarCredito] = useState(false);
 
-  const creditoUsuario = route.params?.credito ?? 100.00;
+  const creditoUsuario = route.params?.credito ?? 100.0;
 
   const totalCarrinho = cartItems.reduce(
     (sum, item) => sum + item.price * (item.quantidade || 1),
@@ -82,12 +82,21 @@ export default function Pagamento({ navigation, route }) {
       }
 
       // Preparar dados do pedido
-      const produtosParaPedido = cartItems.map((item) => ({
-        nome: item.name,
-        preco: item.price,
-        quantidade: item.quantidade || 1,
-        local: localNome,
-      }));
+      const produtosParaPedido = cartItems.flatMap((item) => {
+        const quantity = item.quantidade || item.qty || 1;
+
+        return Array.from({ length: quantity }, (_, index) => ({
+          id: `item-${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2, 9)}-${index}`,
+          nome: item.name,
+          preco: item.price,
+          quantidade: 1,
+          local: localNome,
+
+          custom: item.custom || null,
+        }));
+      });
 
       // Adiciona no contexto
       addPedidos(produtosParaPedido);
@@ -174,7 +183,8 @@ export default function Pagamento({ navigation, route }) {
           color="#000"
           style={styles.iconPay}
         />
-        <Text style={styles.pagamentoText}>Pagamento</Text>
+        <Text style={styles.totalText}>Total a pagar:</Text>
+        <Text style={styles.totalValor}>R$ {totalFinal.toFixed(2)}</Text>
 
         <TouchableOpacity
           style={{
@@ -195,6 +205,18 @@ export default function Pagamento({ navigation, route }) {
           <Text style={styles.textContent}>
             Crédito Disponível R$ {creditoUsuario.toFixed(2)}
           </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.buttonContent}
+          onPress={() =>
+            navigation.navigate("DividirConta", {
+              pedidoId: Date.now,
+              valorTotal: totalFinal,
+            })
+          }
+        >
+          <Text style={styles.textContent}>Dividir Conta</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

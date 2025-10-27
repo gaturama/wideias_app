@@ -26,4 +26,5 @@ export type RootStackParamList = {
   Localizacao: undefined;
   QrScanner: undefined;
   Historico: undefined;
+  DividirConta: undefined;
 };

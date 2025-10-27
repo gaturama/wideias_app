@@ -49,11 +49,6 @@ export default function Pedido({ navigation, route }) {
     );
   };
 
-  const totalValor = pedidos.reduce(
-    (sum, p) => sum + (p.preco || 0) * p.quantidade,
-    0
-  );
-
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.head}>
@@ -90,7 +85,7 @@ export default function Pedido({ navigation, route }) {
       ) : (
         <FlatList
           data={pedidos}
-          keyExtractor={(item, index) => item.nome + index.toString()}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
             <View style={styles.card}>
               <TouchableOpacity
@@ -98,10 +93,10 @@ export default function Pedido({ navigation, route }) {
                 onPress={() =>
                   navigation.navigate("QrCode", {
                     pedido: {
-                      id: "fakeId" + Date.now(),
+                      id: item.id,
                       usuario: "Gabriel",
-                      produtos: pedidos,
-                      valorTotal: totalValor,
+                      produtos: [item],
+                      valorTotal: (item.preco || 0) * item.quantidade,
                       localizacao,
                     },
                   })

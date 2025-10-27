@@ -40,11 +40,16 @@ export default function Credito({ navigation }) {
     <View style={{ flex: 1 }}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-        <Appbar.Content title="Adicionar Crédito" color="white"/>
+        <Appbar.Content title="Adicionar Crédito" color="white" />
       </Appbar.Header>
 
       <View style={styles.container}>
-        <Ionicons name="wallet-outline" size={100} color="#000" style={styles.iconPay} />
+        <Ionicons
+          name="wallet-outline"
+          size={100}
+          color="#000"
+          style={styles.iconPay}
+        />
 
         {/* Botões de valores pré-definidos */}
         <View style={{ flexDirection: "row", gap: 10, marginBottom: 20 }}>
@@ -83,7 +88,7 @@ export default function Credito({ navigation }) {
         <TouchableOpacity style={styles.buttonContent}>
           <Image
             source={require("../assets/ic_samsung.png")}
-            style={[styles.iconContent, {backgroundColor: "#F5F5F5"}]}
+            style={[styles.iconContent, { backgroundColor: "#F5F5F5" }]}
           />
           <Text style={styles.textContent}>Samsung Pay</Text>
         </TouchableOpacity>
