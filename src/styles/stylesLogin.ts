@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     borderColor: "#cccbcbff",
     padding: 20,
     marginBottom: 15,
-    borderRadius: 10,
+    borderRadius: 20,
   },
 
   image: {
@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
   button: {
     backgroundColor: "#0F6EA8",
     padding: 18,
-    borderRadius: 15,
+    borderRadius: 20,
     alignItems: "center",
     alignSelf: "center",
     marginTop: 20,
@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "#cccbcbff",
-    borderRadius: 10,
+    borderRadius: 20,
     paddingVertical: 20,
     paddingHorizontal: 20,
     marginTop: 10,

@@ -10,15 +10,15 @@ import Cadastro from "./src/screens/Cadastro";
 import Pagamento from "./src/screens/Pagamento";
 import QRCodeScreen from "./src/screens/QrCode";
 import QrScanner from "./src/screens/QrScanner";
+import Historico from "./src/screens/Historico";
 import Localizacao from "./src/screens/Localizacao";
+import DividirConta from "./src/screens/DividirConta";
 import TabsNavigator from "./src/navigation/TabsNavigator";
 import { RootStackParamList } from "./src/navigation/types";
 import DescricaoProduto from "./src/screens/DescricaoProduto";
 import { NavigationContainer } from "@react-navigation/native";
 import { PedidosProvider } from "./src/context/PedidosContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Historico from "./src/screens/Historico";
-import DividirConta from "./src/screens/DividirConta";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

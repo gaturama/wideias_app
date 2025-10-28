@@ -96,16 +96,14 @@ export default function Home({ navigation, route }) {
 
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-  // Função para renderizar os produtos teste e adicionar ao card flutuante na tela de Home
+  // Renderização dos produtos
 
   const renderProduct = ({ item }: any) => (
     <View style={styles.productCard}>
-      <Image
-        source={require("../assets/ic_coca_cola.png")}
-        style={styles.productImage}
-      />
+      <Image source={item.image} style={styles.productImage} />
       <Text style={styles.productName}>{item.name}</Text>
       <Text style={styles.productPrice}>R$ {item.price.toFixed(2)}</Text>
+
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => addToCart(item)}
@@ -139,17 +137,9 @@ export default function Home({ navigation, route }) {
       {cart.length > 0 && (
         <TouchableOpacity
           style={styles.cartFooter}
-          onPress={() => {
-            if (tipoLocal === "evento") {
-              navigation.navigate("Carrinho", { cart });
-            } else {
-              navigation.navigate("DescricaoProduto", {
-                produtos,
-                cart,
-                tipoLocal: "restaurante",
-              });
-            }
-          }}
+          onPress={() =>
+            navigation.navigate("DescricaoProduto", { cart, tipoLocal })
+          }
         >
           <Text style={styles.cartText}>
             {cart.length} item{cart.length > 1 && "s"} • Total: R${" "}

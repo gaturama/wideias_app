@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   button: {
     marginTop: 40,
     padding: 10,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#FE8B05",
     borderRadius: 10,
   },
 
@@ -38,5 +38,6 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
+    color: "#fff"
   }
 });

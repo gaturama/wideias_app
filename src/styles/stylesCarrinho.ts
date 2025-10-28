@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f5f5f5",
-    borderRadius: 10,
+    borderRadius: 20,
     padding: 12,
     marginBottom: 10,
     shadowColor: "#000",
@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
   itemImage: {
     width: 45,
     height: 45,
-    borderRadius: 8,
+    borderRadius: 10,
   },
 
   itemInfo: {
@@ -89,7 +89,7 @@ export const styles = StyleSheet.create({
 
   obsInput: {
     backgroundColor: "#F5F5F5",
-    borderRadius: 10,
+    borderRadius: 20,
     padding: 10,
     fontSize: 14,
   },

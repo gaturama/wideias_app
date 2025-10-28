@@ -36,15 +36,15 @@ export const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     backgroundColor: "#F5F5F5",
-    borderRadius: 10,
+    borderRadius: 15,
     padding: 20,
     alignItems: "center",
     elevation: 2,
   },
 
   productImage: {
-    width: 40,
-    height: 75,
+    width: 100,
+    height: 100,
     resizeMode: "cover",
     borderRadius: 8,
   },
@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     backgroundColor: "#fe8b05",
-    borderRadius: 10,
+    borderRadius: 20,
     flexDirection: "row",
   },
 
