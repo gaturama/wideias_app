@@ -72,7 +72,7 @@ export default function Login({ navigation }: Props) {
       />
       <Image
         style={styles.image}
-        source={require("../assets/marca_android.png")}
+        source={require("../assets/ic_logo_wideias.png")}
       />
 
       {/* Input's de login */}

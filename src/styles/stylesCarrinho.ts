@@ -133,4 +133,16 @@ export const styles = StyleSheet.create({
   marginTop: 2,        
   maxWidth: "90%",  
 },
+
+editButton: {
+  marginTop: 4,
+  paddingVertical: 4,
+},
+
+editText: {
+  color: "#007bff",
+  fontWeight: "600",
+  fontSize: 14,
+},
+
 });

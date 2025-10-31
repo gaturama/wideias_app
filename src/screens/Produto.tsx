@@ -138,14 +138,14 @@ export default function Home({ navigation, route }) {
         <TouchableOpacity
           style={styles.cartFooter}
           onPress={() =>
-            navigation.navigate("DescricaoProduto", { cart, tipoLocal })
+            navigation.navigate("Carrinho", { cart, tipoLocal })
           }
         >
           <Text style={styles.cartText}>
             {cart.length} item{cart.length > 1 && "s"} • Total: R${" "}
             {total.toFixed(2)}
           </Text>
-          <Text style={styles.cartAction}>Continuar</Text>
+          <Text style={styles.cartAction}>Carrinho</Text>
         </TouchableOpacity>
       )}
     </View>

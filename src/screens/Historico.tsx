@@ -9,7 +9,6 @@ export default function Historico({ navigation }) {
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title="Histórico de Pedidos" color="white" />
       </Appbar.Header>
 
