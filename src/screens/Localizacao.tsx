@@ -1,114 +1,204 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import * as Location from "expo-location";
-import { ActivityIndicator, Alert, Text, View } from "react-native";
 import { styles } from "../styles/stylesLocalizacao";
+import CustomAlert from "../components/CustomAlert";
 
-export default function Localizacao({ navigation }) {
-  const [location, setLocation] =
-    useState<Location.LocationObjectCoords | null>(null);
-  const [endereco, setEndereco] =
-    useState<Location.LocationGeocodedAddress | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [detalhe, setDetalhe] = useState("Obtendo localização...");
-  const pedidosAtuais = [];
+// Tipos
+interface Evento {
+  id: string;
+  nome: string;
+  data: string;
+  hora: string;
+  local: string;
+}
 
-  // Solicita permissão e obtém a localização
+interface ModalData {
+  title: string;
+  message: string;
+  id: string;
+}
+
+// Dados mockados de eventos
+const EVENTOS_MOCK: Evento[] = [
+  {
+    id: "1",
+    nome: "Show Cover M. Jackson",
+    data: "4 de Junho",
+    hora: "20:00 PM",
+    local: "Praia Central",
+  },
+  {
+    id: "2",
+    nome: "Festa do Divino",
+    data: "7 de Junho",
+    hora: "19:00 PM",
+    local: "Igreja Matriz Divino Espirito Santo",
+  },
+  {
+    id: "3",
+    nome: "Beiro Open Bar",
+    data: "10 de Junho",
+    hora: "22:00 PM",
+    local: "Beiro Bebidas e Tabacaria",
+  },
+  {
+    id: "4",
+    nome: "Passeio Ciclistico",
+    data: "12 de Junho",
+    hora: "10:00 AM",
+    local: "Prefeitura Municipal de Barra Velha",
+  },
+];
+
+export default function EventsScreen({ navigation }) {
+  const [locationAddress, setLocationAddress] = useState<string>(
+    "Buscando localização..."
+  );
+  const [events, setEvents] = useState<Evento[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [pedidosAtuais, setPedidosAtuais] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentEventData, setCurrentEventData] = useState<ModalData | null>(
+    null
+  );
+
   useEffect(() => {
     (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permissão para acessar a localização foi negada.");
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          Alert.alert(
-            "Permissão negada!",
-            "Precisamos da sua localização para continuar"
-          );
-          setLoading(false);
-          return;
-        }
+        // Obter a localização atual
+        let location = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = location.coords;
 
-        // Tenta obter a localização com timeout
-        const locResult = await Promise.race([
-          Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.Highest,
-            timeInterval: 10000,
-          }),
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error("timeout")), 8000)
-          ),
-        ]);
+        // Reverter geocoding para obter o endereço
+        let geocode = await Location.reverseGeocodeAsync({
+          latitude,
+          longitude,
+        });
 
-        // Verifica se a localização foi obtida corretamente
-        if ("coords" in locResult && locResult.coords) {
-          const coords = locResult.coords;
-          setLocation(coords);
-          setDetalhe("Localização obtida, buscando endereço...");
-
-          const [reverse] = await Location.reverseGeocodeAsync({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-          });
-
-          if (reverse) {
-            setEndereco(reverse);
-            navigation.navigate("Main", {
-              screen: "Pedido",
-              params: {
-                pedidos: pedidosAtuais,
-                localizacao: coords,
-                endereco: reverse,
-              },
-            });
-          } else {
-            setDetalhe("Não conseguimos identificar o local.");
-          }
+        if (geocode && geocode.length > 0) {
+          const { city, region } = geocode[0];
+          const fullAddress = `${city}, ${region}`;
+          setLocationAddress(fullAddress);
         } else {
-          throw new Error("Localização inválida");
+          setLocationAddress("Localização desconhecida");
         }
-      } catch (err) {
-        console.log("Erro ao obter localização:", err);
-        setDetalhe("Erro ao detectar localização.");
+
+        // Simular o carregamento de eventos com base na localização
+        setEvents(EVENTOS_MOCK);
+      } catch (error) {
+        console.error("Erro ao buscar localização ou eventos:", error);
+        setErrorMsg("Não foi possível obter a localização ou eventos.");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     })();
   }, []);
 
-  // Renderização condicional com base no estado de carregamento
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#008b8b" />
-        <Text style={{ marginTop: 15 }}>{detalhe}</Text>
+  const handleAttendPress = (item: Evento) => {
+    setCurrentEventData({
+      title: "Confirme sua Presença",
+      message: `Você selecionou o evento: ${item.nome}.\nConfirme para continuar`,
+      id: item.id,
+    });
+    setIsModalVisible(true);
+  };
+
+  const handleConfirm = () => {
+    if (currentEventData) {
+      console.log(`Presença confirmada no evento ID: ${currentEventData.id}`);
+
+      navigation.navigate("Main", {
+        screen: "Pedido",
+        params: {
+          pedidos: pedidosAtuais,
+        },
+      });
+    }
+    setIsModalVisible(false);
+    setCurrentEventData(null);
+  };
+
+  const handleCancel = () => {
+    console.log("Usuário cancelou a confirmação");
+    setIsModalVisible(false);
+    setCurrentEventData(null);
+  };
+
+  const renderEventItem = ({ item }: { item: Evento }) => (
+    <View style={styles.eventCard}>
+      <View style={styles.eventInfo}>
+        <Text style={styles.eventName}>{item.nome}</Text>
+        <Text style={styles.eventTime}>
+          {item.data}, {item.hora}
+        </Text>
+        <Text style={styles.eventLocation}>{item.local}</Text>
       </View>
-    );
-  }
+      <TouchableOpacity style={styles.attendButton}>
+        <Text
+          style={styles.attendButtonText}
+          onPress={() => handleAttendPress(item)}
+        >
+          Entrar
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      {/* Exibe o endereço ou uma mensagem de erro */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Eventos</Text>
+      </View>
 
-      <Text style={styles.textLocal}>Você está em:</Text>
+      <View style={styles.locationContainer}>
+        <Text style={styles.currentLocationText}>Localização Atual</Text>
+        <Text style={styles.locationAddress}>{locationAddress}</Text>
+      </View>
 
-      {/* Se o endereço foi obtido, exibe os detalhes */}
-      {endereco ? (
-        <View style={{ alignItems: "center" }}>
-          <Text style={styles.textRua}>
-            {endereco.street
-              ? `${endereco.street}${
-                  endereco.name && isNaN(Number(endereco.name))
-                    ? `, ${endereco.name}`
-                    : ""
-                }`
-              : endereco.name}
-          </Text>
+      <Text style={styles.sectionTitle}>Eventos próximos</Text>
 
-          <Text style={styles.textBairro}>
-            {endereco.district ? `${endereco.district}, ` : ""}
-            {endereco.city} - {endereco.region}
-          </Text>
-        </View>
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color="#007AFF"
+          style={{ marginTop: 50 }}
+        />
+      ) : errorMsg ? (
+        <Text style={styles.errorText}>{errorMsg}</Text>
       ) : (
-        <Text>Não conseguimos determinar o local.</Text>
+        <FlatList
+          data={events}
+          keyExtractor={(item) => item.id}
+          renderItem={renderEventItem}
+          contentContainerStyle={styles.listContent}
+        />
+      )}
+
+      {currentEventData && (
+        <CustomAlert
+          isVisible={isModalVisible}
+          title={currentEventData.title}
+          message={currentEventData.message}
+          onClose={handleConfirm}
+          onCancel={handleCancel}
+          confirmText="Confirmar"
+          cancelText="Voltar"
+        />
       )}
     </View>
   );

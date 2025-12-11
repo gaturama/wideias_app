@@ -70,7 +70,7 @@ const mockProdutosEvento = [
     image: require("../assets/ic_product.png"),
   },
   {
-    id: "5",
+    // id: "5",
     name: "Água com gás",
     price: 2.5,
     image: require("../assets/ic_product.png"),
