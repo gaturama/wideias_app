@@ -5,32 +5,32 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "#f2ebe0",
+    backgroundColor: "#FFF",
     paddingTop: 20,
   },
 
   head: {
     width: "100%",
-    backgroundColor: "#b38c7d",
+    backgroundColor: "#0F6EA8",
   },
 
   pagamentoText: {
     fontSize: 26,
-    marginVertical: 20,
+    marginVertical: 5,
     fontWeight: "bold",
     color: "#333",
   },
 
   buttonContent: {
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F5F5",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 10,
     alignItems: "center",
     flexDirection: "row",
     gap: 15,
     width: "85%",
-    marginBottom: 25,
+    marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
   buttonCredito: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#fe8b05",
     paddingVertical: 12,
     paddingHorizontal: 15,
     borderRadius: 10,
@@ -55,6 +55,12 @@ export const styles = StyleSheet.create({
 
   textContent: {
     color: "#000",
+    fontSize: 20,
+    fontWeight: "600",
+  },
+
+  textSaldo: {
+    color: "#fff",
     fontSize: 20,
     fontWeight: "600",
   },
@@ -73,14 +79,13 @@ export const styles = StyleSheet.create({
   },
 
   iconPay: {
-    width: 100,
-    height: 100,
+    marginBottom: 25,
   },
 
   textValue: {
     width: "80%",
     backgroundColor: "#fff",
-    borderRadius: 15,
+    borderRadius: 10,
     padding: 12,
     fontSize: 18,
     marginBottom: 30,

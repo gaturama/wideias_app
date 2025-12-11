@@ -1,24 +1,20 @@
 import { useState } from "react";
 import { styles } from "../styles/stylesCadastro";
 import { RootStackParamList } from "../navigation/types";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-  Image,
-} from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Alert } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";
+import { Ionicons } from "@expo/vector-icons";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = NativeStackScreenProps<RootStackParamList, "Pedido">;
 
 export default function Cadastro({ navigation }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [date, setDate] = useState("");
+  const [cpf, setCpf] = useState("");
 
   const handleCadastro = () => {
     if (!name || !email || !password || !phoneNumber) {
@@ -32,31 +28,35 @@ export default function Cadastro({ navigation }: Props) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#f2ebe0"}}>
+    <View style={{ flex: 1, backgroundColor: "#f2ebe0" }}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-         <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
-          <Appbar.Content title="Criar conta" color="white"/>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content title="Criar conta" color="white" />
       </Appbar.Header>
 
       <View style={styles.container}>
-        <View style={styles.avatarContainer}>
-          <Image
-            source={require("../assets/ic_user.png")}
-            style={styles.icon}
-          />
-        </View>
+        {/* <Ionicons name="person-add" size={80} color="#000" style={styles.icon} /> */}
 
         {/* Input's de cadastro*/}
         <Text style={styles.inputText}>Nome Completo</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-
           placeholder="Seu nome"
           style={styles.input}
           value={name}
           onChangeText={setName}
+        />
+
+        <Text style={styles.inputText}>CPF</Text>
+        <TextInput
+          autoCorrect={false}
+          autoCapitalize="none"
+          placeholder="123.456.789-00"
+          style={styles.input}
+          value={cpf}
+          onChangeText={setCpf}
         />
 
         <Text style={styles.inputText}>E-mail</Text>
@@ -88,6 +88,16 @@ export default function Cadastro({ navigation }: Props) {
           style={styles.input}
           value={phoneNumber}
           onChangeText={setPhoneNumber}
+        />
+
+        <Text style={styles.inputText}>Data Nascimento</Text>
+        <TextInput
+          autoCorrect={false}
+          autoCapitalize="none"
+          placeholder="01/01/2000"
+          style={styles.input}
+          value={date}
+          onChangeText={setDate}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleCadastro}>

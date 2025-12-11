@@ -16,7 +16,7 @@ export default function Mesa({ navigation, route }) {
     }
     setMesa(mesaLocal);
     Alert.alert("Mesa selecionada!", `Você escolheu a mesa ${mesaLocal}`);
-    navigation.navigate("Pagamento", { tipoLocal });
+    navigation.navigate("Pagamento", { tipoLocal, cart: route.params?.cart });
   };
 
   return (

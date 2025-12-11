@@ -3,11 +3,11 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f2ebe0",
+    backgroundColor: "#fff",
   },
 
   header: {
-    backgroundColor: "#b38c7d",
+    backgroundColor: "#0F6EA8",
     elevation: 2,
   },
 
@@ -18,8 +18,8 @@ export const styles = StyleSheet.create({
   itemCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 12,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 20,
     padding: 12,
     marginBottom: 10,
     shadowColor: "#000",
@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
   itemImage: {
     width: 45,
     height: 45,
-    borderRadius: 8,
+    borderRadius: 10,
   },
 
   itemInfo: {
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
   },
 
   qtyButton: {
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#FFF",
     borderRadius: 50,
     width: 28,
     height: 28,
@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
 
   qtySymbol: {
     fontSize: 18,
-    color: "#b05c47",
+    color: "#fe8b05",
     fontWeight: "bold",
   },
 
@@ -88,8 +88,8 @@ export const styles = StyleSheet.create({
   },
 
   obsInput: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
+    backgroundColor: "#F5F5F5",
+    borderRadius: 20,
     padding: 10,
     fontSize: 14,
   },
@@ -109,12 +109,12 @@ export const styles = StyleSheet.create({
   },
 
   totalValue: {
-    color: "#e67300",
+    color: "#fe8b05",
     fontWeight: "bold",
   },
 
   nextButton: {
-    backgroundColor: "#f28c38",
+    backgroundColor: "#fe8b05",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -125,4 +125,24 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 15,
   },
+
+  itemCustom: {
+  fontSize: 14,
+  color: "#666",       
+  fontStyle: "italic", 
+  marginTop: 2,        
+  maxWidth: "90%",  
+},
+
+editButton: {
+  marginTop: 4,
+  paddingVertical: 4,
+},
+
+editText: {
+  color: "#007bff",
+  fontWeight: "600",
+  fontSize: 14,
+},
+
 });

@@ -5,27 +5,26 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "#f2ebe0",
-    paddingTop: 20,
+    backgroundColor: "#FFF",
   },
 
   head: {
     width: "100%",
-    backgroundColor: "#b38c7d",
+    backgroundColor: "#0F6EA8",
   },
 
   pagamentoText: {
     fontSize: 26,
-    marginVertical: 20,
     fontWeight: "bold",
     color: "#333",
+    marginBottom: 40,
   },
 
   buttonContent: {
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F5F5",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 10,
     alignItems: "center",
     flexDirection: "row",
     gap: 15,
@@ -58,9 +57,19 @@ export const styles = StyleSheet.create({
   },
 
   iconPay: {
-    width: 100,
-    height: 100,
-    marginBottom: 15,
+    marginTop: 30,
     resizeMode: "contain",
+  },
+
+  totalText: {
+    fontSize: 22,
+    fontWeight: "500",
+    color: "#000",
+  },
+
+  totalValor: {
+    fontSize: 40,
+    marginBottom: 20,
+    fontWeight: "800",
   },
 });

@@ -1,11 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-
   card: {
     flex: 1,
     margin: 8,
-    borderRadius: 8,
+    borderRadius: 10,
     backgroundColor: "#fff",
     elevation: 3,
     overflow: "hidden",

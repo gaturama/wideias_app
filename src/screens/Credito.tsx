@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesCredito";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Credito({ navigation }) {
   const [valor, setValor] = useState<string>("");
@@ -39,18 +40,16 @@ export default function Credito({ navigation }) {
     <View style={{ flex: 1 }}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
-        <Appbar.Content title="Adicionar Crédito" color="white"/>
+        <Appbar.Content title="Adicionar Crédito" color="white" />
       </Appbar.Header>
 
       <View style={styles.container}>
-        <Image
-          source={require("../assets/ic_credito.png")}
+        <Ionicons
+          name="wallet-outline"
+          size={100}
+          color="#000"
           style={styles.iconPay}
         />
-        <Text style={styles.pagamentoText}>
-          Saldo atual: R$ {saldo.toFixed(2)}
-        </Text>
 
         {/* Botões de valores pré-definidos */}
         <View style={{ flexDirection: "row", gap: 10, marginBottom: 20 }}>
@@ -60,7 +59,7 @@ export default function Credito({ navigation }) {
               style={[styles.buttonCredito, { paddingHorizontal: 15 }]}
               onPress={() => addSaldoMock(valor)}
             >
-              <Text style={styles.textContent}>R$ {valor} </Text>
+              <Text style={styles.textSaldo}>R$ {valor} </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -83,13 +82,13 @@ export default function Credito({ navigation }) {
             source={require("../assets/ic_pix.png")}
             style={styles.iconContent}
           />
-          <Text style={styles.textContent}>Adicionar Crédito</Text>
+          <Text style={styles.textContent}>PIX</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.buttonContent}>
           <Image
             source={require("../assets/ic_samsung.png")}
-            style={styles.iconContent}
+            style={[styles.iconContent, { backgroundColor: "#F5F5F5" }]}
           />
           <Text style={styles.textContent}>Samsung Pay</Text>
         </TouchableOpacity>

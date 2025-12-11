@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Appbar, TextInput } from "react-native-paper";
 import { styles } from "../styles/stylesDescProduto";
@@ -18,9 +18,10 @@ interface Adicional {
 
 export default function DescricaoProduto({ route, navigation }) {
   const tipoLocal = route.params?.tipoLocal;
-  {
-    /* Mockup de produtos para testes */
-  }
+  const produtoEditado = route.params?.produto || null;
+  const editMode = route.params?.editar || false;
+  const cartAtual = route.params?.cart || [];
+
   const [ingredientes, setIngredientes] = useState<Ingrediente[]>([
     { id: 1, nome: "Pão Brioche", incluso: true },
     { id: 2, nome: "Carne 160g", incluso: true },
@@ -37,8 +38,31 @@ export default function DescricaoProduto({ route, navigation }) {
     { id: 3, nome: "Maionese Caseira", preco: 1.5, selecionado: false },
   ]);
 
-  const cartAtual = route.params?.cart || [];
   const [observacao, setObservacao] = useState("");
+
+  useEffect(() => {
+    if (editMode && produtoEditado) {
+      setIngredientes((prev) =>
+        prev.map((ing) => ({
+          ...ing,
+          incluso:
+            produtoEditado.ingredientes?.some((i) => i.nome === ing.nome) ??
+            ing.incluso,
+        }))
+      );
+
+      setAdicionais((prev) =>
+        prev.map((ad) => ({
+          ...ad,
+          selecionado:
+            produtoEditado.adicionais?.some((a) => a.nome === ad.nome) ??
+            ad.selecionado,
+        }))
+      );
+
+      setObservacao(produtoEditado.observacao || "");
+    }
+  }, [editMode, produtoEditado]);
 
   const toggleIngrediente = (id: number) => {
     setIngredientes((prev) =>
@@ -63,32 +87,50 @@ export default function DescricaoProduto({ route, navigation }) {
       .filter((a) => a.selecionado)
       .reduce((sum, a) => sum + a.preco, 0);
 
+  const custom = [
+    ...ingredientes.filter((i) => !i.incluso).map((i) => `- ${i.nome}`),
+    ...adicionais.filter((a) => a.selecionado).map((a) => `+ ${a.nome}`),
+  ].join(", ");
+
   const handleAddToCart = () => {
     const novoProduto = {
-      id: Date.now().toString(),
-      name: produto.nome,
+      id: produtoEditado?.id || Date.now().toString(),
+      name: produtoEditado?.name || "Smash da Casa",
       price: precoTotal,
+      custom,
       ingredientes: ingredientes.filter((i) => i.incluso),
       adicionais: adicionais.filter((a) => a.selecionado),
       observacao,
     };
 
-    const novoCarrinho = [...cartAtual, novoProduto];
-    navigation.navigate("Carrinho", { cart: novoCarrinho, tipoLocal: route.params?.tipoLocal });
+    let novoCarrinho;
+    if (typeof route.params?.editIndex === "number") {
+      novoCarrinho = [...cartAtual];
+      novoCarrinho[route.params.editIndex] = novoProduto;
+    } else {
+      novoCarrinho = [...cartAtual, novoProduto];
+    }
+
+    navigation.navigate("Carrinho", {
+      cart: novoCarrinho,
+      tipoLocal,
+    });
   };
 
   const produto = {
-    nome: "Smash da Casa",
+    nome: produtoEditado?.name || "Smash da Casa",
     descricao:
       "Pão brioche, carne 160g, cheddar, alface, tomate, cebola roxa e molho da casa.",
   };
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Header customizado */}
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
-        <Appbar.Content title="Descrição do Produto" color="white"/>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content
+          title={editMode ? "Editar Produto" : "Descrição do Produto"}
+          color="white"
+        />
       </Appbar.Header>
 
       <ScrollView style={styles.container}>
@@ -96,10 +138,10 @@ export default function DescricaoProduto({ route, navigation }) {
           source={require("../assets/ic_burguer.png")}
           style={styles.productImage}
         />
+
         <Text style={styles.productName}>{produto.nome}</Text>
         <Text style={styles.productDesc}>{produto.descricao}</Text>
 
-        {/* Ingredientes selecionáveis */}
         <Text style={styles.titleSection}>Ingredientes</Text>
         {ingredientes.map((item) => (
           <TouchableOpacity
@@ -121,7 +163,6 @@ export default function DescricaoProduto({ route, navigation }) {
           </TouchableOpacity>
         ))}
 
-        {/* Ingredientes adicionais */}
         <Text style={styles.titleSection}>Adicionais</Text>
         {adicionais.map((item) => (
           <TouchableOpacity
@@ -140,7 +181,6 @@ export default function DescricaoProduto({ route, navigation }) {
           </TouchableOpacity>
         ))}
 
-        {/* Observações */}
         <Text style={styles.titleSection}>Observações</Text>
         <TextInput
           mode="outlined"
@@ -155,7 +195,9 @@ export default function DescricaoProduto({ route, navigation }) {
             Total: R$ {precoTotal.toFixed(2)}
           </Text>
           <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
-            <Text style={styles.textButton}>Adicionar ao Carrinho</Text>
+            <Text style={styles.textButton}>
+              {editMode ? "Salvar Alterações" : "Adicionar ao Carrinho"}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

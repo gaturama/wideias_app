@@ -1,0 +1,153 @@
+import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
+import { Appbar } from "react-native-paper";
+import { useState } from "react";
+import { styles } from "../styles/stylesProduto";
+
+//Mockup de produtos para teste
+
+const mockProdutosRestaurante = [
+  {
+    id: "1",
+    name: "Hamburguer",
+    price: 24.9,
+    image: require("../assets/ic_burguer.png"),
+  },
+  {
+    id: "2",
+    name: "Pizza",
+    price: 49.9,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "3",
+    name: "Suco Natural",
+    price: 8.5,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "4",
+    name: "Prato Feito",
+    price: 32.0,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "5",
+    name: "Refrigerante",
+    price: 6.0,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "6",
+    name: "Sushi",
+    price: 34.0,
+    image: require("../assets/ic_product.png"),
+  },
+];
+
+const mockProdutosEvento = [
+  {
+    id: "1",
+    name: "Cerveja",
+    price: 8.0,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "2",
+    name: "Whisky",
+    price: 21.0,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "3",
+    name: "Tônica",
+    price: 5.0,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "4",
+    name: "Água sem gás",
+    price: 2.0,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    // id: "5",
+    name: "Água com gás",
+    price: 2.5,
+    image: require("../assets/ic_product.png"),
+  },
+  {
+    id: "6",
+    name: "Sorvete",
+    price: 7.5,
+    image: require("../assets/ic_product.png"),
+  },
+];
+
+export default function Home({ navigation, route }) {
+  const [cart, setCart] = useState([]);
+
+  const tipoLocal = route?.params?.tipo || "restaurante";
+  const produtos =
+    tipoLocal === "evento" ? mockProdutosEvento : mockProdutosRestaurante;
+
+  const addToCart = (item) => {
+    setCart((prev) => [...prev, item]);
+  };
+
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+  // Renderização dos produtos
+
+  const renderProduct = ({ item }: any) => (
+    <View style={styles.productCard}>
+      <Image source={item.image} style={styles.productImage} />
+      <Text style={styles.productName}>{item.name}</Text>
+      <Text style={styles.productPrice}>R$ {item.price.toFixed(2)}</Text>
+
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => addToCart(item)}
+      >
+        <Image
+          source={require("../assets/ic_carrinho.png")}
+          style={styles.iconCarrinho}
+        />
+        <Text style={styles.addButtonText}>Adicionar</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      {/* Header customizável */}
+      <Appbar.Header style={styles.head}>
+        <Appbar.Content title="Produtos" color="white" />
+      </Appbar.Header>
+
+      {/* Lista dos produtos */}
+      <FlatList
+        data={produtos}
+        numColumns={2}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+        renderItem={renderProduct}
+        showsVerticalScrollIndicator={false}
+      />
+
+      {cart.length > 0 && (
+        <TouchableOpacity
+          style={styles.cartFooter}
+          onPress={() =>
+            navigation.navigate("Carrinho", { cart, tipoLocal })
+          }
+        >
+          <Text style={styles.cartText}>
+            {cart.length} item{cart.length > 1 && "s"} • Total: R${" "}
+            {total.toFixed(2)}
+          </Text>
+          <Text style={styles.cartAction}>Carrinho</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}

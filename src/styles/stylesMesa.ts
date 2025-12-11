@@ -5,15 +5,17 @@ container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f2ebe0",
+    backgroundColor: "#FFF",
     paddingHorizontal: 16,
   },
+  
   title: {
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 30,
     textAlign: "center",
   },
+
   input: {
     width: "60%",
     height: 180,
@@ -25,15 +27,17 @@ container: {
     marginBottom: 20,
     textAlign: "center",
   },
+
   button: {
     width: "60%",
     height: 50,
-    backgroundColor: "#008b8b",
+    backgroundColor: "#0F6EA8",
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 40,
   },
+
   buttonText: {
     color: "#fff",
     fontSize: 18,

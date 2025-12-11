@@ -4,22 +4,32 @@ import { styles } from "../styles/stylesPerfil";
 import * as ImagePicker from "expo-image-picker";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  FlatList,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = NativeStackScreenProps<RootStackParamList, "Produto">;
 
 export default function Perfil({ navigation }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [date, setDate] = useState("");
+  const [cpf, setCpf] = useState("");
   const [image, setImage] = useState("");
 
   const handleLogin = () => {
     navigation.navigate("Login");
   };
 
-  {/* Função para que seja possível a edição do perfil do usuário */}
+  // Função para que seja possível a edição do perfil do usuário
   const handleEdit = () => {
     if (!name || !email || !password || !phoneNumber) {
       alert("Preencha todos os campos antes de salvar!");
@@ -29,7 +39,7 @@ export default function Perfil({ navigation }: Props) {
     alert("Informações atualizadas com sucesso!");
   };
 
-  {/* Função para selecionar uma foto da galeria do celular do usuário */}
+  // Função para selecionar uma foto da galeria do celular do usuário
   async function pickImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -49,82 +59,93 @@ export default function Perfil({ navigation }: Props) {
     }
   }
 
+  const inputs = [
+    { key: "name", placeholder: "Nome", value: name, onChange: setName },
+    { key: "email", placeholder: "Email", value: email, onChange: setEmail },
+    {
+      key: "password",
+      placeholder: "Senha",
+      value: password,
+      onChange: setPassword,
+      secure: true,
+    },
+    {
+      key: "phone",
+      placeholder: "Telefone",
+      value: phoneNumber,
+      onChange: setPhoneNumber,
+    },
+    { key: "cpf", placeholder: "CPF", value: cpf, onChange: setCpf },
+    {
+      key: "date",
+      placeholder: "Data de Aniversário",
+      value: date,
+      onChange: setDate,
+    },
+  ];
+
   return (
-    <View style={[styles.container, { backgroundColor: "#f2ebe0" }]}>
+    <View style={[styles.container, { backgroundColor: "#fff" }]}>
       {/* Header customizável */}
       <Appbar.Header style={styles.head}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white"/>
-        <Appbar.Content title="Perfil" color="white"/>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content title="Perfil" color="white" />
       </Appbar.Header>
 
-      <View style={styles.containerBody}>
-        <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
-          {image ? (
-            <Image source={{ uri: image }} style={styles.avatar} />
-          ) : (
-            <Image
-              source={require("../assets/ic_user.png")}
-              style={styles.icon}
-            />
-          )}
-        </TouchableOpacity>
+      <FlatList
+        data={inputs}
+        keyExtractor={(item) => item.key}
+        contentContainerStyle={{ margin: 15, paddingBottom: 40 }}
+        renderItem={({ item }) => (
+          <TextInput
+            placeholder={item.placeholder}
+            style={styles.input}
+            value={item.value}
+            onChangeText={item.onChange}
+            secureTextEntry={item.secure || false}
+            keyboardType={
+              item.key === "email"
+                ? "email-address"
+                : item.key === "phone"
+                ? "phone-pad"
+                : "default"
+            }
+            autoCorrect={false}
+            autoCapitalize="none"
+          />
+        )}
+        ListHeaderComponent={
+          <>
+            <TouchableOpacity
+              onPress={pickImage}
+              style={styles.avatarContainer}
+            >
+              {image ? (
+                <Image source={{ uri: image }} style={styles.avatar} />
+              ) : (
+                <Ionicons name="person" size={60} color="#CCC" />
+              )}
+            </TouchableOpacity>
+            <Text style={styles.title}>Editar Perfil</Text>
+          </>
+        }
+        ListFooterComponent={
+          <>
+            <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+              <Text style={styles.editButtonText}>Editar</Text>
+            </TouchableOpacity>
 
-        <Text style={styles.title}>Editar Perfil</Text>
+            <View style={styles.line} />
 
-        {/* Input's da tela de perfil */}
-        <TextInput
-          autoCorrect={false}
-          autoCapitalize="none"
-          placeholder="Nome"
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-        />
-
-        <TextInput
-          autoCorrect={false}
-          autoCapitalize="none"
-          placeholder="Email"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-
-        <TextInput
-          autoCorrect={false}
-          autoCapitalize="none"
-          placeholder="Senha"
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <TextInput
-          autoCorrect={false}
-          autoCapitalize="none"
-          placeholder="Telefone"
-          style={styles.input}
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-        />
-
-        <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
-          <Text style={styles.editButtonText}>Editar</Text>
-        </TouchableOpacity>
-
-        <View style={styles.line} />
-
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <View style={styles.buttonContent}>
-            <Image
-              source={require("../assets/ic_loggout.png")}
-              style={styles.exit}
-            />
-            <Text style={styles.buttonText}>Sair</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+              <View style={styles.buttonContent}>
+                <Ionicons name="exit-outline" size={50} color="black" />
+                <Text style={styles.buttonText}>Sair</Text>
+              </View>
+            </TouchableOpacity>
+          </>
+        }
+      />
     </View>
   );
 }

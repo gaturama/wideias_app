@@ -2,7 +2,6 @@ import React from "react";
 import { styles } from "../styles/stylesQrCode";
 import { View, Text } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/types";
 
@@ -11,7 +10,7 @@ type Props = {
 };
 
 export default function QRCodeScreen({ route }: Props) {
-  const { pedido } = route.params || {};
+  const pedido = route.params?.pedido;
 
   // Verifica se o pedido existe
   if (!pedido) {
@@ -31,18 +30,18 @@ export default function QRCodeScreen({ route }: Props) {
   });
 
   return (
-      <View style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <Text style={styles.title}>Mostre este QR Code no balcão</Text>
-          <View style={styles.qrContainer}>
-            {/* Gerando o QR Code */}
-            <QRCode value={qrData} size={220} />
-          </View>
-          <Text style={styles.info}>Pedido #{pedido.id}</Text>
-          <Text style={styles.subtext}>
-            Total: R$ {pedido.valorTotal.toFixed(2)}
-          </Text>
+    <View style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Mostre este QR Code no balcão</Text>
+        <View style={styles.qrContainer}>
+          {/* Gerando o QR Code */}
+          <QRCode value={qrData} size={220} />
         </View>
+        <Text style={styles.info}>Pedido #{pedido.id}</Text>
+        <Text style={styles.subtext}>
+          Total: R$ {pedido.valorTotal.toFixed(2)}
+        </Text>
       </View>
+    </View>
   );
 }

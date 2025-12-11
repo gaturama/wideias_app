@@ -6,7 +6,6 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     alignSelf: "center",
-    color: "#333",
   },
 
   input: {
@@ -21,16 +20,16 @@ export const styles = StyleSheet.create({
 
   image: {
     padding: 20,
-    width: 280,
-    height: 70,
+    width: 310,
+    height: 76,
     alignSelf: "center",
     marginBottom: 50,
   },
 
   button: {
-    backgroundColor: "#008b8b",
+    backgroundColor: "#0F6EA8",
     padding: 18,
-    borderRadius: 25,
+    borderRadius: 20,
     alignItems: "center",
     alignSelf: "center",
     marginTop: 20,
@@ -70,7 +69,7 @@ export const styles = StyleSheet.create({
 
   textCadastro: {
     fontSize: 16,
-    color: "#0059FF",
+    color: "#0551dfff",
     fontWeight: "bold",
     marginTop: 20,
     alignSelf: "center",

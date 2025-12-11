@@ -9,12 +9,12 @@ export const styles = StyleSheet.create({
   containerBody: {
     flex: 1,
     padding: 20,
-    marginTop: 40,
+    marginTop: 20,
   },
 
   head: {
     width: "100%",
-    backgroundColor: "#b38c7d",
+    backgroundColor: "#0F6EA8",
   },
 
   title: {
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 10,
     marginBottom: 25,
     borderColor: "#cccbcbff",
   },
@@ -36,7 +36,6 @@ export const styles = StyleSheet.create({
   button: {
     backgroundColor: "transparent",
     padding: 12,
-    borderRadius: 25,
     alignItems: "center",
     width: "25%",
     flexDirection: "row",
@@ -56,8 +55,8 @@ export const styles = StyleSheet.create({
   },
 
   editButton: {
-    backgroundColor: "#008b8b",
-    borderRadius: 20,
+    backgroundColor: "#0F6EA8",
+    borderRadius: 15,
     padding: 18,
     marginTop: 10,
     alignItems: "center",
@@ -79,7 +78,7 @@ export const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: "#e6e6e6ff",
+    backgroundColor: "#f5f5f5",
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
@@ -90,11 +89,6 @@ export const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-  },
-
-  icon: {
-    width: 60,
-    height: 60,
   },
 
   iconLoggout: {

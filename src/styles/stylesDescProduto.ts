@@ -5,14 +5,14 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#f2ebe0",
+    backgroundColor: "#fff",
   },
 
   head: {
     width: "100%",
     flexDirection: "row",
     gap: 8,
-    backgroundColor: "#b38c7d",
+    backgroundColor: "#0F6EA8",
   },
 
   productImage: {
@@ -42,8 +42,8 @@ export const styles = StyleSheet.create({
   },
 
   option: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 10,
     padding: 12,
     marginBottom: 8,
     flexDirection: "row",
@@ -63,11 +63,12 @@ export const styles = StyleSheet.create({
 
   removedOption: {
     backgroundColor: "#fdecea",
-    borderColor: "#f44336",
+    borderColor: "#FB9D80",
   },
 
   textRemovedOption: {
-    color: "#f44336",
+    color: "#9C0404",
+    fontWeight: "bold",
   },
 
   selectedOption: {
@@ -102,7 +103,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#ff6a00",
     paddingVertical: 12,
     paddingHorizontal: 24,
-    borderRadius: 20,
+    borderRadius: 10,
   },
 
   textButton: {

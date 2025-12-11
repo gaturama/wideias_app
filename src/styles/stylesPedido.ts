@@ -1,0 +1,106 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+
+  head: {
+    backgroundColor: "#0F6EA8",
+    elevation: 4,
+  },
+
+  iconPerfil: {
+    tintColor: "#fff",
+    margin: 2,
+    right: 18,
+  },
+
+  cardCredito: {
+    backgroundColor: "#fe8b05",
+    marginHorizontal: 16,
+    marginVertical: 10,
+    padding: 16,
+    borderRadius: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  labelCredito: {
+    color: "#fff",
+    fontSize: 14,
+  },
+
+  valorCredito: {
+    color: "#fff",
+    fontSize: 28,
+    fontWeight: "bold",
+    marginTop: 4,
+  },
+
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  emptyText: {
+    fontSize: 16,
+    color: "#888",
+    textAlign: "center",
+  },
+
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
+    borderRadius: 20,
+    padding: 14,
+    marginVertical: 8,
+    marginHorizontal: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
+  },
+
+  icon: {
+    width: 45,
+    height: 45,
+    marginRight: 18,
+  },
+
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#222",
+  },
+
+  subtitle: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 2,
+  },
+
+  qrButton: {
+    left: -8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  removeButton: {
+    backgroundColor: "#F5F5F5",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 30,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    marginLeft: 10,
+  },
+});

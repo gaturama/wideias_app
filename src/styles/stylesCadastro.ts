@@ -5,12 +5,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#f2ebe0 ",
+    backgroundColor: "#fff",
   },
 
   head: {
     width: "100%",
-     backgroundColor: "#b38c7d",
+     backgroundColor: "#0F6EA8",
   },
 
   title: {
@@ -30,16 +30,16 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#008b8b",
+    backgroundColor: "#0F6EA8",
     padding: 12,
-    borderRadius: 25,
+    borderRadius: 20,
     justifyContent: "center",
     alignSelf: "center",
     alignItems: "center",
     width: "100%",
     height: 60,
     flexDirection: "row",
-    marginTop: 30,
+    marginTop: 15,
     gap: 8,
   },
 
@@ -55,23 +55,10 @@ export const styles = StyleSheet.create({
     fontSize: 18,
   },
 
-  avatarContainer: {
-    width: 110,
-    height: 110,
-    borderRadius: 60,
-    backgroundColor: "#e6e6e6ff",
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 15,
-  },
-
   icon: {
-    width: 70,
-    height: 70,
+    marginBottom: 30,
     alignSelf: "center",
     justifyContent: "center",
-    tintColor: "#cccbcbff"
   },
 
   iconExit: {
