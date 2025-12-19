@@ -1,6 +1,19 @@
 export interface Database {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          id: string
+          nome: string
+          cpf: string
+          telefone: string
+          data_nascimento: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['profiles']['Row'], 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['profiles']['Insert']>
+      }
       locations: {
         Row: {
           id: string
@@ -58,6 +71,7 @@ export interface Database {
   }
 }
 
+export type Profile = Database['public']['Tables']['profiles']['Row']
 export type Location = Database['public']['Tables']['locations']['Row']
 export type Product = Database['public']['Tables']['products']['Row']
 export type Order = Database['public']['Tables']['orders']['Row']
