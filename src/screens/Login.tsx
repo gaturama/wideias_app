@@ -1,7 +1,4 @@
 import { useCallback, useState } from "react";
-import { styles } from "../styles/stylesLogin";
-import { RootStackParamList } from "../navigation/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   View,
   Text,
@@ -10,50 +7,60 @@ import {
   TextInput,
   StatusBar,
 } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { styles } from "../styles/stylesLogin";
+import { AuthService } from "../services/AuthServices";
 
-// Mockup de usuários para teste
-const users = [
-  { id: 1, email: "teste@email.com", password: 1234 },
-  { id: 2, email: "teste2@email.com", password: 456 },
-];
+export type RootStackParamList = {
+  Login: undefined;
+  Cadastro: undefined;
+  Localizacao: undefined;
+};
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function Login({ navigation }: Props) {
-  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Função para esconder a senha do usuário
-  const toggleShowPassword = () => {
-    setShowPassword((prev) => !prev);
-  };
-
-  // Função que apaga a login do usuário ao retornar a tela de login
   useFocusEffect(
     useCallback(() => {
       setEmail("");
       setPassword("");
+      setShowPassword(false);
     }, [])
   );
 
-  // Função para acessar tela de home caso o login for concluído com sucesso
-  const handleLocalizacao = () => {
-    const user = users.find(
-      (u) => u.email === email && u.password.toString() === password
-    );
-    if (user) {
-      navigation.navigate("Localizacao");
-    } else {
-      alert("Email ou senha incorretos!");
+  const validateForm = (): boolean => {
+    if (!email.trim()) {
+      alert("Informe o email");
+      return false;
     }
+    if (!password.trim()) {
+      alert("Informe a senha");
+      return false;
+    }
+    return true;
   };
 
-  // Função para acessar a tela de cadastro
-  const handleCadastro = () => {
-    navigation.navigate("Cadastro");
+  const handleLogin = async () => {
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    const response = await AuthService.login({ email, password });
+
+    setIsLoading(false);
+
+    if (response.success) {
+      navigation.navigate("Localizacao");
+    } else {
+      alert(response.error || "Erro ao autenticar");
+    }
   };
 
   return (
@@ -65,50 +72,57 @@ export default function Login({ navigation }: Props) {
         padding: 20,
       }}
     >
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
+      <StatusBar barStyle="dark-content" />
+
       <Image
         style={styles.image}
         source={require("../assets/ic_logo_wideias.png")}
       />
 
-      {/* Input's de login */}
       <TextInput
-        autoCorrect={false}
-        autoCapitalize="none"
         placeholder="Email"
         style={styles.input}
         value={email}
         onChangeText={setEmail}
+        autoCapitalize="none"
         keyboardType="email-address"
       />
+
       <View style={styles.passwordContainer}>
         <TextInput
-          autoCorrect={false}
-          autoCapitalize="none"
-          secureTextEntry={!showPassword}
           placeholder="Senha"
-          value={password}
           style={styles.inputPassword}
+          value={password}
           onChangeText={setPassword}
-          keyboardType="numeric"
+          secureTextEntry={!showPassword}
         />
 
-        <TouchableOpacity onPress={toggleShowPassword} style={styles.icon}>
-          {showPassword ? (
-            <Ionicons name="eye-off" size={24} color="black" />
-          ) : (
-            <Ionicons name="eye" size={24} color="black" />
-          )}
+        <TouchableOpacity
+          onPress={() => setShowPassword(!showPassword)}
+          style={styles.icon}
+        >
+          <Ionicons
+            name={showPassword ? "eye-off" : "eye"}
+            size={24}
+            color="black"
+          />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleLocalizacao}>
-        <Text style={styles.buttonText}>Entrar</Text>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleLogin}
+        disabled={isLoading}
+      >
+        <Text style={styles.buttonText}>
+          {isLoading ? "Entrando..." : "Entrar"}
+        </Text>
       </TouchableOpacity>
-      <Text style={styles.textCadastro} onPress={handleCadastro}>
+
+      <Text
+        style={styles.textCadastro}
+        onPress={() => navigation.navigate("Cadastro")}
+      >
         Realizar Cadastro
       </Text>
     </View>

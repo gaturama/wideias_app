@@ -1,12 +1,20 @@
-import { useState } from "react";
-import { styles } from "../styles/stylesCadastro";
-import { RootStackParamList } from "../navigation/types";
-import { View, Text, TouchableOpacity, TextInput, Alert } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+} from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
+import { styles } from "../styles/stylesCadastro";
+import { RootStackParamList } from "../navigation/types";
+import { supabase } from "../../utils/supabase";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Pedido">;
+
+
+type Props = NativeStackScreenProps<RootStackParamList, "Cadastro">;
 
 export default function Cadastro({ navigation }: Props) {
   const [name, setName] = useState("");
@@ -15,17 +23,66 @@ export default function Cadastro({ navigation }: Props) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [date, setDate] = useState("");
   const [cpf, setCpf] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleCadastro = () => {
-    if (!name || !email || !password || !phoneNumber) {
-      Alert.alert("Erro", "Preencha todos os campos!");
+const handleCadastro = async () => {
+  if (!name || !email || !password || !phoneNumber || !cpf || !date) {
+    Alert.alert("Erro", "Preencha todos os campos!");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      setLoading(false);
+      Alert.alert("Erro", error.message);
       return;
     }
 
-    Alert.alert("Sucesso", `Usuário ${name} cadastrado!`);
+    if (!data.user) {
+      setLoading(false);
+      Alert.alert("Erro", "Erro ao criar usuário");
+      return;
+    }
 
-    navigation.navigate("Login");
-  };
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .insert({
+        id: data.user.id,
+        nome: name,
+        cpf: cpf,
+        telefone: phoneNumber,
+        data_nascimento: date,
+      });
+
+    if (profileError) {
+      setLoading(false);
+      Alert.alert("Erro no perfil", profileError.message);
+      console.error("Erro ao inserir perfil:", profileError);
+      return;
+    }
+
+    setLoading(false);
+    Alert.alert("Sucesso", `Usuário ${name} cadastrado com sucesso!`, [
+      {
+        text: "OK",
+        onPress: () => navigation.navigate("Login")
+      }
+    ]);
+
+  } catch (err: any) {
+    setLoading(false);
+    Alert.alert("Erro", err?.message || "Ocorreu um erro inesperado");
+    console.error("Erro no cadastro:", err);
+  }
+};
+
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f2ebe0" }}>
@@ -57,6 +114,7 @@ export default function Cadastro({ navigation }: Props) {
           style={styles.input}
           value={cpf}
           onChangeText={setCpf}
+          keyboardType="numeric"
         />
 
         <Text style={styles.inputText}>E-mail</Text>
@@ -78,6 +136,7 @@ export default function Cadastro({ navigation }: Props) {
           style={styles.input}
           value={password}
           onChangeText={setPassword}
+          secureTextEntry
         />
 
         <Text style={styles.inputText}>Telefone</Text>
@@ -94,14 +153,14 @@ export default function Cadastro({ navigation }: Props) {
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="01/01/2000"
+          placeholder="2001-12-31"
           style={styles.input}
           value={date}
           onChangeText={setDate}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleCadastro}>
-          <Text style={styles.buttonText}>Cadastrar</Text>
+        <TouchableOpacity style={styles.button} onPress={handleCadastro} disabled={loading}>
+          <Text style={styles.buttonText}>{loading ? "Cadastrando..." : "Cadastrar"}</Text>
         </TouchableOpacity>
       </View>
     </View>
