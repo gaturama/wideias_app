@@ -1,202 +1,285 @@
 import { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { Appbar, TextInput } from "react-native-paper";
 import { styles } from "../styles/stylesDescProduto";
+import { supabase } from "../../utils/supabase";
 
 interface Ingrediente {
-  id: number;
+  id: string;
   nome: string;
   incluso: boolean;
+  removable: boolean;
 }
 
 interface Adicional {
-  id: number;
+  id: string;
   nome: string;
   preco: number;
   selecionado: boolean;
 }
 
-export default function DescricaoProduto({ route, navigation }) {
+export default function DescricaoProduto({ route, navigation }: any) {
+  const produto = route.params?.produto;
+  const produtoEditado = route.params?.produtoEditado;
   const tipoLocal = route.params?.tipoLocal;
-  const produtoEditado = route.params?.produto || null;
-  const editMode = route.params?.editar || false;
-  const cartAtual = route.params?.cart || [];
+  const cart = route.params?.cart || [];
+  const editar = route.params?.editar || false;
+  const editIndex = route.params?.editIndex;
+  const eventId = route.params?.eventId;
+  const locationId = route.params?.locationId;
 
-  const [ingredientes, setIngredientes] = useState<Ingrediente[]>([
-    { id: 1, nome: "Pão Brioche", incluso: true },
-    { id: 2, nome: "Carne 160g", incluso: true },
-    { id: 3, nome: "Queijo Cheddar", incluso: true },
-    { id: 5, nome: "Alface", incluso: true },
-    { id: 6, nome: "Tomate", incluso: true },
-    { id: 7, nome: "Cebola Roxa", incluso: true },
-    { id: 8, nome: "Molho da Casa", incluso: true },
-  ]);
-
-  const [adicionais, setAdicionais] = useState<Adicional[]>([
-    { id: 1, nome: "Bacon Crocante", preco: 3.0, selecionado: false },
-    { id: 2, nome: "Queijo Extra", preco: 2.5, selecionado: false },
-    { id: 3, nome: "Maionese Caseira", preco: 1.5, selecionado: false },
-  ]);
-
+  const [ingredientes, setIngredientes] = useState<Ingrediente[]>([]);
+  const [adicionais, setAdicionais] = useState<Adicional[]>([]);
   const [observacao, setObservacao] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (editMode && produtoEditado) {
-      setIngredientes((prev) =>
-        prev.map((ing) => ({
-          ...ing,
-          incluso:
-            produtoEditado.ingredientes?.some((i) => i.nome === ing.nome) ??
-            ing.incluso,
-        }))
-      );
+    if (!produto?.id) return;
+    carregarCustomizacoes();
+  }, []);
 
-      setAdicionais((prev) =>
-        prev.map((ad) => ({
-          ...ad,
-          selecionado:
-            produtoEditado.adicionais?.some((a) => a.nome === ad.nome) ??
-            ad.selecionado,
-        }))
-      );
+  async function carregarCustomizacoes() {
+    try {
+      // @ts-ignore
+      const { data: ingredientesDB, error: ingError } = await supabase
+        .from("product_ingredients")
+        .select("id, name, default_included, removable")
+        .eq("product_id", produto.id);
 
-      setObservacao(produtoEditado.observacao || "");
+      if (ingError) throw ingError;
+
+      // @ts-ignore
+      const { data: adicionaisDB, error: addError } = await supabase
+        .from("product_additionals")
+        .select("id, name, price")
+        .eq("product_id", produto.id);
+
+      if (addError) throw addError;
+
+      // Carregar ingredientes
+      const ingredientesCarregados = (ingredientesDB || []).map((i) => ({
+        id: i.id,
+        nome: i.name,
+        incluso: i.default_included,
+        removable: i.removable,
+      }));
+
+      // Carregar adicionais
+      const adicionaisCarregados = (adicionaisDB || []).map((a) => ({
+        id: a.id,
+        nome: a.name,
+        preco: a.price,
+        selecionado: false,
+      }));
+
+      // Se estiver editando, aplicar as seleções anteriores
+      if (editar && produtoEditado) {
+        // Restaurar ingredientes removidos
+        if (produtoEditado.ingredientes_removidos) {
+          const idsRemovidos = produtoEditado.ingredientes_removidos.map(
+            (i: any) => i.id
+          );
+          ingredientesCarregados.forEach((ing) => {
+            if (idsRemovidos.includes(ing.id)) {
+              ing.incluso = false;
+            }
+          });
+        }
+
+        // Restaurar adicionais selecionados
+        if (produtoEditado.adicionais) {
+          const idsAdicionais = produtoEditado.adicionais.map(
+            (a: any) => a.id
+          );
+          adicionaisCarregados.forEach((add) => {
+            if (idsAdicionais.includes(add.id)) {
+              add.selecionado = true;
+            }
+          });
+        }
+
+        // Restaurar observação
+        if (produtoEditado.observacao) {
+          setObservacao(produtoEditado.observacao);
+        }
+      }
+
+      setIngredientes(ingredientesCarregados);
+      setAdicionais(adicionaisCarregados);
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Erro", "Erro ao carregar ingredientes e adicionais");
+    } finally {
+      setLoading(false);
     }
-  }, [editMode, produtoEditado]);
+  }
 
-  const toggleIngrediente = (id: number) => {
+  const toggleIngrediente = (id: string) => {
     setIngredientes((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, incluso: !item.incluso } : item
-      )
+      prev.map((i) => (i.id === id ? { ...i, incluso: !i.incluso } : i))
     );
   };
 
-  const toggleAdicional = (id: number) => {
+  const toggleAdicional = (id: string) => {
     setAdicionais((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, selecionado: !item.selecionado } : item
+      prev.map((a) =>
+        a.id === id ? { ...a, selecionado: !a.selecionado } : a
       )
     );
   };
 
-  const precoBase = 24.9;
-  const precoTotal =
-    precoBase +
-    adicionais
-      .filter((a) => a.selecionado)
-      .reduce((sum, a) => sum + a.preco, 0);
+  const precoAdicionais = adicionais
+    .filter((a) => a.selecionado)
+    .reduce((sum, a) => sum + a.preco, 0);
 
-  const custom = [
-    ...ingredientes.filter((i) => !i.incluso).map((i) => `- ${i.nome}`),
-    ...adicionais.filter((a) => a.selecionado).map((a) => `+ ${a.nome}`),
-  ].join(", ");
+  const precoTotal = produto.price + precoAdicionais;
 
   const handleAddToCart = () => {
-    const novoProduto = {
-      id: produtoEditado?.id || Date.now().toString(),
-      name: produtoEditado?.name || "Smash da Casa",
+    const itemCarrinho = {
+      cartEntryId:
+        editar && cart[editIndex]?.cartEntryId
+          ? cart[editIndex].cartEntryId
+          : `${produto.id}-${Date.now()}`,
+      id: produto.id,
+      name: produto.name,
+      image_url: produto.image_url,
       price: precoTotal,
-      custom,
-      ingredientes: ingredientes.filter((i) => i.incluso),
+      qty: editar && cart[editIndex]?.qty ? cart[editIndex].qty : 1,
+      ingredientes_removidos: ingredientes.filter(
+        (i) => i.removable && !i.incluso
+      ),
       adicionais: adicionais.filter((a) => a.selecionado),
       observacao,
     };
 
-    let novoCarrinho;
-    if (typeof route.params?.editIndex === "number") {
-      novoCarrinho = [...cartAtual];
-      novoCarrinho[route.params.editIndex] = novoProduto;
+    const novoCarrinho = [...cart];
+
+    if (editar && typeof editIndex === "number") {
+      novoCarrinho[editIndex] = itemCarrinho;
     } else {
-      novoCarrinho = [...cartAtual, novoProduto];
+      novoCarrinho.push(itemCarrinho);
     }
 
     navigation.navigate("Carrinho", {
       cart: novoCarrinho,
       tipoLocal,
+      eventId,
+      locationId,
     });
   };
 
-  const produto = {
-    nome: produtoEditado?.name || "Smash da Casa",
-    descricao:
-      "Pão brioche, carne 160g, cheddar, alface, tomate, cebola roxa e molho da casa.",
-  };
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content
-          title={editMode ? "Editar Produto" : "Descrição do Produto"}
+          title={editar ? "Editar Produto" : produto.name}
           color="white"
         />
       </Appbar.Header>
 
       <ScrollView style={styles.container}>
         <Image
-          source={require("../assets/ic_burguer.png")}
+          source={
+            produto.image_url
+              ? { uri: produto.image_url }
+              : require("../assets/ic_product.png")
+          }
           style={styles.productImage}
         />
 
-        <Text style={styles.productName}>{produto.nome}</Text>
-        <Text style={styles.productDesc}>{produto.descricao}</Text>
+        <Text style={styles.productName}>{produto.name}</Text>
+        <Text style={styles.productDesc}>
+          {produto.description || "Produto delicioso"}
+        </Text>
+        <Text style={styles.productPrice}>
+          Preço base: R$ {produto.price.toFixed(2)}
+        </Text>
 
-        <Text style={styles.titleSection}>Ingredientes</Text>
-        {ingredientes.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={[styles.option, !item.incluso && styles.removedOption]}
-            onPress={() => toggleIngrediente(item.id)}
-          >
-            <Text
-              style={[
-                styles.optionText,
-                !item.incluso && styles.textRemovedOption,
-              ]}
-            >
-              {item.nome}
-            </Text>
-            <Text style={styles.toggleText}>
-              {item.incluso ? "✓ Incluso" : "Remover"}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        {/* INGREDIENTES */}
+        {ingredientes.some((i) => i.removable) && (
+          <>
+            <Text style={styles.titleSection}>Ingredientes</Text>
+            {ingredientes
+              .filter((i) => i.removable)
+              .map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.option,
+                    !item.incluso && styles.removedOption,
+                  ]}
+                  onPress={() => toggleIngrediente(item.id)}
+                >
+                  <Text style={styles.optionText}>{item.nome}</Text>
+                  <Text style={styles.toggleText}>
+                    {item.incluso ? "✓ Incluso" : "❌ Remover"}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+          </>
+        )}
 
-        <Text style={styles.titleSection}>Adicionais</Text>
-        {adicionais.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={[styles.option, item.selecionado && styles.selectedOption]}
-            onPress={() => toggleAdicional(item.id)}
-          >
-            <Text
-              style={[
-                styles.optionText,
-                item.selecionado && styles.textSelectedOption,
-              ]}
-            >
-              {item.nome} (+ R$ {item.preco.toFixed(2)})
-            </Text>
-          </TouchableOpacity>
-        ))}
+        {/* ADICIONAIS */}
+        {adicionais.length > 0 && (
+          <>
+            <Text style={styles.titleSection}>Adicionais</Text>
+            {adicionais.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={[
+                  styles.option,
+                  item.selecionado && styles.selectedOption,
+                ]}
+                onPress={() => toggleAdicional(item.id)}
+              >
+                <Text style={styles.optionText}>
+                  {item.nome} (+ R$ {item.preco.toFixed(2)})
+                </Text>
+                {item.selecionado && (
+                  <Text style={styles.toggleText}>✓</Text>
+                )}
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
 
+        {/* OBSERVAÇÃO */}
         <Text style={styles.titleSection}>Observações</Text>
         <TextInput
           mode="outlined"
-          style={styles.input}
-          placeholder="Ex: tirar cebola, ponto da carne, etc."
+          placeholder="Ex: sem cebola, pouco molho..."
           value={observacao}
           onChangeText={setObservacao}
+          multiline
+          style={{ marginBottom: 20 }}
         />
 
+        {/* FOOTER */}
         <View style={styles.footer}>
-          <Text style={styles.totalText}>
-            Total: R$ {precoTotal.toFixed(2)}
-          </Text>
+          <View>
+            <Text style={styles.totalLabel}>Total com adicionais:</Text>
+            <Text style={styles.totalText}>R$ {precoTotal.toFixed(2)}</Text>
+          </View>
           <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
             <Text style={styles.textButton}>
-              {editMode ? "Salvar Alterações" : "Adicionar ao Carrinho"}
+              {editar ? "Salvar Alterações" : "Adicionar ao Carrinho"}
             </Text>
           </TouchableOpacity>
         </View>
