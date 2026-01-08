@@ -1,112 +1,84 @@
-import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { Appbar } from "react-native-paper";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { styles } from "../styles/stylesProduto";
-
-//Mockup de produtos para teste
-
-const mockProdutosRestaurante = [
-  {
-    id: "1",
-    name: "Hamburguer",
-    price: 24.9,
-    image: require("../assets/ic_burguer.png"),
-  },
-  {
-    id: "2",
-    name: "Pizza",
-    price: 49.9,
-    image: require("../assets/ic_product.png"),
-  },
-  {
-    id: "3",
-    name: "Suco Natural",
-    price: 8.5,
-    image: require("../assets/ic_product.png"),
-  },
-  {
-    id: "4",
-    name: "Prato Feito",
-    price: 32.0,
-    image: require("../assets/ic_product.png"),
-  },
-  {
-    id: "5",
-    name: "Refrigerante",
-    price: 6.0,
-    image: require("../assets/ic_product.png"),
-  },
-  {
-    id: "6",
-    name: "Sushi",
-    price: 34.0,
-    image: require("../assets/ic_product.png"),
-  },
-];
-
-const mockProdutosEvento = [
-  {
-    id: "1",
-    name: "Cerveja",
-    price: 8.0,
-    image: require("../assets/ic_product.png"),
-  },
-  {
-    id: "2",
-    name: "Whisky",
-    price: 21.0,
-    image: require("../assets/ic_product.png"),
-  },
-  {
-    id: "3",
-    name: "Tônica",
-    price: 5.0,
-    image: require("../assets/ic_product.png"),
-  },
-  {
-    id: "4",
-    name: "Água sem gás",
-    price: 2.0,
-    image: require("../assets/ic_product.png"),
-  },
-  {
-    // id: "5",
-    name: "Água com gás",
-    price: 2.5,
-    image: require("../assets/ic_product.png"),
-  },
-  {
-    id: "6",
-    name: "Sorvete",
-    price: 7.5,
-    image: require("../assets/ic_product.png"),
-  },
-];
+import { supabase } from "../../utils/supabase";
+import { Product } from "../types/database.types";
 
 export default function Home({ navigation, route }) {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState<any[]>([]);
+  const [produtos, setProdutos] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const tipoLocal = route?.params?.tipo || "restaurante";
-  const produtos =
-    tipoLocal === "evento" ? mockProdutosEvento : mockProdutosRestaurante;
 
-  const addToCart = (item) => {
-    setCart((prev) => [...prev, item]);
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("active", true)
+        .order("name");
+
+      if (error) throw error;
+
+      setProdutos(data || []);
+    } catch (error: any) {
+      Alert.alert("Erro", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  const goToDescription = (item: Product) => {
+    navigation.navigate("DescricaoProduto", {
+      produto: item,
+      cart,
+      tipoLocal,
+    });
+  };
 
-  // Renderização dos produtos
+  const total = cart.reduce(
+    (sum, item: any) => sum + item.price * (item.qty || 1),
+    0
+  );
 
-  const renderProduct = ({ item }: any) => (
+  const renderProduct = ({ item }: { item: Product }) => (
     <View style={styles.productCard}>
-      <Image source={item.image} style={styles.productImage} />
-      <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.productPrice}>R$ {item.price.toFixed(2)}</Text>
+      {item.image_url ? (
+        <Image
+          source={{ uri: item.image_url }}
+          style={styles.productImage}
+        />
+      ) : (
+        <Image
+          source={require("../assets/ic_product.png")}
+          style={styles.productImage}
+        />
+      )}
 
+      <Text style={styles.productName}>{item.name}</Text>
+
+      <Text style={styles.productPrice}>
+        R$ {item.price.toFixed(2)}
+      </Text>
+
+      {/* BOTÃO MANTIDO — AGORA REDIRECIONA */}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => addToCart(item)}
+        onPress={() => goToDescription(item)}
       >
         <Image
           source={require("../assets/ic_carrinho.png")}
@@ -117,23 +89,35 @@ export default function Home({ navigation, route }) {
     </View>
   );
 
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.Content title="Produtos" color="white" />
       </Appbar.Header>
 
-      {/* Lista dos produtos */}
       <FlatList
         data={produtos}
         numColumns={2}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
         renderItem={renderProduct}
         showsVerticalScrollIndicator={false}
       />
 
+      {/* FOOTER DO CARRINHO SÓ APARECE QUANDO HOUVER ITENS */}
       {cart.length > 0 && (
         <TouchableOpacity
           style={styles.cartFooter}
