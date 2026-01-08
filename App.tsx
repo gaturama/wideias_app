@@ -19,11 +19,13 @@ import DescricaoProduto from "./src/screens/DescricaoProduto";
 import { NavigationContainer } from "@react-navigation/native";
 import { PedidosProvider } from "./src/context/PedidosContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { CreditoProvider } from "./src/context/CreditoContext";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
+    <CreditoProvider>
     <PedidosProvider>
       <NavigationContainer>
         {/*Inicialização definida para tela de Login || Para testes, substituir para a tela desejada*/}
@@ -111,5 +113,6 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </PedidosProvider>
+    </CreditoProvider>
   );
 }

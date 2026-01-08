@@ -10,6 +10,7 @@ import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPedido";
 import { usePedidos } from "../context/PedidosContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useCredito } from "../context/CreditoContext";
 
 interface Localizacao {
   latitude: number;
@@ -18,8 +19,8 @@ interface Localizacao {
 
 export default function Pedido({ navigation, route }) {
   const { pedidos, concluirPedido } = usePedidos();
+  const { credito } = useCredito();
   const localizacao: Localizacao | undefined = route.params?.localizacao;
-  const credito = route.params?.credito ?? 100.0;
 
   const handlePerfil = () => {
     navigation.navigate("Perfil");
