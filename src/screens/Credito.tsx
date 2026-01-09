@@ -10,15 +10,20 @@ import {
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesCredito";
 import { Ionicons } from "@expo/vector-icons";
+import { useCredito } from "../context/CreditoContext";
 
 export default function Credito({ navigation }) {
   const [valor, setValor] = useState<string>("");
   const [saldo, setSaldo] = useState<number>(50.0);
+  const { credito, adicionarCredito } = useCredito();
 
   // Mockup de adicionar saldo
   const addSaldoMock = (valor: number) => {
-    setSaldo((prev) => prev + valor);
-    Alert.alert("Sucesso", `R$ ${valor.toFixed(2)} adicionados ao seu saldo!`);
+    adicionarCredito(valor);
+    Alert.alert(
+      "Sucesso", 
+      `R$ ${valor.toFixed(2)} adicionados ao seu saldo!`
+    );
   };
 
   // Função para adicionar crédito ao saldo
@@ -28,7 +33,7 @@ export default function Credito({ navigation }) {
       Alert.alert("Erro", "Digite um valor válido para adicionar crédito.");
       return;
     }
-    setSaldo((prev) => prev + valorNum);
+    adicionarCredito(valorNum);
     Alert.alert(
       "Sucesso",
       `R$ ${valorNum.toFixed(2)} adicionados ao seu saldo!`

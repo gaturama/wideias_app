@@ -13,6 +13,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../utils/supabase";
 import { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+//import { useCredito } from "../context/CreditoContext";
+
 
 interface OrderItem {
   id: string;
@@ -56,7 +58,7 @@ export default function Pedido({ navigation, route }) {
         return;
       }
 
-      const { data: profile } = await supabase
+     /* const { data: profile } = await supabase
         .from("profiles")
         .select("credito")
         .eq("id", user.id)
@@ -64,7 +66,7 @@ export default function Pedido({ navigation, route }) {
 
       if (profile) {
         setCredito(profile.credito || 0);
-      }
+      }*/
 
       const { data, error } = await supabase
         .from("order_items")
@@ -118,6 +120,7 @@ export default function Pedido({ navigation, route }) {
     setRefreshing(true);
     carregarPedidos();
   };
+
 
   const handlePerfil = () => {
     navigation.navigate("Perfil");
