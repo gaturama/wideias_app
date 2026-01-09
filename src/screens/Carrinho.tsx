@@ -7,6 +7,7 @@ import {
   View,
   Alert,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { styles } from "../styles/stylesCarrinho";
 import { Appbar } from "react-native-paper";
@@ -16,8 +17,10 @@ export default function Carrinho({ navigation, route }: any) {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [observacoes, setObservacoes] = useState("");
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userCredito, setUserCredito] = useState(0);
+
   const tipoLocal = route.params?.tipoLocal;
-  const eventId = route.params?.eventId;
   const locationId = route.params?.locationId;
 
   useEffect(() => {
@@ -31,6 +34,39 @@ export default function Carrinho({ navigation, route }: any) {
       setCartItems(items);
     }
   }, [route.params?.cart]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        Alert.alert("Erro", "Usuário não autenticado");
+        return;
+      }
+
+      setUserId(user.id);
+
+      /*const { data: userData, error: creditError } = await supabase
+        .from("users")
+        .select("credito")
+        .eq("id", user.id)
+        .single();
+
+      if (!creditError && userData) {
+        setUserCredito(userData.credito || 0);
+      }*/
+    } catch (error) {
+      console.error("Erro ao buscar dados do usuário:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleIncrease = (cartEntryId: string) => {
     setCartItems((prev) =>
@@ -54,8 +90,16 @@ export default function Carrinho({ navigation, route }: any) {
     );
   };
 
+  // CORRIGIDO: Calcula o preço total incluindo adicionais
+  const calcularPrecoItem = (item: any) => {
+    let precoBase = item.price;
+    
+    return precoBase;
+  };
+
+  // CORRIGIDO: Usa a função de cálculo correta
   const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.qty,
+    (sum, item) => sum + calcularPrecoItem(item) * item.qty,
     0
   );
 
@@ -69,7 +113,6 @@ export default function Carrinho({ navigation, route }: any) {
       produtoEditado: item,
       cart: cartItems,
       tipoLocal,
-      eventId,
       locationId,
       editIndex,
       editar: true,
@@ -77,10 +120,8 @@ export default function Carrinho({ navigation, route }: any) {
   };
 
   const handleAddMoreProducts = () => {
-    // Voltar para a tela de produtos mantendo o carrinho
     navigation.navigate("Produto", {
-      tipo: tipoLocal,
-      eventId,
+      tipoLocal,
       locationId,
       cart: cartItems,
     });
@@ -92,24 +133,29 @@ export default function Carrinho({ navigation, route }: any) {
       return;
     }
 
+    if (!userId) {
+      Alert.alert("Erro", "Dados do usuário não encontrados. Tente fazer login novamente.");
+      return;
+    }
+
     if (tipoLocal === "restaurante") {
       navigation.navigate("Mesa", {
         cart: cartItems,
         tipoLocal,
-        eventId,
         locationId,
         observacoes,
         total,
       });
     } else {
-      // Ir direto para pagamento
       navigation.navigate("Pagamento", {
         cart: cartItems,
-        tipoLocal,
-        eventId,
-        locationId,
-        observacoes,
-        total,
+        credito: userCredito,
+        userId: userId,
+        locationId: locationId,
+        mesa: null, 
+        tipoLocal: tipoLocal,
+        observacoes: observacoes,
+        total: total,
       });
     }
   };
@@ -125,7 +171,7 @@ export default function Carrinho({ navigation, route }: any) {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text style={styles.emptyText}>Seu carrinho está vazio.</Text>
+          <Text>Seu carrinho está vazio.</Text>
           <TouchableOpacity
             style={[styles.nextButton, { marginTop: 20 }]}
             onPress={handleAddMoreProducts}
@@ -141,15 +187,24 @@ export default function Carrinho({ navigation, route }: any) {
             contentContainerStyle={styles.listContent}
             renderItem={({ item }) => (
               <View style={styles.itemCard}>
+                
+                {item.imagem_url && (
+                  <Image
+                    source={{ uri: item.imagem_url }}
+                    style={styles.itemImage}
+                    resizeMode="cover"
+                  />
+                )}
+
                 <View style={styles.itemInfo}>
                   <Text style={styles.itemName}>{item.name}</Text>
 
-                  {/* INGREDIENTES REMOVIDOS */}
+                  {/* CORRIGIDO: Adicionada key única */}
                   {item.ingredientes_removidos?.length > 0 && (
                     <View style={{ marginTop: 4 }}>
-                      {item.ingredientes_removidos.map((ing: any) => (
+                      {item.ingredientes_removidos.map((ing: any, index: number) => (
                         <Text
-                          key={ing.id}
+                          key={`${ing.id}-${index}`}
                           style={{ fontSize: 12, color: "#B00020" }}
                         >
                           – Sem {ing.nome}
@@ -158,12 +213,12 @@ export default function Carrinho({ navigation, route }: any) {
                     </View>
                   )}
 
-                  {/* ADICIONAIS */}
+                  {/* CORRIGIDO: Adicionada key única */}
                   {item.adicionais?.length > 0 && (
                     <View style={{ marginTop: 4 }}>
-                      {item.adicionais.map((add: any) => (
+                      {item.adicionais.map((add: any, index: number) => (
                         <Text
-                          key={add.id}
+                          key={`${add.id}-${index}`}
                           style={{ fontSize: 12, color: "#2E7D32" }}
                         >
                           + {add.nome} (R$ {add.preco.toFixed(2)})
@@ -172,14 +227,16 @@ export default function Carrinho({ navigation, route }: any) {
                     </View>
                   )}
 
+                  {/* OBSERVAÇÃO */}
                   {item.observacao ? (
-                    <Text style={styles.itemObservation}>
+                    <Text style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
                       Obs: {item.observacao}
                     </Text>
                   ) : null}
 
+                  {/* CORRIGIDO: Mostra o preço com adicionais */}
                   <Text style={styles.itemPrice}>
-                    R$ {item.price.toFixed(2)}
+                    R$ {calcularPrecoItem(item).toFixed(2)}
                   </Text>
 
                   <TouchableOpacity

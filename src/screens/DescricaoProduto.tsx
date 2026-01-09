@@ -208,7 +208,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
         <Text style={styles.productDesc}>
           {produto.description || "Produto delicioso"}
         </Text>
-        <Text style={styles.productPrice}>
+        <Text>
           Preço base: R$ {produto.price.toFixed(2)}
         </Text>
 
@@ -229,7 +229,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
                 >
                   <Text style={styles.optionText}>{item.nome}</Text>
                   <Text style={styles.toggleText}>
-                    {item.incluso ? "✓ Incluso" : "❌ Remover"}
+                    {item.incluso ? "✓ Incluso" : "- Remover"}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -274,7 +274,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
         {/* FOOTER */}
         <View style={styles.footer}>
           <View>
-            <Text style={styles.totalLabel}>Total com adicionais:</Text>
+            <Text>Total com adicionais:</Text>
             <Text style={styles.totalText}>R$ {precoTotal.toFixed(2)}</Text>
           </View>
           <TouchableOpacity style={styles.button} onPress={handleAddToCart}>

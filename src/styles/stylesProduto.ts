@@ -133,4 +133,48 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
+
+  cartBar: {
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  backgroundColor: '#4CAF50',
+  paddingVertical: 12,
+  paddingHorizontal: 16,
+  elevation: 8,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: -2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+},
+cartBarContent: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+},
+cartBarItems: {
+  color: '#fff',
+  fontSize: 14,
+  fontWeight: '600',
+},
+cartBarTotal: {
+  color: '#fff',
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginTop: 2,
+},
+cartBarButton: {
+  backgroundColor: '#fff',
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  borderRadius: 8,
+},
+cartBarButtonText: {
+  color: '#4CAF50',
+  fontSize: 16,
+  fontWeight: 'bold',
+},
+
+
 });

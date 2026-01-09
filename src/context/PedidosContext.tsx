@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { Product } from "../types/database.types";
 
 export interface Pedido {
   id: string;
@@ -7,6 +8,7 @@ export interface Pedido {
   quantidade: number;
   local?: string;
   dataHora?: string;
+  image_url?: product.image_url;
 }
 
 interface PedidosContextType {

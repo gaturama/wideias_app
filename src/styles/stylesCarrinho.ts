@@ -145,4 +145,17 @@ editText: {
   fontSize: 14,
 },
 
+addMoreButton: {
+  alignItems: 'center',
+  paddingVertical: 12,
+  borderTopWidth: 1,
+  borderTopColor: '#E0E0E0',
+},
+
+addMoreButtonText: {
+  color: '#4CAF50',
+  fontSize: 16,
+  fontWeight: '600',
+},
+
 });

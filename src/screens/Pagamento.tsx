@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPagamento";
 import {
@@ -8,111 +8,164 @@ import {
   Image,
   Linking,
   Alert,
+  ActivityIndicator,
 } from "react-native";
-import * as Location from "expo-location";
-import { usePedidos } from "../context/PedidosContext";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../utils/supabase";
 
 export default function Pagamento({ navigation, route }) {
   const cartItems = route.params?.cart || [];
+  const tipoLocal = route.params?.tipoLocal;
+  const eventId = route.params?.eventId;
+  const locationId = route.params?.locationId;
+  const observacoes = route.params?.observacoes;
+  const mesa = route.params?.mesa;
+  
   const [loading, setLoading] = useState(false);
-  const { addPedidos } = usePedidos();
-  const [usarCredito, setUsarCredito] = useState(false);
-
-  const creditoUsuario = route.params?.credito ?? 100.0;
+  // const [usarCredito, setUsarCredito] = useState(false);
+  // const [creditoUsuario, setCreditoUsuario] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const totalCarrinho = cartItems.reduce(
-    (sum, item) => sum + item.price * (item.quantidade || 1),
+    (sum, item) => sum + item.price * (item.qty || 1),
     0
   );
 
-  const totalFinal = usarCredito
-    ? Math.max(totalCarrinho - creditoUsuario, 0)
-    : totalCarrinho;
+  // const creditoAplicado = usarCredito
+  //   ? Math.min(creditoUsuario, totalCarrinho)
+  //   : 0;
+  // const totalFinal = totalCarrinho - creditoAplicado;
+  const totalFinal = totalCarrinho;
 
-  // Função para finalizar o pagamento
-  const finalizarPagamento = async () => {
+  // useEffect(() => {
+  //   carregarCredito();
+  // }, []);
+
+  // const carregarCredito = async () => {
+  //   try {
+  //     const {
+  //       data: { user },
+  //     } = await supabase.auth.getUser();
+  //     if (!user) return;
+
+  //     setUserId(user.id);
+
+  //     const { data, error } = await supabase
+  //       .from("profiles")
+  //       .select("credito")
+  //       .eq("id", user.id)
+  //       .single();
+
+  //     if (error) throw error;
+
+  //     setCreditoUsuario(data?.credito || 0);
+  //   } catch (error: any) {
+  //     console.error("Erro ao carregar crédito:", error);
+  //   }
+  // };
+
+  const finalizarPagamento = async (paymentMethod: string) => {
     if (cartItems.length === 0) {
-      Alert.alert(
-        "Carrinho vazio",
-        "Adicione produtos antes de finalizar o pagamento"
-      );
+      Alert.alert("Carrinho vazio", "Adicione produtos antes de finalizar");
       return;
     }
 
     setLoading(true);
 
     try {
-      // Solicitar permissão de localização
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permissão negada",
-          "Autorize o acesso à localização nas configurações do seu aparelho para continuar."
-        );
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        Alert.alert("Erro", "Usuário não autenticado");
         setLoading(false);
         return;
       }
 
-      let localizacao = null;
-      let localNome = "Local desconhecido";
+      // Buscar location se não foi passada
+      let finalLocationId = locationId;
+      if (!finalLocationId) {
+        const { data: location } = await supabase
+          .from("locations")
+          .select("id")
+          .limit(1)
+          .single();
 
-      // Obter localização e converter em nome legível
-      try {
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        const [reverseGeocode] = await Location.reverseGeocodeAsync({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        });
-
-        localizacao = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        };
-
-        if (reverseGeocode) {
-          localNome = `${reverseGeocode.street || "Rua desconhecida"}, ${
-            reverseGeocode.city || "Cidade desconhecida"
-          }`;
+        if (!location) {
+          Alert.alert("Erro", "Nenhuma localização encontrada");
+          setLoading(false);
+          return;
         }
-      } catch (err) {
-        console.warn("AVISO: Não foi possível obter a localização.", err);
+        finalLocationId = location.id;
       }
 
-      // Preparar dados do pedido
-      const produtosParaPedido = cartItems.flatMap((item) => {
-        const quantity = item.quantidade || item.qty || 1;
+      // Criar o pedido
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          user_id: user.id,
+          location_id: finalLocationId,
+          status: "pending",
+          total: totalCarrinho,
+          payment_method: paymentMethod,
+          observacoes: observacoes || null,
+          mesa: mesa || null,
+        })
+        .select()
+        .single();
 
-        return Array.from({ length: quantity }, (_, index) => ({
-          id: `item-${Date.now()}-${Math.random()
-            .toString(36)
-            .slice(2, 9)}-${index}`,
-          nome: item.name,
-          preco: item.price,
-          quantidade: 1,
-          local: localNome,
+      if (orderError) throw orderError;
 
-          custom: item.custom || null,
-        }));
-      });
+      // Criar os itens do pedido
+      const orderItems = cartItems.map((item) => ({
+        order_id: order.id,
+        product_id: item.id,
+        quantity: item.qty,
+        price: item.price,
+        observations: item.observacao || null,
+        custom: JSON.stringify({
+          ingredientes_removidos: item.ingredientes_removidos || [],
+          adicionais: item.adicionais || [],
+        }),
+      }));
 
-      // Adiciona no contexto
-      addPedidos(produtosParaPedido);
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(orderItems);
 
-      Alert.alert("Pix", "Pagamento realizado com sucesso!");
-      setTimeout(() => {
-        navigation.navigate("Main", {
-          screen: "Pedido",
-          params: { localizacao },
-        });
-      }, 200);
-    } catch (error) {
-      console.error("Erro crítico no processo de pagamento:", error);
-      Alert.alert("Erro", "Ocorreu um problema inesperado. Tente novamente.");
-    } finally {
+      if (itemsError) throw itemsError;
+
+      // Atualizar crédito do usuário se foi usado
+      // if (usarCredito && creditoAplicado > 0) {
+      //   const novoCredito = creditoUsuario - creditoAplicado;
+      //   const { error: creditError } = await supabase
+      //     .from("profiles")
+      //     .update({ credito: novoCredito })
+      //     .eq("id", user.id);
+
+      //   if (creditError) throw creditError;
+      // }
+
       setLoading(false);
+      Alert.alert(
+        "Sucesso!",
+        `Pedido realizado com sucesso!\n\nTotal pago: R$ ${totalFinal.toFixed(2)}`,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate("Main", {
+                screen: "Pedido",
+              });
+            },
+          },
+        ]
+      );
+    } catch (err: any) {
+      setLoading(false);
+      Alert.alert("Erro", err.message);
+      console.error(err);
     }
   };
 
@@ -138,7 +191,6 @@ export default function Pagamento({ navigation, route }) {
     try {
       const samsungScheme = "samsungpay://";
       const supported = await Linking.canOpenURL(samsungScheme);
-
       if (supported) {
         await Linking.openURL(samsungScheme);
       } else {
@@ -148,7 +200,7 @@ export default function Pagamento({ navigation, route }) {
       }
     } catch (err) {
       console.log("Erro abrindo Samsung Pay:", err);
-      Alert.alert("Não foi possível abrir o Samsung Pay.");
+      Alert.alert("Ops", "Não foi possível abrir o Samsung Pay.");
     }
   }
 
@@ -183,10 +235,22 @@ export default function Pagamento({ navigation, route }) {
           color="#000"
           style={styles.iconPay}
         />
+
         <Text style={styles.totalText}>Total a pagar:</Text>
         <Text style={styles.totalValor}>R$ {totalFinal.toFixed(2)}</Text>
 
-        <TouchableOpacity
+        {/* {creditoAplicado > 0 && (
+          <View style={{ marginTop: 8, marginBottom: 16 }}>
+            <Text style={{ fontSize: 14, color: "#666", textAlign: "center" }}>
+              Valor do carrinho: R$ {totalCarrinho.toFixed(2)}
+            </Text>
+            <Text style={{ fontSize: 14, color: "#2E7D32", textAlign: "center" }}>
+              Crédito aplicado: - R$ {creditoAplicado.toFixed(2)}
+            </Text>
+          </View>
+        )} */}
+
+        {/* <TouchableOpacity
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -194,70 +258,82 @@ export default function Pagamento({ navigation, route }) {
             backgroundColor: usarCredito ? "#d1f0d1" : "#f1f1f1",
             borderRadius: 8,
             marginBottom: 20,
+            opacity: creditoUsuario === 0 ? 0.5 : 1,
           }}
           onPress={() => setUsarCredito(!usarCredito)}
+          disabled={creditoUsuario === 0}
         >
           <Ionicons
             name={usarCredito ? "checkbox" : "square-outline"}
             size={24}
-            color={usarCredito ? "green" : "black"}
+            color={usarCredito ? "#2E7D32" : "#666"}
           />
-          <Text style={styles.textContent}>
-            Crédito Disponível R$ {creditoUsuario.toFixed(2)}
-          </Text>
-        </TouchableOpacity>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <Text style={styles.textContent}>Usar Crédito Disponível</Text>
+            <Text style={{ fontSize: 14, color: "#666" }}>
+              R$ {creditoUsuario.toFixed(2)}
+            </Text>
+          </View>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity
-          style={styles.buttonContent}
-          onPress={() =>
-            navigation.navigate("DividirConta", {
-              pedidoId: Date.now,
-              valorTotal: totalFinal,
-            })
-          }
-        >
-          <Text style={styles.textContent}>Dividir Conta</Text>
-        </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+        ) : (
+          <>
+            <TouchableOpacity
+              style={styles.buttonContent}
+              onPress={() => finalizarPagamento("PIX")}
+            >
+              <Image
+                source={require("../assets/ic_pix.png")}
+                style={styles.iconContent}
+              />
+              <Text style={styles.textContent}>PIX</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.buttonContent}
-          onPress={finalizarPagamento}
-        >
-          <Image
-            source={require("../assets/ic_pix.png")}
-            style={styles.iconContent}
-          />
-          <Text style={styles.textContent}>
-            {loading ? "Processando..." : "PIX"}
-          </Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonContent}
+              onPress={() => {
+                openSamsungPay();
+                setTimeout(() => finalizarPagamento("Samsung Pay"), 1000);
+              }}
+            >
+              <Image
+                source={require("../assets/ic_samsung.png")}
+                style={styles.iconContent}
+              />
+              <Text style={styles.textContent}>Samsung Pay</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buttonContent} onPress={openSamsungPay}>
-          <Image
-            source={require("../assets/ic_samsung.png")}
-            style={styles.iconContent}
-          />
-          <Text style={styles.textContent}>Samsung Pay</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonContent}
+              onPress={() => {
+                openGoogleWallet();
+                setTimeout(() => finalizarPagamento("Google Pay"), 1000);
+              }}
+            >
+              <Image
+                source={require("../assets/ic_google.png")}
+                style={styles.iconContent}
+              />
+              <Text style={styles.textContent}>Google Pay</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.buttonContent}
-          onPress={openGoogleWallet}
-        >
-          <Image
-            source={require("../assets/ic_google.png")}
-            style={styles.iconContent}
-          />
-          <Text style={styles.textContent}>Google Pay</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.buttonContent} onPress={openApplePay}>
-          <Image
-            source={require("../assets/ic_apple.png")}
-            style={styles.iconContent}
-          />
-          <Text style={styles.textContent}>Apple Pay</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonContent}
+              onPress={() => {
+                openApplePay();
+                setTimeout(() => finalizarPagamento("Apple Pay"), 1000);
+              }}
+            >
+              <Image
+                source={require("../assets/ic_apple.png")}
+                style={styles.iconContent}
+              />
+              <Text style={styles.textContent}>Apple Pay</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </View>
   );

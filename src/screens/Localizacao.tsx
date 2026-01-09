@@ -5,18 +5,21 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import * as Location from "expo-location";
 import { styles } from "../styles/stylesLocalizacao";
 import CustomAlert from "../components/CustomAlert";
+import { supabase } from "../../utils/supabase";
 
 // Tipos
-interface Evento {
+interface Localizacao {
   id: string;
-  nome: string;
-  data: string;
-  hora: string;
-  local: string;
+  name: string;
+  address: string;
+  description?: string;
+  status?: string;
+  created_at?: string;
 }
 
 interface ModalData {
@@ -25,134 +28,131 @@ interface ModalData {
   id: string;
 }
 
-// Dados mockados de eventos
-const EVENTOS_MOCK: Evento[] = [
-  {
-    id: "1",
-    nome: "Show Cover M. Jackson",
-    data: "4 de Junho",
-    hora: "20:00 PM",
-    local: "Praia Central",
-  },
-  {
-    id: "2",
-    nome: "Festa do Divino",
-    data: "7 de Junho",
-    hora: "19:00 PM",
-    local: "Igreja Matriz Divino Espirito Santo",
-  },
-  {
-    id: "3",
-    nome: "Beiro Open Bar",
-    data: "10 de Junho",
-    hora: "22:00 PM",
-    local: "Beiro Bebidas e Tabacaria",
-  },
-  {
-    id: "4",
-    nome: "Passeio Ciclistico",
-    data: "12 de Junho",
-    hora: "10:00 AM",
-    local: "Prefeitura Municipal de Barra Velha",
-  },
-];
-
 export default function EventsScreen({ navigation }) {
   const [locationAddress, setLocationAddress] = useState<string>(
     "Buscando localização..."
   );
-  const [events, setEvents] = useState<Evento[]>([]);
+  const [locations, setLocations] = useState<Localizacao[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [pedidosAtuais, setPedidosAtuais] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentEventData, setCurrentEventData] = useState<ModalData | null>(
+  const [currentLocationData, setCurrentLocationData] = useState<ModalData | null>(
     null
   );
 
+  // Função para buscar locations do banco
+  const buscarLocations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("locations")
+        .select("*")
+        .order("name", { ascending: true });
+
+      if (error) throw error;
+
+      setLocations(data || []);
+      setErrorMsg(null);
+    } catch (error: any) {
+      console.error("Erro ao buscar localizações:", error);
+      setErrorMsg("Não foi possível carregar as localizações.");
+    } finally {
+      setIsLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  // Função para buscar localização do usuário
+  const buscarLocalizacaoUsuario = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permissão para acessar a localização foi negada.");
+      setLocationAddress("Localização não disponível");
+      return;
+    }
+
+    try {
+      let location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+
+      let geocode = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+
+      if (geocode && geocode.length > 0) {
+        const { city, region } = geocode[0];
+        const fullAddress = `${city}, ${region}`;
+        setLocationAddress(fullAddress);
+      } else {
+        setLocationAddress("Localização desconhecida");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar localização:", error);
+      setLocationAddress("Erro ao buscar localização");
+    }
+  };
+
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permissão para acessar a localização foi negada.");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        // Obter a localização atual
-        let location = await Location.getCurrentPositionAsync({});
-        const { latitude, longitude } = location.coords;
-
-        // Reverter geocoding para obter o endereço
-        let geocode = await Location.reverseGeocodeAsync({
-          latitude,
-          longitude,
-        });
-
-        if (geocode && geocode.length > 0) {
-          const { city, region } = geocode[0];
-          const fullAddress = `${city}, ${region}`;
-          setLocationAddress(fullAddress);
-        } else {
-          setLocationAddress("Localização desconhecida");
-        }
-
-        // Simular o carregamento de eventos com base na localização
-        setEvents(EVENTOS_MOCK);
-      } catch (error) {
-        console.error("Erro ao buscar localização ou eventos:", error);
-        setErrorMsg("Não foi possível obter a localização ou eventos.");
-      } finally {
-        setIsLoading(false);
-      }
+      await buscarLocalizacaoUsuario();
+      await buscarLocations();
     })();
   }, []);
 
-  const handleAttendPress = (item: Evento) => {
-    setCurrentEventData({
+  const onRefresh = () => {
+    setRefreshing(true);
+    buscarLocations();
+  };
+
+  const handleAttendPress = (item: Localizacao) => {
+    setCurrentLocationData({
       title: "Confirme sua Presença",
-      message: `Você selecionou o evento: ${item.nome}.\nConfirme para continuar`,
+      message: `Você selecionou: ${item.name}.\nConfirme para continuar`,
       id: item.id,
     });
     setIsModalVisible(true);
   };
 
   const handleConfirm = () => {
-    if (currentEventData) {
-      console.log(`Presença confirmada no evento ID: ${currentEventData.id}`);
+    if (currentLocationData) {
+      console.log(`Presença confirmada na localização ID: ${currentLocationData.id}`);
+
+      // Buscar a localização completa para passar os dados
+      const localizacaoSelecionada = locations.find(l => l.id === currentLocationData.id);
 
       navigation.navigate("Main", {
         screen: "Pedido",
         params: {
-          pedidos: pedidosAtuais,
+          locationId: currentLocationData.id,
+          locationName: localizacaoSelecionada?.name,
         },
       });
     }
     setIsModalVisible(false);
-    setCurrentEventData(null);
+    setCurrentLocationData(null);
   };
 
   const handleCancel = () => {
     console.log("Usuário cancelou a confirmação");
     setIsModalVisible(false);
-    setCurrentEventData(null);
+    setCurrentLocationData(null);
   };
 
-  const renderEventItem = ({ item }: { item: Evento }) => (
+  const renderLocationItem = ({ item }: { item: Localizacao }) => (
     <View style={styles.eventCard}>
       <View style={styles.eventInfo}>
-        <Text style={styles.eventName}>{item.nome}</Text>
-        <Text style={styles.eventTime}>
-          {item.data}, {item.hora}
-        </Text>
-        <Text style={styles.eventLocation}>{item.local}</Text>
+        <Text style={styles.eventName}>{item.name}</Text>
+        <Text style={styles.eventLocation}>{item.address}</Text>
+        {item.description && (
+          <Text >{item.description}</Text>
+        )}
       </View>
-      <TouchableOpacity style={styles.attendButton}>
-        <Text
-          style={styles.attendButtonText}
-          onPress={() => handleAttendPress(item)}
-        >
+      <TouchableOpacity 
+        style={styles.attendButton}
+        onPress={() => handleAttendPress(item)}
+      >
+        <Text style={styles.attendButtonText}>
           Entrar
         </Text>
       </TouchableOpacity>
@@ -162,7 +162,7 @@ export default function EventsScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Eventos</Text>
+        <Text style={styles.title}>Locais Disponíveis</Text>
       </View>
 
       <View style={styles.locationContainer}>
@@ -170,7 +170,7 @@ export default function EventsScreen({ navigation }) {
         <Text style={styles.locationAddress}>{locationAddress}</Text>
       </View>
 
-      <Text style={styles.sectionTitle}>Eventos próximos</Text>
+      <Text style={styles.sectionTitle}>Locais próximos</Text>
 
       {isLoading ? (
         <ActivityIndicator
@@ -179,21 +179,43 @@ export default function EventsScreen({ navigation }) {
           style={{ marginTop: 50 }}
         />
       ) : errorMsg ? (
-        <Text style={styles.errorText}>{errorMsg}</Text>
+        <View style={{ alignItems: "center", marginTop: 50 }}>
+          <Text style={styles.errorText}>{errorMsg}</Text>
+          <TouchableOpacity
+            onPress={onRefresh}
+            style={{
+              marginTop: 16,
+              padding: 12,
+              backgroundColor: "#007AFF",
+              borderRadius: 8,
+            }}
+          >
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>
+              Tentar novamente
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : locations.length === 0 ? (
+        <View style={{ alignItems: "center", marginTop: 50 }}>
+          <Text style={styles.errorText}>Nenhum local disponível no momento</Text>
+        </View>
       ) : (
         <FlatList
-          data={events}
+          data={locations}
           keyExtractor={(item) => item.id}
-          renderItem={renderEventItem}
+          renderItem={renderLocationItem}
           contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       )}
 
-      {currentEventData && (
+      {currentLocationData && (
         <CustomAlert
           isVisible={isModalVisible}
-          title={currentEventData.title}
-          message={currentEventData.message}
+          title={currentLocationData.title}
+          message={currentLocationData.message}
           onClose={handleConfirm}
           onCancel={handleCancel}
           confirmText="Confirmar"

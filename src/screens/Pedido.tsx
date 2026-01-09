@@ -1,48 +1,170 @@
 import {
   Alert,
   FlatList,
-  Image,
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPedido";
-import { usePedidos } from "../context/PedidosContext";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../utils/supabase";
+import { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
-interface Localizacao {
-  latitude: number;
-  longitude: number;
+interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  quantity: number;
+  price: number;
+  observations: string | null;
+  custom: any;
+  products: {
+    id: string;
+    name: string;
+    image_url: string;
+  };
+  orders: {
+    id: string;
+    payment_method: string;
+    mesa: string | null;
+    locations: {
+      id: string;
+      name: string;
+      address: string;
+    };
+  };
 }
 
 export default function Pedido({ navigation, route }) {
-  const { pedidos, concluirPedido } = usePedidos();
-  const localizacao: Localizacao | undefined = route.params?.localizacao;
-  const credito = route.params?.credito ?? 100.0;
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [credito, setCredito] = useState(0);
+
+  const carregarPedidos = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("credito")
+        .eq("id", user.id)
+        .single();
+
+      if (profile) {
+        setCredito(profile.credito || 0);
+      }
+
+      const { data, error } = await supabase
+        .from("order_items")
+        .select(`
+          *,
+          products (
+            id,
+            name,
+            image_url
+          ),
+          orders!inner (
+            id,
+            user_id,
+            status,
+            payment_method,
+            mesa,
+            locations (
+              id,
+              name,
+              address
+            )
+          )
+        `)
+        .eq("orders.user_id", user.id)
+        .eq("orders.status", "pending")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setOrderItems(data || []);
+    } catch (error: any) {
+      console.error("Erro ao carregar pedidos:", error);
+      Alert.alert("Erro", "Não foi possível carregar os pedidos");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    carregarPedidos();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      carregarPedidos();
+    }, [])
+  );
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    carregarPedidos();
+  };
 
   const handlePerfil = () => {
     navigation.navigate("Perfil");
   };
 
-  const handleRetirada = (pedido) => {
+  const handleRetirada = async (item: OrderItem) => {
     Alert.alert(
       "Confirmar retirada",
-      `Você está retirando o pedido "${pedido.nome}"?`,
+      `Você está retirando "${item.products?.name}"?`,
       [
         { text: "Cancelar", style: "cancel" },
         {
           text: "Sim",
-          onPress: () => {
-            concluirPedido({
-              ...pedido,
-              local: "Estádio Municipal",
-            });
-            Alert.alert(
-              "Pedido retirado",
-              "Esse pedido foi movido para histórico!"
-            );
-            navigation.navigate("Historico");
+          onPress: async () => {
+            try {
+              const { data: allItems } = await supabase
+                .from("order_items")
+                .select("id")
+                .eq("order_id", item.order_id);
+
+              if (allItems && allItems.length === 1) {
+                const { error } = await supabase
+                  .from("orders")
+                  .update({ status: "completed" })
+                  .eq("id", item.order_id);
+
+                if (error) throw error;
+              } else {
+                const { error } = await supabase
+                  .from("orders")
+                  .update({ status: "completed" })
+                  .eq("id", item.order_id);
+
+                if (error) throw error;
+              }
+
+              Alert.alert(
+                "Pedido retirado",
+                "Esse pedido foi movido para histórico!"
+              );
+              
+              carregarPedidos();
+              navigation.navigate("Historico");
+            } catch (error: any) {
+              console.error("Erro ao concluir pedido:", error);
+              Alert.alert("Erro", "Não foi possível concluir o pedido");
+            }
           },
         },
       ]
@@ -78,14 +200,27 @@ export default function Pedido({ navigation, route }) {
         <Text style={styles.valorCredito}>R$ {credito.toFixed(2)}</Text>
       </View>
 
-      {pedidos.length === 0 ? (
+      {loading ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Nenhum pedido realizado ainda</Text>
+          <ActivityIndicator size="large" color="#000" />
+          <Text style={[styles.emptyText, { marginTop: 12 }]}>
+            Carregando pedidos...
+          </Text>
+        </View>
+      ) : orderItems.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Nenhum pedido pendente</Text>
+          <TouchableOpacity
+            onPress={onRefresh}
+            style={{ marginTop: 16, padding: 12, backgroundColor: "#000", borderRadius: 8 }}
+          >
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>Atualizar</Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <FlatList
-          data={pedidos}
-          keyExtractor={(item) => String(item.id)}
+          data={orderItems}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.card}>
               <TouchableOpacity
@@ -93,32 +228,34 @@ export default function Pedido({ navigation, route }) {
                 onPress={() =>
                   navigation.navigate("QrCode", {
                     pedido: {
-                      id: item.id,
-                      usuario: "Gabriel",
+                      id: item.order_id,
+                      usuario: "Usuário",
                       produtos: [item],
-                      valorTotal: (item.preco || 0) * item.quantidade,
-                      localizacao,
+                      valorTotal: item.price * item.quantity,
+                      localizacao: item.orders?.locations,
                     },
                   })
                 }
               >
-                <Image
-                  source={require("../assets/ic_product.png")}
-                  style={styles.icon}
-                />
-
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.title}>{item.nome}</Text>
+                  <Text style={styles.title}>{item.products?.name || "Produto"}</Text>
                   <Text style={styles.subtitle}>
-                    Quantidade: {item.quantidade}
+                    Local: {item.orders?.locations?.name || "N/A"}
                   </Text>
                   <Text style={styles.subtitle}>
-                    Valor: R$ {(item.preco || 0).toFixed(2)}
+                    Quantidade: {item.quantity}
                   </Text>
+                  <Text style={styles.subtitle}>
+                    Valor: R$ {(item.price * item.quantity).toFixed(2)}
+                  </Text>
+                  {item.observations && (
+                    <Text style={[styles.subtitle, { fontStyle: "italic", marginTop: 4 }]}>
+                      Obs: {item.observations}
+                    </Text>
+                  )}
                 </View>
               </TouchableOpacity>
 
-              {/* Botão de concluir (retirar) */}
               <TouchableOpacity
                 style={styles.removeButton}
                 onPress={() => handleRetirada(item)}
@@ -127,6 +264,9 @@ export default function Pedido({ navigation, route }) {
               </TouchableOpacity>
             </View>
           )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       )}
     </View>

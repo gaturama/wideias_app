@@ -14,6 +14,7 @@ import Historico from "./src/screens/Historico";
 import Localizacao from "./src/screens/Localizacao";
 import DividirConta from "./src/screens/DividirConta";
 import TabsNavigator from "./src/navigation/TabsNavigator";
+import Produto from "./src/screens/Produto";
 import { RootStackParamList } from "./src/navigation/types";
 import DescricaoProduto from "./src/screens/DescricaoProduto";
 import { NavigationContainer } from "@react-navigation/native";
@@ -107,6 +108,11 @@ export default function App() {
             name="DividirConta"
             component={DividirConta}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+           name="Produto"
+           component={Produto}
+           options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

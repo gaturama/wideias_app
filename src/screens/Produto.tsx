@@ -18,11 +18,20 @@ export default function Home({ navigation, route }) {
   const [produtos, setProdutos] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const tipoLocal = route?.params?.tipo || "restaurante";
+  const tipoLocal = route?.params?.tipoLocal || route?.params?.tipo || "restaurante";
+  const eventId = route?.params?.eventId;
+  const locationId = route?.params?.locationId;
 
   useEffect(() => {
     loadProducts();
   }, []);
+
+  // Atualiza o carrinho quando a rota mudar (voltando da tela de descrição)
+  useEffect(() => {
+    if (route.params?.cart && Array.isArray(route.params.cart)) {
+      setCart(route.params.cart);
+    }
+  }, [route.params?.cart]);
 
   const loadProducts = async () => {
     try {
@@ -47,11 +56,19 @@ export default function Home({ navigation, route }) {
       produto: item,
       cart,
       tipoLocal,
+      eventId,
+      locationId,
+      returnToCart: route.params?.returnToCart || false,
     });
   };
 
   const total = cart.reduce(
     (sum, item: any) => sum + item.price * (item.qty || 1),
+    0
+  );
+
+  const totalItems = cart.reduce(
+    (sum, item: any) => sum + (item.qty || 1),
     0
   );
 
@@ -75,7 +92,6 @@ export default function Home({ navigation, route }) {
         R$ {item.price.toFixed(2)}
       </Text>
 
-      {/* BOTÃO MANTIDO — AGORA REDIRECIONA */}
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => goToDescription(item)}
@@ -112,17 +128,25 @@ export default function Home({ navigation, route }) {
         data={produtos}
         numColumns={2}
         keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+        contentContainerStyle={{ 
+          padding: 16, 
+          paddingBottom: cart.length > 0 ? 180 : 100 
+        }}
         renderItem={renderProduct}
         showsVerticalScrollIndicator={false}
       />
 
-      {/* FOOTER DO CARRINHO SÓ APARECE QUANDO HOUVER ITENS */}
+      {/* FOOTER DO CARRINHO - MANTIDO ORIGINAL */}
       {cart.length > 0 && (
         <TouchableOpacity
           style={styles.cartFooter}
           onPress={() =>
-            navigation.navigate("Carrinho", { cart, tipoLocal })
+            navigation.navigate("Carrinho", { 
+              cart, 
+              tipoLocal,
+              eventId,
+              locationId,
+            })
           }
         >
           <Text style={styles.cartText}>
@@ -132,6 +156,13 @@ export default function Home({ navigation, route }) {
           <Text style={styles.cartAction}>Carrinho</Text>
         </TouchableOpacity>
       )}
+
     </View>
+      
+    
   );
 }
+   
+ 
+
+  
