@@ -99,7 +99,7 @@ export default function Pedido({ navigation }) {
           )
         `)
         .eq("orders.user_id", user.id)
-        .eq("orders.status", "pending")
+        .eq("status", "pending")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -144,37 +144,39 @@ export default function Pedido({ navigation }) {
           text: "Sim",
           onPress: async () => {
             try {
-              const { data: allItems } = await supabase
+              const { error: itemError } = await supabase
+                .from("order_items")
+                .update({ status: "completed" })
+                .eq("id", item.id);
+
+
+              const { data: remaingItems, error:checkError } = await supabase
                 .from("order_items")
                 .select("id")
-                .eq("order_id", item.order_id);
+                .eq("order_id", item.order_id)
+                .eq("status", "pending");
 
-              if (allItems && allItems.length === 1) {
-                const { error } = await supabase
+              if (checkError) throw checkError;
+              
+              if (remaingItems.length === 0) {
+                const { error: orderError } = await supabase
                   .from("orders")
                   .update({ status: "completed" })
                   .eq("id", item.order_id);
 
-                if (error) throw error;
-              } else {
-                const { error } = await supabase
-                  .from("orders")
-                  .update({ status: "completed" })
-                  .eq("id", item.order_id);
-
-                if (error) throw error;
+                if (orderError) throw orderError;
               }
 
               Alert.alert(
-                "Pedido retirado",
-                "Esse pedido foi movido para histórico!"
+                "Item retirado",
+                "Esse item foi movido para histórico!"
               );
               
               carregarPedidos();
               navigation.navigate("Historico");
             } catch (error: any) {
-              console.error("Erro ao concluir pedido:", error);
-              Alert.alert("Erro", "Não foi possível concluir o pedido");
+              console.error("Erro ao concluir item:", error);
+              Alert.alert("Erro", "Não foi possível concluir o ");
             }
           },
         },
@@ -273,6 +275,7 @@ export default function Pedido({ navigation }) {
               >
                 <Ionicons name="checkmark-circle" size={28} color="#4CAF50" />
               </TouchableOpacity>
+
             </View>
           )}
           refreshControl={

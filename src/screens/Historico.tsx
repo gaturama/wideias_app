@@ -10,34 +10,41 @@ export default function Historico() {
 
   async function fetchItensCompletos() {
     try {
-      // 1. Busca todos os pedidos com status "completed"
-      const { data: ordersCompleted, error: ordersError } = await supabase
-        .from("orders")
-        .select("id")
-        .eq("status", "completed");
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      if (ordersError) {
-        console.error("Erro ao buscar pedidos:", ordersError);
+      if (!user) {
+        console.log("Usuário não autenticado");
         setLoading(false);
         return;
       }
 
-      if (!ordersCompleted || ordersCompleted.length === 0) {
-        console.log("Nenhum pedido completo encontrado");
-        setItens([]);
-        setLoading(false);
-        return;
-      }
-
-      // 2. Pega os IDs dos pedidos completos
-      const orderIds = ordersCompleted.map(order => order.id);
-      console.log("IDs dos pedidos completos:", orderIds);
-
-      // 3. Busca os itens desses pedidos
+      // Buscar itens com status "completed" diretamente da tabela order_items
       const { data: orderItemsData, error: itemsError } = await supabase
         .from("order_items")
-        .select("*")
-        .in("order_id", orderIds);
+        .select(`
+          *,
+          products (
+            id,
+            name,
+            image_url
+          ),
+          orders!inner (
+            id,
+            user_id,
+            payment_method,
+            mesa,
+            locations (
+              id,
+              name,
+              address
+            )
+          )
+        `)
+        .eq("orders.user_id", user.id)
+        .eq("status", "completed") // Filtrar por status do item
+        .order("created_at", { ascending: false });
 
       if (itemsError) {
         console.error("Erro ao buscar itens:", itemsError);
@@ -45,43 +52,31 @@ export default function Historico() {
         return;
       }
 
-      console.log("Itens encontrados:", orderItemsData);
+      if (!orderItemsData || orderItemsData.length === 0) {
+        console.log("Nenhum item completo encontrado");
+        setItens([]);
+        setLoading(false);
+        return;
+      }
 
-      // 4. Busca as informações dos produtos (incluindo imagem)
-      const itensComProdutos = await Promise.all(
-        orderItemsData.map(async (item) => {
-          if (!item.product_id) {
-            return {
-              ...item,
-              product_image: null,
-              product_name: null,
-            };
-          }
+      console.log("Itens completos encontrados:", orderItemsData.length);
+      
+      // Formatar os dados para exibição
+      const itensFormatados = orderItemsData.map(item => ({
+        id: item.id,
+        product_name: item.products?.name || "Produto",
+        product_image: item.products?.image_url || null,
+        quantity: item.quantity,
+        price: item.price,
+        total: item.price * item.quantity,
+        created_at: item.created_at,
+        observations: item.observations,
+        location_name: item.orders?.locations?.name || "N/A",
+        mesa: item.orders?.mesa,
+        payment_method: item.orders?.payment_method,
+      }));
 
-          const { data: productData, error: productError } = await supabase
-            .from("products")
-            .select("image_url, name")
-            .eq("id", item.product_id)
-            .maybeSingle();
-
-          if (productError) {
-            console.warn(`Erro ao buscar produto ${item.product_id}:`, productError);
-          }
-
-          if (!productData) {
-            console.warn(`Produto ${item.product_id} não encontrado`);
-          }
-
-          return {
-            ...item,
-            product_image: productData?.image_url || null,
-            product_name: productData?.name || null,
-          };
-        })
-      );
-
-      console.log("Itens com produtos:", itensComProdutos);
-      setItens(itensComProdutos);
+      setItens(itensFormatados);
       setLoading(false);
     } catch (error) {
       console.error("Erro geral:", error);
@@ -121,21 +116,41 @@ export default function Historico() {
                 resizeMode="cover"
               />
 
-              <View>
+              <View style={{ flex: 1 }}>
                 <Text style={styles.title}>
-                  {item.product_name || item.name || 'Produto'}
+                  {item.product_name}
                 </Text>
 
                 <Text style={styles.subtitle}>
-                  Quantidade: {item.quantity || item.quantidade || 0}
+                  Local: {item.location_name}
                 </Text>
 
                 <Text style={styles.subtitle}>
-                  Valor: R$ {((item.price || item.total || 0) * (item.quantity || item.quantidade || 1)).toFixed(2)}
+                  Quantidade: {item.quantity}
                 </Text>
+
+                <Text style={styles.subtitle}>
+                  Valor: R$ {item.total.toFixed(2)}
+                </Text>
+
+                {item.mesa && (
+                  <Text style={styles.subtitle}>
+                    Mesa: {item.mesa}
+                  </Text>
+                )}
+
+                {item.observations && (
+                  <Text style={[styles.subtitle, { fontStyle: "italic", marginTop: 4 }]}>
+                    Obs: {item.observations}
+                  </Text>
+                )}
 
                 <Text style={styles.subtitle}>
                   Data: {item.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR') : '-'}
+                </Text>
+
+                <Text style={[styles.subtitle, { color: "#4CAF50", marginTop: 4 }]}>
+                  Status: Concluído
                 </Text>
               </View>
             </View>

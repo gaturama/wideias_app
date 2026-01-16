@@ -141,6 +141,7 @@ export default function Pagamento({ navigation }) {
         quantity: item.qty,
         price: item.price,
         observations: item.observacao || null,
+        status: "pending",
         custom: JSON.stringify({
           ingredientes_removidos: item.ingredientes_removidos || [],
           adicionais: item.adicionais || [],
