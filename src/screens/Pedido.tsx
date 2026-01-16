@@ -12,10 +12,11 @@ import { styles } from "../styles/stylesPedido";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../utils/supabase";
 import { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoute, RouteProp } from "@react-navigation/native";
 //import { useCredito } from "../context/CreditoContext";
-
-
+import { RootTabParamList } from "../navigation/types";
+import { useLocation } from "../context/LocationContext";
+  
 interface OrderItem {
   id: string;
   order_id: string;
@@ -41,11 +42,18 @@ interface OrderItem {
   };
 }
 
-export default function Pedido({ navigation, route }) {
+  type pedidoRouteProp = RouteProp<RootTabParamList, "Home">;
+
+export default function Pedido({ navigation }) {
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [credito, setCredito] = useState(0);
+  const { locationId, locationName } = useLocation();
+  console.log("Location ID recebida em Pedido:", locationId);
+
+  const route = useRoute<pedidoRouteProp>();
+
 
   const carregarPedidos = async () => {
     try {

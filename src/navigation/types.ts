@@ -1,13 +1,18 @@
+import { NavigatorScreenParams } from "@react-navigation/native";
+
+export type RootTabParamList = {
+  Home: { locationId?: string } | undefined;
+  Perfil: undefined;
+  Produto: { locationId?: string } | undefined;
+  Credito: undefined;
+};
+
 export type RootStackParamList = {
   Login: undefined;
-  Main: {
-    screen: "Pedido" | "Perfil" | "Produto" | "Credito";
-    params?: { pedidos?: any[]; localizacao?: { latitude: number; longitude: number }};
-    merge?: boolean;
-  };
+  Main: NavigatorScreenParams<RootTabParamList>;
   Produto: { tipo?: "restaurante" | "evento" };
   Perfil: undefined;
-  Carrinho: { cart: any[] };
+  Carrinho: { cart: any[]; localizacao?: undefined | string; };
   Pagamento: { cart: any[] };
   QrCode: {
     pedido: {
@@ -22,7 +27,7 @@ export type RootStackParamList = {
   Mesa: undefined;
   DescricaoProduto: undefined;
   Credito: undefined;
-  Pedido: { pedidos?: any[]; localizacao?: { latitude: number; longitude: number } };
+  Pedido: { pedidos?: any[]; localizacao?: undefined | string };
   Localizacao: undefined;
   QrScanner: undefined;
   Historico: undefined;

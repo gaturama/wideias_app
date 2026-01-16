@@ -115,7 +115,7 @@ export default function Login({ navigation }: Props) {
         disabled={isLoading}
       >
         <Text style={styles.buttonText}>
-          {isLoading ? "Entrando..." : "Entrar"}
+          { "Entrar"}
         </Text>
       </TouchableOpacity>
 

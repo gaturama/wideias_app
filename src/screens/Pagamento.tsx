@@ -12,19 +12,40 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../utils/supabase";
+import { useRoute, RouteProp } from "@react-navigation/native";
+import { useLocation } from '../context/LocationContext';
 
-export default function Pagamento({ navigation, route }) {
+type PagamentoParams = {
+  cart: any[];
+  locationId?: string;
+  locationName?: string;
+  observacoes?: string;
+  mesa?: string;
+};
+
+export default function Pagamento({ navigation }) {
+  const route = useRoute<RouteProp<{ params: PagamentoParams }, 'params'>>();
   const cartItems = route.params?.cart || [];
-  const tipoLocal = route.params?.tipoLocal;
-  const eventId = route.params?.eventId;
-  const locationId = route.params?.locationId;
   const observacoes = route.params?.observacoes;
   const mesa = route.params?.mesa;
-  
+  const { locationId: contextLocationId, locationName: contextLocationName } = useLocation();
+
+  const locationId = route.params?.locationId || contextLocationId || "";
+  const localName = route.params?.locationName || contextLocationName || "";
+
   const [loading, setLoading] = useState(false);
   // const [usarCredito, setUsarCredito] = useState(false);
   // const [creditoUsuario, setCreditoUsuario] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log("Location ID:", locationId);
+    console.log("Location Name:", localName);
+    console.log("Mesa:", mesa);
+    console.log("Observações:", observacoes);
+    console.log("Itens do carrinho:", cartItems.length);
+  }, [locationId, localName, mesa, observacoes, cartItems]);
+
 
   const totalCarrinho = cartItems.reduce(
     (sum, item) => sum + item.price * (item.qty || 1),
@@ -83,41 +104,37 @@ export default function Pagamento({ navigation, route }) {
         return;
       }
 
-      // Buscar location se não foi passada
-      let finalLocationId = locationId;
-      if (!finalLocationId) {
-        const { data: location } = await supabase
-          .from("locations")
-          .select("id")
-          .limit(1)
-          .single();
 
+      /*let finalLocationId = locationId;
         if (!location) {
           Alert.alert("Erro", "Nenhuma localização encontrada");
           setLoading(false);
           return;
-        }
-        finalLocationId = location.id;
-      }
+        }*/
+      
 
-      // Criar o pedido
       const { data: order, error: orderError } = await supabase
         .from("orders")
-        .insert({
+        .insert([{
           user_id: user.id,
-          location_id: finalLocationId,
+          location_id: locationId,
           status: "pending",
           total: totalCarrinho,
           payment_method: paymentMethod,
           observacoes: observacoes || null,
           mesa: mesa || null,
-        })
+        }] as any)
         .select()
-        .single();
+        .single() as any;
 
       if (orderError) throw orderError;
 
-      // Criar os itens do pedido
+      if (!order) {
+        Alert.alert("Erro", "Falha ao criar o pedido");
+        setLoading(false);
+        return;
+      }
+
       const orderItems = cartItems.map((item) => ({
         order_id: order.id,
         product_id: item.id,
@@ -136,7 +153,6 @@ export default function Pagamento({ navigation, route }) {
 
       if (itemsError) throw itemsError;
 
-      // Atualizar crédito do usuário se foi usado
       // if (usarCredito && creditoAplicado > 0) {
       //   const novoCredito = creditoUsuario - creditoAplicado;
       //   const { error: creditError } = await supabase

@@ -21,11 +21,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { PedidosProvider } from "./src/context/PedidosContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { CreditoProvider } from "./src/context/CreditoContext";
+import { LocationProvider } from "./src/context/LocationContext";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
+    <LocationProvider>  
     <CreditoProvider>
     <PedidosProvider>
       <NavigationContainer>
@@ -120,5 +122,6 @@ export default function App() {
       </NavigationContainer>
     </PedidosProvider>
     </CreditoProvider>
+    </LocationProvider>
   );
 }

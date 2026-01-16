@@ -12,21 +12,24 @@ import { useState, useEffect } from "react";
 import { styles } from "../styles/stylesProduto";
 import { supabase } from "../../utils/supabase";
 import { Product } from "../types/database.types";
+import { useLocation } from "../context/LocationContext";
+
+
 
 export default function Home({ navigation, route }) {
+
+  const { locationId, tipoLocal } = useLocation();
   const [cart, setCart] = useState<any[]>([]);
   const [produtos, setProdutos] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const tipoLocal = route?.params?.tipoLocal || route?.params?.tipo || "restaurante";
-  const eventId = route?.params?.eventId;
-  const locationId = route?.params?.locationId;
+  console.log("Location ID recebida em Produto:", locationId);
+  console.log(tipoLocal);
 
   useEffect(() => {
     loadProducts();
   }, []);
 
-  // Atualiza o carrinho quando a rota mudar (voltando da tela de descrição)
   useEffect(() => {
     if (route.params?.cart && Array.isArray(route.params.cart)) {
       setCart(route.params.cart);
@@ -54,10 +57,9 @@ export default function Home({ navigation, route }) {
   const goToDescription = (item: Product) => {
     navigation.navigate("DescricaoProduto", {
       produto: item,
-      cart,
-      tipoLocal,
-      eventId,
-      locationId,
+      cart: cart,
+      tipoLocal: tipoLocal,
+      locationId: locationId,
       returnToCart: route.params?.returnToCart || false,
     });
   };
@@ -143,9 +145,8 @@ export default function Home({ navigation, route }) {
           onPress={() =>
             navigation.navigate("Carrinho", { 
               cart, 
-              tipoLocal,
-              eventId,
-              locationId,
+              tipoLocal: tipoLocal,
+              locationId: locationId,
             })
           }
         >

@@ -11,8 +11,8 @@ import * as Location from "expo-location";
 import { styles } from "../styles/stylesLocalizacao";
 import CustomAlert from "../components/CustomAlert";
 import { supabase } from "../../utils/supabase";
+import { useLocation } from "../context/LocationContext";
 
-// Tipos
 interface Localizacao {
   id: string;
   name: string;
@@ -40,8 +40,8 @@ export default function EventsScreen({ navigation }) {
   const [currentLocationData, setCurrentLocationData] = useState<ModalData | null>(
     null
   );
+  const { setLocationData } = useLocation();
 
-  // Função para buscar locations do banco
   const buscarLocations = async () => {
     try {
       const { data, error } = await supabase
@@ -62,7 +62,6 @@ export default function EventsScreen({ navigation }) {
     }
   };
 
-  // Função para buscar localização do usuário
   const buscarLocalizacaoUsuario = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -118,15 +117,18 @@ export default function EventsScreen({ navigation }) {
     if (currentLocationData) {
       console.log(`Presença confirmada na localização ID: ${currentLocationData.id}`);
 
-      // Buscar a localização completa para passar os dados
-      const localizacaoSelecionada = locations.find(l => l.id === currentLocationData.id);
+      const selectedLocation = locations.find( loc => loc.id === currentLocationData.id );
+
+      if (selectedLocation) {
+        setLocationData(
+          selectedLocation.id,
+          selectedLocation.name,
+          selectedLocation.tipo || "evento"
+        );
+      }
 
       navigation.navigate("Main", {
-        screen: "Pedido",
-        params: {
-          locationId: currentLocationData.id,
-          locationName: localizacaoSelecionada?.name,
-        },
+        screen: "Home",
       });
     }
     setIsModalVisible(false);

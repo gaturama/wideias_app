@@ -35,10 +35,13 @@ export default function TabsNavigator() {
       })}
     >
       <Tab.Screen name="Home" component={Pedido} />
-      <Tab.Screen name="Produto" component={Produto} />
+      <Tab.Screen 
+        name="Produto" 
+        component={Produto} 
+        
+        />
       <Tab.Screen name="Credito" component={Credito} />
       <Tab.Screen name="Historico" component={Historico} />
     </Tab.Navigator>
   );
-  4;
 }

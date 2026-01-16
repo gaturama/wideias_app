@@ -274,12 +274,12 @@ export default function DescricaoProduto({ route, navigation }: any) {
         {/* FOOTER */}
         <View style={styles.footer}>
           <View>
-            <Text>Total com adicionais:</Text>
+            <Text>Total:</Text>
             <Text style={styles.totalText}>R$ {precoTotal.toFixed(2)}</Text>
           </View>
           <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
             <Text style={styles.textButton}>
-              {editar ? "Salvar Alterações" : "Adicionar ao Carrinho"}
+              {editar ? "Salvar Alterações" : "Carrinho"}
             </Text>
           </TouchableOpacity>
         </View>
