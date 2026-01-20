@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  ScrollView,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";
@@ -12,9 +13,16 @@ import { styles } from "../styles/stylesCadastro";
 import { RootStackParamList } from "../navigation/types";
 import { supabase } from "../../utils/supabase";
 
-
-
 type Props = NativeStackScreenProps<RootStackParamList, "Cadastro">;
+
+type PerfilUpdate = {
+  id?: string | null;
+  nome?: string | null;
+  cpf?: string | null;
+  telefone?: string | null;
+  data_nascimento?: string | null;
+  credit?: number | null;
+};
 
 export default function Cadastro({ navigation }: Props) {
   const [name, setName] = useState("");
@@ -25,96 +33,148 @@ export default function Cadastro({ navigation }: Props) {
   const [cpf, setCpf] = useState("");
   const [loading, setLoading] = useState(false);
 
-const handleCadastro = async () => {
-  if (!name || !email || !password || !phoneNumber || !cpf || !date) {
-    Alert.alert("Erro", "Preencha todos os campos!");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-
-    if (error) {
-      setLoading(false);
-      Alert.alert("Erro", error.message);
+  const handleCadastro = async () => {
+    if (!name || !email || !password || !phoneNumber || !cpf || !date) {
+      Alert.alert("Erro", "Preencha todos os campos!");
       return;
     }
 
-    if (!data.user) {
-      setLoading(false);
-      Alert.alert("Erro", "Erro ao criar usuário");
+    if (password.length < 6) {
+      Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres!");
       return;
     }
 
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .insert({
-        id: data.user.id,
-        nome: name,
-        cpf: cpf,
-        telefone: phoneNumber,
-        data_nascimento: date,
+    const cpfNumeros = cpf.replace(/\D/g, "");
+    if (cpfNumeros.length !== 11) {
+      Alert.alert("Erro", "CPF inválido! Digite apenas números (11 dígitos)");
+      return;
+    }
+
+    const dataRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dataRegex.test(date)) {
+      Alert.alert("Erro", "Data inválida! Use o formato AAAA-MM-DD (ex: 2001-12-31)");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password: password,
+        options: {
+          data: {
+            nome: name,
+            cpf: cpfNumeros,
+          },
+        },
       });
 
-    if (profileError) {
-      setLoading(false);
-      Alert.alert("Erro no perfil", profileError.message);
-      console.error("Erro ao inserir perfil:", profileError);
-      return;
-    }
-
-    setLoading(false);
-    Alert.alert("Sucesso", `Usuário ${name} cadastrado com sucesso!`, [
-      {
-        text: "OK",
-        onPress: () => navigation.navigate("Login")
+      if (authError) {
+        setLoading(false);
+        Alert.alert("Erro no cadastro", authError.message);
+        return;
       }
-    ]);
 
-  } catch (err: any) {
-    setLoading(false);
-    Alert.alert("Erro", err?.message || "Ocorreu um erro inesperado");
-    console.error("Erro no cadastro:", err);
-  }
-};
+      if (!authData.user) {
+        setLoading(false);
+        Alert.alert("Erro", "Erro ao criar usuário");
+        return;
+      }
 
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update<PerfilUpdate>({
+          nome: name.trim(),
+          cpf: cpfNumeros,
+          telefone: phoneNumber.trim(),
+          data_nascimento: date,
+          credit: 0,
+        })
+        .eq("id", authData.user.id);
+
+      if (profileError) {
+        setLoading(false);
+        console.error("Erro ao criar perfil:", profileError);
+        Alert.alert(
+          "Erro no perfil",
+          "Não foi possível criar o perfil. Por favor, tente novamente."
+        );
+        return;
+      }
+
+      setLoading(false);
+      
+      Alert.alert(
+        "Cadastro realizado",
+        `Usuário ${name} cadastrado com sucesso!\n\nVerifique seu email para confirmar o cadastro.`,
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("Login"),
+          },
+        ]
+      );
+
+      setName("");
+      setEmail("");
+      setPassword("");
+      setPhoneNumber("");
+      setDate("");
+      setCpf("");
+
+    } catch (err: any) {
+      setLoading(false);
+      console.error("Erro no cadastro:", err);
+      Alert.alert("Erro", err?.message || "Ocorreu um erro inesperado");
+    }
+  };
+
+  const formatCPF = (text: string) => {
+    const numeros = text.replace(/\D/g, "");
+    if (numeros.length <= 11) {
+      setCpf(numeros);
+    }
+  };
+
+  const formatPhone = (text: string) => {
+    const numeros = text.replace(/\D/g, "");
+    if (numeros.length <= 11) {
+      setPhoneNumber(numeros);
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f2ebe0" }}>
-      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title="Criar conta" color="white" />
       </Appbar.Header>
 
-      <View style={styles.container}>
-        {/* <Ionicons name="person-add" size={80} color="#000" style={styles.icon} /> */}
-
-        {/* Input's de cadastro*/}
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.inputText}>Nome Completo</Text>
         <TextInput
           autoCorrect={false}
-          autoCapitalize="none"
-          placeholder="Seu nome"
+          autoCapitalize="words"
+          placeholder="Seu nome completo"
           style={styles.input}
           value={name}
           onChangeText={setName}
+          editable={!loading}
         />
 
         <Text style={styles.inputText}>CPF</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="123.456.789-00"
+          placeholder="12345678900"
           style={styles.input}
           value={cpf}
-          onChangeText={setCpf}
+          onChangeText={formatCPF}
           keyboardType="numeric"
+          maxLength={11}
+          editable={!loading}
         />
 
         <Text style={styles.inputText}>E-mail</Text>
@@ -126,30 +186,35 @@ const handleCadastro = async () => {
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
+          editable={!loading}
         />
 
         <Text style={styles.inputText}>Senha</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="******"
+          placeholder="Mínimo 6 caracteres"
           style={styles.input}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          editable={!loading}
         />
 
         <Text style={styles.inputText}>Telefone</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="(47) 99999-9999"
+          placeholder="47999999999"
           style={styles.input}
           value={phoneNumber}
-          onChangeText={setPhoneNumber}
+          onChangeText={formatPhone}
+          keyboardType="phone-pad"
+          maxLength={11}
+          editable={!loading}
         />
 
-        <Text style={styles.inputText}>Data Nascimento</Text>
+        <Text style={styles.inputText}>Data de Nascimento</Text>
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
@@ -157,12 +222,19 @@ const handleCadastro = async () => {
           style={styles.input}
           value={date}
           onChangeText={setDate}
+          editable={!loading}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleCadastro} disabled={loading}>
-          <Text style={styles.buttonText}>{loading ? "Cadastrando..." : "Cadastrar"}</Text>
+        <TouchableOpacity
+          style={[styles.button, loading && { opacity: 0.5 }]}
+          onPress={handleCadastro}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {"Cadastrar"}
+          </Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 }

@@ -34,56 +34,64 @@ export default function Pagamento({ navigation }) {
   const localName = route.params?.locationName || contextLocationName || "";
 
   const [loading, setLoading] = useState(false);
-  // const [usarCredito, setUsarCredito] = useState(false);
-  // const [creditoUsuario, setCreditoUsuario] = useState(0);
+  const [usarCredito, setUsarCredito] = useState(false);
+  const [creditoUsuario, setCreditoUsuario] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    console.log("Location ID:", locationId);
-    console.log("Location Name:", localName);
-    console.log("Mesa:", mesa);
-    console.log("Observações:", observacoes);
-    console.log("Itens do carrinho:", cartItems.length);
-  }, [locationId, localName, mesa, observacoes, cartItems]);
-
 
   const totalCarrinho = cartItems.reduce(
     (sum, item) => sum + item.price * (item.qty || 1),
     0
   );
 
-  // const creditoAplicado = usarCredito
-  //   ? Math.min(creditoUsuario, totalCarrinho)
-  //   : 0;
-  // const totalFinal = totalCarrinho - creditoAplicado;
-  const totalFinal = totalCarrinho;
+  const creditoAplicado = usarCredito
+    ? Math.min(creditoUsuario, totalCarrinho)
+    : 0;
+  const totalFinal = totalCarrinho - creditoAplicado;
 
-  // useEffect(() => {
-  //   carregarCredito();
-  // }, []);
+  useEffect(() => {
+    carregarCredito();
+  }, []);
 
-  // const carregarCredito = async () => {
-  //   try {
-  //     const {
-  //       data: { user },
-  //     } = await supabase.auth.getUser();
-  //     if (!user) return;
+  const carregarCredito = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      
+      if (!user) return;
 
-  //     setUserId(user.id);
+      setUserId(user.id);
 
-  //     const { data, error } = await supabase
-  //       .from("profiles")
-  //       .select("credito")
-  //       .eq("id", user.id)
-  //       .single();
+      // Garante que o perfil existe usando upsert
+      await supabase
+        .from("profiles")
+        .upsert(
+          { 
+            id: user.id,
+            credit: 0 
+          },
+          { onConflict: 'id', ignoreDuplicates: true }
+        );
 
-  //     if (error) throw error;
+      // Busca o perfil
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("credit")
+        .eq("id", user.id)
+        .single();
 
-  //     setCreditoUsuario(data?.credito || 0);
-  //   } catch (error: any) {
-  //     console.error("Erro ao carregar crédito:", error);
-  //   }
-  // };
+      if (error) {
+        console.error("Erro ao carregar crédito:", error);
+        setCreditoUsuario(0);
+        return;
+      }
+
+      setCreditoUsuario(data?.credit || 0);
+    } catch (error: any) {
+      console.error("Erro ao carregar crédito:", error);
+      setCreditoUsuario(0);
+    }
+  };
 
   const finalizarPagamento = async (paymentMethod: string) => {
     if (cartItems.length === 0) {
@@ -91,6 +99,33 @@ export default function Pagamento({ navigation }) {
       return;
     }
 
+    // Verifica se o usuário selecionou usar crédito mas não tem saldo suficiente
+    if (usarCredito && creditoUsuario < totalCarrinho && totalFinal > 0) {
+      Alert.alert(
+        "Crédito Insuficiente",
+        `Seu crédito disponível (R$ ${creditoUsuario.toFixed(2)}) não é suficiente para cobrir o valor total (R$ ${totalCarrinho.toFixed(2)}).\n\nVocê pode:\n• Adicionar mais crédito\n• Pagar R$ ${totalFinal.toFixed(2)} com ${paymentMethod}`,
+        [
+          {
+            text: "Adicionar Crédito",
+            onPress: () => navigation.navigate("Credito"),
+          },
+          {
+            text: "Pagar Restante",
+            onPress: () => processarPagamento(paymentMethod),
+          },
+          {
+            text: "Cancelar",
+            style: "cancel",
+          },
+        ]
+      );
+      return;
+    }
+
+    processarPagamento(paymentMethod);
+  };
+
+  const processarPagamento = async (paymentMethod: string) => {
     setLoading(true);
 
     try {
@@ -104,15 +139,6 @@ export default function Pagamento({ navigation }) {
         return;
       }
 
-
-      /*let finalLocationId = locationId;
-        if (!location) {
-          Alert.alert("Erro", "Nenhuma localização encontrada");
-          setLoading(false);
-          return;
-        }*/
-      
-
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert([{
@@ -120,7 +146,9 @@ export default function Pagamento({ navigation }) {
           location_id: locationId,
           status: "pending",
           total: totalCarrinho,
-          payment_method: paymentMethod,
+          payment_method: usarCredito && creditoAplicado > 0 
+            ? `Crédito + ${paymentMethod}` 
+            : paymentMethod,
           observacoes: observacoes || null,
           mesa: mesa || null,
         }] as any)
@@ -154,31 +182,41 @@ export default function Pagamento({ navigation }) {
 
       if (itemsError) throw itemsError;
 
-      // if (usarCredito && creditoAplicado > 0) {
-      //   const novoCredito = creditoUsuario - creditoAplicado;
-      //   const { error: creditError } = await supabase
-      //     .from("profiles")
-      //     .update({ credito: novoCredito })
-      //     .eq("id", user.id);
+      // Deduz o crédito usado
+      if (usarCredito && creditoAplicado > 0) {
+        const novoCredito = creditoUsuario - creditoAplicado;
+        const { error: creditError } = await supabase
+          .from("profiles")
+          .update({ credit: novoCredito })
+          .eq("id", user.id);
 
-      //   if (creditError) throw creditError;
-      // }
+        if (creditError) throw creditError;
+      }
 
       setLoading(false);
-      Alert.alert(
-        "Sucesso!",
-        `Pedido realizado com sucesso!\n\nTotal pago: R$ ${totalFinal.toFixed(2)}`,
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              navigation.navigate("Main", {
-                screen: "Pedido",
-              });
-            },
+      
+      let mensagemSucesso = `Pedido realizado com sucesso!\n\n`;
+      
+      if (usarCredito && creditoAplicado > 0) {
+        mensagemSucesso += `Crédito usado: R$ ${creditoAplicado.toFixed(2)}\n`;
+        if (totalFinal > 0) {
+          mensagemSucesso += `Pago via ${paymentMethod}: R$ ${totalFinal.toFixed(2)}\n`;
+        }
+        mensagemSucesso += `\nTotal: R$ ${totalCarrinho.toFixed(2)}`;
+      } else {
+        mensagemSucesso += `Total pago: R$ ${totalFinal.toFixed(2)}`;
+      }
+
+      Alert.alert("Sucesso!", mensagemSucesso, [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.navigate("Main", {
+              screen: "Pedido",
+            });
           },
-        ]
-      );
+        },
+      ]);
     } catch (err: any) {
       setLoading(false);
       Alert.alert("Erro", err.message);
@@ -256,7 +294,7 @@ export default function Pagamento({ navigation }) {
         <Text style={styles.totalText}>Total a pagar:</Text>
         <Text style={styles.totalValor}>R$ {totalFinal.toFixed(2)}</Text>
 
-        {/* {creditoAplicado > 0 && (
+        {creditoAplicado > 0 && (
           <View style={{ marginTop: 8, marginBottom: 16 }}>
             <Text style={{ fontSize: 14, color: "#666", textAlign: "center" }}>
               Valor do carrinho: R$ {totalCarrinho.toFixed(2)}
@@ -265,9 +303,9 @@ export default function Pagamento({ navigation }) {
               Crédito aplicado: - R$ {creditoAplicado.toFixed(2)}
             </Text>
           </View>
-        )} */}
+        )}
 
-        {/* <TouchableOpacity
+        <TouchableOpacity
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -291,7 +329,7 @@ export default function Pagamento({ navigation }) {
               R$ {creditoUsuario.toFixed(2)}
             </Text>
           </View>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
 
         {loading ? (
           <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />

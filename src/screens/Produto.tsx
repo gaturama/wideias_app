@@ -14,14 +14,13 @@ import { supabase } from "../../utils/supabase";
 import { Product } from "../types/database.types";
 import { useLocation } from "../context/LocationContext";
 
-
-
 export default function Home({ navigation, route }) {
-
   const { locationId, tipoLocal } = useLocation();
   const [cart, setCart] = useState<any[]>([]);
   const [produtos, setProdutos] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const editar = route.params?.editar || false;
+  const editIndex = route.params?.editIndex;
 
   console.log("Location ID recebida em Produto:", locationId);
   console.log(tipoLocal);
@@ -54,14 +53,18 @@ export default function Home({ navigation, route }) {
     }
   };
 
-  const goToDescription = (item: Product) => {
-    navigation.navigate("DescricaoProduto", {
-      produto: item,
-      cart: cart,
-      tipoLocal: tipoLocal,
-      locationId: locationId,
-      returnToCart: route.params?.returnToCart || false,
-    });
+  const handleAddToCart = (item: Product) => {
+    const itemCarrinho = {
+      cartEntryId: `${item.id}-${Date.now()}`,
+      id: item.id,
+      name: item.name,
+      image_url: item.image_url,
+      price: item.price,
+      qty: 1,
+    };
+
+    // Adiciona o item ao carrinho sem navegar
+    setCart((prevCart) => [...prevCart, itemCarrinho]);
   };
 
   const total = cart.reduce(
@@ -96,7 +99,7 @@ export default function Home({ navigation, route }) {
 
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => goToDescription(item)}
+        onPress={() => handleAddToCart(item)}
       >
         <Image
           source={require("../assets/ic_carrinho.png")}
@@ -138,7 +141,7 @@ export default function Home({ navigation, route }) {
         showsVerticalScrollIndicator={false}
       />
 
-      {/* FOOTER DO CARRINHO - MANTIDO ORIGINAL */}
+      {/* FOOTER DO CARRINHO */}
       {cart.length > 0 && (
         <TouchableOpacity
           style={styles.cartFooter}
@@ -151,19 +154,12 @@ export default function Home({ navigation, route }) {
           }
         >
           <Text style={styles.cartText}>
-            {cart.length} item{cart.length > 1 && "s"} • Total: R${" "}
+            {totalItems} item{totalItems > 1 ? "s" : ""} • Total: R${" "}
             {total.toFixed(2)}
           </Text>
           <Text style={styles.cartAction}>Carrinho</Text>
         </TouchableOpacity>
       )}
-
     </View>
-      
-    
   );
 }
-   
- 
-
-  

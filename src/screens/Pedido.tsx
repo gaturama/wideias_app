@@ -13,7 +13,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../utils/supabase";
 import { useState, useEffect, useCallback } from "react";
 import { useFocusEffect, useRoute, RouteProp } from "@react-navigation/native";
-//import { useCredito } from "../context/CreditoContext";
 import { RootTabParamList } from "../navigation/types";
 import { useLocation } from "../context/LocationContext";
   
@@ -42,7 +41,7 @@ interface OrderItem {
   };
 }
 
-  type pedidoRouteProp = RouteProp<RootTabParamList, "Home">;
+type pedidoRouteProp = RouteProp<RootTabParamList, "Home">;
 
 export default function Pedido({ navigation }) {
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
@@ -50,10 +49,44 @@ export default function Pedido({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [credito, setCredito] = useState(0);
   const { locationId, locationName } = useLocation();
-  console.log("Location ID recebida em Pedido:", locationId);
-
+  
   const route = useRoute<pedidoRouteProp>();
 
+  const carregarCredito = async () => {
+    try {
+      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+
+      if (!user) {
+        console.log("Nenhum usuário autenticado");
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      console.log("Erro ao buscar perfil:", error);
+
+      if (error) {
+        console.error("Erro ao carregar crédito:", error);
+        setCredito(0);
+        return;
+      }
+
+      const creditValue = profile?.credit || 0;
+      setCredito(creditValue);
+      
+    } catch (error: any) {
+      console.error("Erro CATCH ao carregar crédito:", error);
+      setCredito(0);
+    }
+  };
 
   const carregarPedidos = async () => {
     try {
@@ -66,15 +99,7 @@ export default function Pedido({ navigation }) {
         return;
       }
 
-     /* const { data: profile } = await supabase
-        .from("profiles")
-        .select("credito")
-        .eq("id", user.id)
-        .single();
-
-      if (profile) {
-        setCredito(profile.credito || 0);
-      }*/
+      await carregarCredito();
 
       const { data, error } = await supabase
         .from("order_items")
@@ -129,7 +154,6 @@ export default function Pedido({ navigation }) {
     carregarPedidos();
   };
 
-
   const handlePerfil = () => {
     navigation.navigate("Perfil");
   };
@@ -149,8 +173,9 @@ export default function Pedido({ navigation }) {
                 .update({ status: "completed" })
                 .eq("id", item.id);
 
+              if (itemError) throw itemError;
 
-              const { data: remaingItems, error:checkError } = await supabase
+              const { data: remainingItems, error: checkError } = await supabase
                 .from("order_items")
                 .select("id")
                 .eq("order_id", item.order_id)
@@ -158,7 +183,7 @@ export default function Pedido({ navigation }) {
 
               if (checkError) throw checkError;
               
-              if (remaingItems.length === 0) {
+              if (remainingItems.length === 0) {
                 const { error: orderError } = await supabase
                   .from("orders")
                   .update({ status: "completed" })
@@ -176,7 +201,7 @@ export default function Pedido({ navigation }) {
               navigation.navigate("Historico");
             } catch (error: any) {
               console.error("Erro ao concluir item:", error);
-              Alert.alert("Erro", "Não foi possível concluir o ");
+              Alert.alert("Erro", "Não foi possível concluir o item");
             }
           },
         },
@@ -275,7 +300,6 @@ export default function Pedido({ navigation }) {
               >
                 <Ionicons name="checkmark-circle" size={28} color="#4CAF50" />
               </TouchableOpacity>
-
             </View>
           )}
           refreshControl={

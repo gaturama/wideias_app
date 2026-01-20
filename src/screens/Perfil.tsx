@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesPerfil";
 import * as ImagePicker from "expo-image-picker";
@@ -11,10 +11,21 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../utils/supabase";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Produto">;
+
+type PerfilUpdate = {
+  nome: string;
+  cpf: string | null;
+  telefone: string;
+  data_nascimento: string | null;
+};
+
 
 export default function Perfil({ navigation }: Props) {
   const [name, setName] = useState("");
@@ -24,26 +35,121 @@ export default function Perfil({ navigation }: Props) {
   const [date, setDate] = useState("");
   const [cpf, setCpf] = useState("");
   const [image, setImage] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const handleLogin = () => {
-    navigation.navigate("Login");
+  useEffect(() => {
+  carregarPerfil().catch(console.error);
+}, []);
+
+  const carregarPerfil = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        Alert.alert("Erro", "Usuário não autenticado");
+        navigation.navigate("Login");
+        return;
+      }
+
+      setUserId(user.id);
+      setEmail(user.email || "");
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Erro ao carregar perfil:", error);
+        return;
+      }
+
+      if (profile) {
+        setName(profile.nome || "");
+        setCpf(profile.cpf || "");
+        setPhoneNumber(profile.telefone || "");
+        setDate(profile.data_nascimento || "");
+        setImage(profile.avatar_url || "");
+      }
+
+    } catch (error: any) {
+      console.error("Erro ao carregar perfil:", error);
+      Alert.alert("Erro", "Não foi possível carregar o perfil");
+    }
   };
 
-  // Função para que seja possível a edição do perfil do usuário
-  const handleEdit = () => {
-    if (!name || !email || !password || !phoneNumber) {
-      alert("Preencha todos os campos antes de salvar!");
+  const handleEdit = async () => {
+    if (!name || !phoneNumber) {
+      Alert.alert("Erro", "Preencha pelo menos nome e telefone!");
       return;
     }
 
-    alert("Informações atualizadas com sucesso!");
+    if (!userId) {
+      Alert.alert("Erro", "Usuário não identificado");
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      // Atualiza o perfil
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update<PerfilUpdate>({
+            nome: name,
+            cpf: cpf || null,
+            telefone: phoneNumber,
+            data_nascimento: date || null,
+          }) 
+        .eq("id", userId);
+
+      if (profileError) throw profileError;
+
+      // Se a senha foi alterada, atualiza também
+      if (password && password.length >= 6) {
+        const { error: passwordError } = await supabase.auth.updateUser({
+          password: password,
+        });
+
+        if (passwordError) throw passwordError;
+      }
+
+      setSaving(false);
+      Alert.alert("Sucesso", "Informações atualizadas com sucesso!");
+      setPassword(""); // Limpa o campo de senha
+    } catch (error: any) {
+      setSaving(false);
+      console.error("Erro ao atualizar perfil:", error);
+      Alert.alert("Erro", error.message || "Não foi possível atualizar o perfil");
+    }
   };
 
-  // Função para selecionar uma foto da galeria do celular do usuário
+  const handleLogin = async () => {
+    Alert.alert(
+      "Sair",
+      "Tem certeza que deseja sair?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Sair",
+          style: "destructive",
+          onPress: async () => {
+            await supabase.auth.signOut();
+            navigation.navigate("Login");
+          },
+        },
+      ]
+    );
+  };
+
   async function pickImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      alert("Precisamos de permisão para acessar a galeria!");
+      Alert.alert("Permissão necessária", "Precisamos de permissão para acessar a galeria!");
       return;
     }
 
@@ -61,11 +167,11 @@ export default function Perfil({ navigation }: Props) {
 
   const inputs = [
     { key: "name", placeholder: "Nome", value: name, onChange: setName },
-    { key: "email", placeholder: "Email", value: email, onChange: setEmail },
+    { key: "email", placeholder: "Email", value: email, onChange: setEmail, disabled: true },
     {
       key: "password",
-      placeholder: "Senha",
-      value: password,
+      placeholder: "Nova Senha (deixe em branco para não alterar)",
+      value: "",
       onChange: setPassword,
       secure: true,
     },
@@ -78,15 +184,15 @@ export default function Perfil({ navigation }: Props) {
     { key: "cpf", placeholder: "CPF", value: cpf, onChange: setCpf },
     {
       key: "date",
-      placeholder: "Data de Aniversário",
+      placeholder: "Data de Aniversário (AAAA-MM-DD)",
       value: date,
       onChange: setDate,
     },
   ];
 
+
   return (
     <View style={[styles.container, { backgroundColor: "#fff" }]}>
-      {/* Header customizável */}
       <Appbar.Header style={styles.head}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title="Perfil" color="white" />
@@ -99,10 +205,11 @@ export default function Perfil({ navigation }: Props) {
         renderItem={({ item }) => (
           <TextInput
             placeholder={item.placeholder}
-            style={styles.input}
+            style={[styles.input, item.disabled && { backgroundColor: "#f0f0f0" }]}
             value={item.value}
             onChangeText={item.onChange}
             secureTextEntry={item.secure || false}
+            editable={!item.disabled}
             keyboardType={
               item.key === "email"
                 ? "email-address"
@@ -131,8 +238,14 @@ export default function Perfil({ navigation }: Props) {
         }
         ListFooterComponent={
           <>
-            <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
-              <Text style={styles.editButtonText}>Editar</Text>
+            <TouchableOpacity 
+              style={[styles.editButton, saving && { opacity: 0.5 }]} 
+              onPress={handleEdit}
+              disabled={saving}
+            >
+              <Text style={styles.editButtonText}>
+                {"Salvar Alterações"}
+              </Text>
             </TouchableOpacity>
 
             <View style={styles.line} />
