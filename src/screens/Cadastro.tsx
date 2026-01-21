@@ -10,19 +10,19 @@ import {
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesCadastro";
-import { RootStackParamList } from "../navigation/types";
-import { supabase } from "../../utils/supabase";
+import { RootStackParamList } from "../navigation/types"; 
+import { authCadastro } from "../services/AuthServiceCadastro";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Cadastro">;
 
-type PerfilUpdate = {
-  id?: string | null;
-  nome?: string | null;
-  cpf?: string | null;
-  telefone?: string | null;
-  data_nascimento?: string | null;
-  credit?: number | null;
-};
+// type PerfilUpdate = {
+//   id?: string | null;
+//   nome?: string | null;
+//   cpf?: string | null;
+//   telefone?: string | null;
+//   data_nascimento?: string | null;
+//   credit?: number | null;
+// };
 
 export default function Cadastro({ navigation }: Props) {
   const [name, setName] = useState("");
@@ -39,14 +39,20 @@ export default function Cadastro({ navigation }: Props) {
       return;
     }
 
-    if (password.length < 6) {
-      Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres!");
+    if (password.length < 3) {
+      Alert.alert("Erro", "A senha deve ter pelo menos 4 caracteres!");
       return;
     }
 
     const cpfNumeros = cpf.replace(/\D/g, "");
     if (cpfNumeros.length !== 11) {
       Alert.alert("Erro", "CPF inválido! Digite apenas números (11 dígitos)");
+      return;
+    }
+
+    const telefoneNumeros = phoneNumber.replace(/\D/g, "");
+    if (telefoneNumeros.length < 10) {
+      Alert.alert("Erro", "Telefone inválido!");
       return;
     }
 
@@ -59,75 +65,44 @@ export default function Cadastro({ navigation }: Props) {
     setLoading(true);
 
     try {
-      
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: email.trim(),
-        password: password,
-        options: {
-          data: {
-            nome: name,
-            cpf: cpfNumeros,
-          },
-        },
-      });
-
-      if (authError) {
-        setLoading(false);
-        Alert.alert("Erro no cadastro", authError.message);
-        return;
-      }
-
-      if (!authData.user) {
-        setLoading(false);
-        Alert.alert("Erro", "Erro ao criar usuário");
-        return;
-      }
-
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update<PerfilUpdate>({
-          nome: name.trim(),
-          cpf: cpfNumeros,
-          telefone: phoneNumber.trim(),
-          data_nascimento: date,
-          credit: 0,
-        })
-        .eq("id", authData.user.id);
-
-      if (profileError) {
-        setLoading(false);
-        console.error("Erro ao criar perfil:", profileError);
-        Alert.alert(
-          "Erro no perfil",
-          "Não foi possível criar o perfil. Por favor, tente novamente."
-        );
-        return;
-      }
+      const resultado = await authCadastro.cadastrarUsuario({
+        nome: name.trim(),
+        cpf: cpfNumeros,
+        email: email.trim().toLowerCase(),
+        senha: password,
+        telefone: telefoneNumeros,
+        nascimento: date,
+      }); 
 
       setLoading(false);
-      
-      Alert.alert(
-        "Cadastro realizado",
-        `Usuário ${name} cadastrado com sucesso!\n\nVerifique seu email para confirmar o cadastro.`,
-        [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate("Login"),
-          },
-        ]
-      );
 
-      setName("");
-      setEmail("");
-      setPassword("");
-      setPhoneNumber("");
-      setDate("");
-      setCpf("");
+      if (resultado.sucesso) {
+        Alert.alert(
+          "Cadastro realizado com sucesso!",
+          `Bem vindo, ${name}!`,
+          [
+            {
+              text: "OK", 
+              onPress: () => {
+                setName("");
+                setEmail("");
+                setPassword("");
+                setPhoneNumber("");
+                setDate("");
+                setCpf("");
 
+                navigation.navigate("Login");
+              },
+            },
+          ]
+        );
+      } else {
+        Alert.alert("Erro no cadastro", resultado.erro)
+      }
     } catch (err: any) {
       setLoading(false);
-      console.error("Erro no cadastro:", err);
-      Alert.alert("Erro", err?.message || "Ocorreu um erro inesperado");
+      console.error("Erro inesperado", err);
+      Alert.alert("Erro", "Ocorreu um erro inesperado. Tente novamente");
     }
   };
 
@@ -193,7 +168,7 @@ export default function Cadastro({ navigation }: Props) {
         <TextInput
           autoCorrect={false}
           autoCapitalize="none"
-          placeholder="Mínimo 6 caracteres"
+          placeholder="Mínimo 3 caracteres"
           style={styles.input}
           value={password}
           onChangeText={setPassword}
