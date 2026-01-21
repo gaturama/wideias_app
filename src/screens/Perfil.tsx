@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../utils/supabase";
+import CustomAlert from "../components/CustomAlert";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Produto">;
 
@@ -25,7 +26,6 @@ type PerfilUpdate = {
   telefone: string;
   data_nascimento: string | null;
 };
-
 
 export default function Perfil({ navigation }: Props) {
   const [name, setName] = useState("");
@@ -38,9 +38,36 @@ export default function Perfil({ navigation }: Props) {
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertOnConfirm, setAlertOnConfirm] = useState<(() => void) | null>(
+    null,
+  );
+  const [alertOnCancel, setAlertOnCancel] = useState<(() => void) | null>(null);
+  const [alertConfirmText, setAlertConfirmText] = useState("OK");
+  const [alertCancelText, setAlertCancelText] = useState("Cancelar");
+
+  const showAlert = (
+    title: string,
+    message: string,
+    onConfirm?: () => void,
+    onCancel?: () => void,
+    confirmText?: string,
+    cancelText?: string,
+  ) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertOnConfirm(() => onConfirm || (() => setAlertVisible(false)));
+    setAlertOnCancel(() => onCancel);
+    setAlertConfirmText(confirmText || "OK");
+    setAlertCancelText(cancelText || "Cancelar");
+    setAlertVisible(true);
+  };
+
   useEffect(() => {
-  carregarPerfil().catch(console.error);
-}, []);
+    carregarPerfil().catch(console.error);
+  }, []);
 
   const carregarPerfil = async () => {
     try {
@@ -49,7 +76,7 @@ export default function Perfil({ navigation }: Props) {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        Alert.alert("Erro", "Usuário não autenticado");
+        showAlert("Erro", "Usuário não autenticado");
         navigation.navigate("Login");
         return;
       }
@@ -75,21 +102,20 @@ export default function Perfil({ navigation }: Props) {
         setDate(profile.data_nascimento || "");
         setImage(profile.avatar_url || "");
       }
-
     } catch (error: any) {
       console.error("Erro ao carregar perfil:", error);
-      Alert.alert("Erro", "Não foi possível carregar o perfil");
+      showAlert("Erro", "Não foi possível carregar o perfil");
     }
   };
 
   const handleEdit = async () => {
     if (!name || !phoneNumber) {
-      Alert.alert("Erro", "Preencha pelo menos nome e telefone!");
+      showAlert("Erro", "Preencha pelo menos nome e telefone!");
       return;
     }
 
     if (!userId) {
-      Alert.alert("Erro", "Usuário não identificado");
+      showAlert("Erro", "Usuário não identificado");
       return;
     }
 
@@ -100,11 +126,11 @@ export default function Perfil({ navigation }: Props) {
       const { error: profileError } = await supabase
         .from("profiles")
         .update<PerfilUpdate>({
-            nome: name,
-            cpf: cpf || null,
-            telefone: phoneNumber,
-            data_nascimento: date || null,
-          }) 
+          nome: name,
+          cpf: cpf || null,
+          telefone: phoneNumber,
+          data_nascimento: date || null,
+        })
         .eq("id", userId);
 
       if (profileError) throw profileError;
@@ -119,37 +145,40 @@ export default function Perfil({ navigation }: Props) {
       }
 
       setSaving(false);
-      Alert.alert("Sucesso", "Informações atualizadas com sucesso!");
-      setPassword(""); // Limpa o campo de senha
+      showAlert("Sucesso", "Informações atualizadas com sucesso!");
+      setPassword("");
     } catch (error: any) {
       setSaving(false);
       console.error("Erro ao atualizar perfil:", error);
-      Alert.alert("Erro", error.message || "Não foi possível atualizar o perfil");
+      showAlert("Erro", error.message || "Não foi possível atualizar o perfil");
     }
   };
 
   const handleLogin = async () => {
-    Alert.alert(
+    showAlert(
       "Sair",
       "Tem certeza que deseja sair?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Sair",
-          style: "destructive",
-          onPress: async () => {
-            await supabase.auth.signOut();
-            navigation.navigate("Login");
-          },
-        },
-      ]
+      async () => {
+        setAlertVisible(false);
+        await supabase.auth.signOut();
+        navigation.navigate("Login");
+      },
+      () => {
+        // Ao cancelar
+        setAlertVisible(false);
+      },
+      "Sair",
+      "Cancelar",
     );
   };
 
   async function pickImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("Permissão necessária", "Precisamos de permissão para acessar a galeria!");
+      showAlert(
+        "Permissão necessária",
+        "Precisamos de permissão para acessar a galeria!",
+      );
       return;
     }
 
@@ -167,7 +196,13 @@ export default function Perfil({ navigation }: Props) {
 
   const inputs = [
     { key: "name", placeholder: "Nome", value: name, onChange: setName },
-    { key: "email", placeholder: "Email", value: email, onChange: setEmail, disabled: true },
+    {
+      key: "email",
+      placeholder: "Email",
+      value: email,
+      onChange: setEmail,
+      disabled: true,
+    },
     {
       key: "password",
       placeholder: "Nova Senha (deixe em branco para não alterar)",
@@ -190,7 +225,6 @@ export default function Perfil({ navigation }: Props) {
     },
   ];
 
-
   return (
     <View style={[styles.container, { backgroundColor: "#fff" }]}>
       <Appbar.Header style={styles.head}>
@@ -205,7 +239,10 @@ export default function Perfil({ navigation }: Props) {
         renderItem={({ item }) => (
           <TextInput
             placeholder={item.placeholder}
-            style={[styles.input, item.disabled && { backgroundColor: "#f0f0f0" }]}
+            style={[
+              styles.input,
+              item.disabled && { backgroundColor: "#f0f0f0" },
+            ]}
             value={item.value}
             onChangeText={item.onChange}
             secureTextEntry={item.secure || false}
@@ -214,8 +251,8 @@ export default function Perfil({ navigation }: Props) {
               item.key === "email"
                 ? "email-address"
                 : item.key === "phone"
-                ? "phone-pad"
-                : "default"
+                  ? "phone-pad"
+                  : "default"
             }
             autoCorrect={false}
             autoCapitalize="none"
@@ -238,14 +275,12 @@ export default function Perfil({ navigation }: Props) {
         }
         ListFooterComponent={
           <>
-            <TouchableOpacity 
-              style={[styles.editButton, saving && { opacity: 0.5 }]} 
+            <TouchableOpacity
+              style={[styles.editButton, saving && { opacity: 0.5 }]}
               onPress={handleEdit}
               disabled={saving}
             >
-              <Text style={styles.editButtonText}>
-                {"Salvar Alterações"}
-              </Text>
+              <Text style={styles.editButtonText}>{"Salvar Alterações"}</Text>
             </TouchableOpacity>
 
             <View style={styles.line} />
@@ -258,6 +293,32 @@ export default function Perfil({ navigation }: Props) {
             </TouchableOpacity>
           </>
         }
+      />
+
+      <CustomAlert
+        isVisible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          if (alertOnConfirm) {
+            alertOnConfirm();
+          } else {
+            setAlertVisible(false);
+          }
+        }}
+        onCancel={
+          alertOnCancel
+            ? () => {
+                if (alertOnCancel) {
+                  alertOnCancel();
+                } else {
+                  setAlertVisible(false);
+                }
+              }
+            : undefined
+        }
+        confirmText={alertConfirmText}
+        cancelText={alertCancelText}
       />
     </View>
   );

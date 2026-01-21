@@ -13,6 +13,7 @@ import { styles } from "../styles/stylesProduto";
 import { supabase } from "../../utils/supabase";
 import { Product } from "../types/database.types";
 import { useLocation } from "../context/LocationContext";
+import CustomAlert from "../components/CustomAlert";
 
 export default function Home({ navigation, route }) {
   const { locationId, tipoLocal } = useLocation();
@@ -21,6 +22,24 @@ export default function Home({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const editar = route.params?.editar || false;
   const editIndex = route.params?.editIndex;
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertOnConfirmm, setAlertOnConfirm] = useState<(() => void) | null>(
+    null,
+  );
+
+  const showAlert = (
+    title: string,
+    message: string,
+    onConfirm?: () => void,
+  ) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertOnConfirm(() => onConfirm || (() => setAlertVisible(false)));
+    setAlertVisible(true);
+  };
 
   console.log("Location ID recebida em Produto:", locationId);
   console.log(tipoLocal);
@@ -47,7 +66,7 @@ export default function Home({ navigation, route }) {
 
       setProdutos(data || []);
     } catch (error: any) {
-      Alert.alert("Erro", error.message);
+      showAlert("Erro", error.message);
     } finally {
       setLoading(false);
     }
@@ -69,21 +88,15 @@ export default function Home({ navigation, route }) {
 
   const total = cart.reduce(
     (sum, item: any) => sum + item.price * (item.qty || 1),
-    0
+    0,
   );
 
-  const totalItems = cart.reduce(
-    (sum, item: any) => sum + (item.qty || 1),
-    0
-  );
+  const totalItems = cart.reduce((sum, item: any) => sum + (item.qty || 1), 0);
 
   const renderProduct = ({ item }: { item: Product }) => (
     <View style={styles.productCard}>
       {item.image_url ? (
-        <Image
-          source={{ uri: item.image_url }}
-          style={styles.productImage}
-        />
+        <Image source={{ uri: item.image_url }} style={styles.productImage} />
       ) : (
         <Image
           source={require("../assets/ic_product.png")}
@@ -93,9 +106,7 @@ export default function Home({ navigation, route }) {
 
       <Text style={styles.productName}>{item.name}</Text>
 
-      <Text style={styles.productPrice}>
-        R$ {item.price.toFixed(2)}
-      </Text>
+      <Text style={styles.productPrice}>R$ {item.price.toFixed(2)}</Text>
 
       <TouchableOpacity
         style={styles.addButton}
@@ -133,9 +144,9 @@ export default function Home({ navigation, route }) {
         data={produtos}
         numColumns={2}
         keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={{ 
-          padding: 16, 
-          paddingBottom: cart.length > 0 ? 180 : 100 
+        contentContainerStyle={{
+          padding: 16,
+          paddingBottom: cart.length > 0 ? 180 : 100,
         }}
         renderItem={renderProduct}
         showsVerticalScrollIndicator={false}
@@ -146,8 +157,8 @@ export default function Home({ navigation, route }) {
         <TouchableOpacity
           style={styles.cartFooter}
           onPress={() =>
-            navigation.navigate("Carrinho", { 
-              cart, 
+            navigation.navigate("Carrinho", {
+              cart,
               tipoLocal: tipoLocal,
               locationId: locationId,
             })
@@ -160,6 +171,20 @@ export default function Home({ navigation, route }) {
           <Text style={styles.cartAction}>Carrinho</Text>
         </TouchableOpacity>
       )}
+
+      <CustomAlert
+        isVisible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          if (alertOnConfirmm) {
+            alertOnConfirmm();
+          } else {
+            setAlertVisible(false);
+          }
+        }}      
+        confirmText="OK"
+      />
     </View>
   );
 }

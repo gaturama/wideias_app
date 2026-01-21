@@ -13,7 +13,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../utils/supabase";
 import { useRoute, RouteProp } from "@react-navigation/native";
-import { useLocation } from '../context/LocationContext';
+import { useLocation } from "../context/LocationContext";
+import CustomAlert from "../components/CustomAlert";
 
 type PagamentoParams = {
   cart: any[];
@@ -24,11 +25,12 @@ type PagamentoParams = {
 };
 
 export default function Pagamento({ navigation }) {
-  const route = useRoute<RouteProp<{ params: PagamentoParams }, 'params'>>();
+  const route = useRoute<RouteProp<{ params: PagamentoParams }, "params">>();
   const cartItems = route.params?.cart || [];
   const observacoes = route.params?.observacoes;
   const mesa = route.params?.mesa;
-  const { locationId: contextLocationId, locationName: contextLocationName } = useLocation();
+  const { locationId: contextLocationId, locationName: contextLocationName } =
+    useLocation();
 
   const locationId = route.params?.locationId || contextLocationId || "";
   const localName = route.params?.locationName || contextLocationName || "";
@@ -40,13 +42,38 @@ export default function Pagamento({ navigation }) {
 
   const totalCarrinho = cartItems.reduce(
     (sum, item) => sum + item.price * (item.qty || 1),
-    0
+    0,
   );
 
   const creditoAplicado = usarCredito
     ? Math.min(creditoUsuario, totalCarrinho)
     : 0;
   const totalFinal = totalCarrinho - creditoAplicado;
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertOnConfirm, setAlertOnConfirm] = useState<(() => void) | null>(null);
+  const [alertOnCancel, setAlertOnCancel] = useState<(() => void) | null>(null);
+  const [alertConfirmText, setAlertConfirmText] = useState("OK");
+  const [alertCancelText, setAlertCancelText] = useState("Cancelar");
+
+  const showAlert = (
+    title: string,
+    message: string,
+    onConfirm?: () => void,
+    onCancel?: () => void,
+    confirmText?: string,
+    cancelText?: string,
+  ) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertOnConfirm(() => onConfirm || (() => setAlertVisible(false)));
+    setAlertOnCancel(() => onCancel);
+    setAlertConfirmText(confirmText || "OK");
+    setAlertCancelText(cancelText || "Cancelar");
+    setAlertVisible(true);
+  };
 
   useEffect(() => {
     carregarCredito();
@@ -57,21 +84,19 @@ export default function Pagamento({ navigation }) {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      
+
       if (!user) return;
 
       setUserId(user.id);
 
       // Garante que o perfil existe usando upsert
-      await supabase
-        .from("profiles")
-        .upsert(
-          { 
-            id: user.id,
-            credit: 0 
-          },
-          { onConflict: 'id', ignoreDuplicates: true }
-        );
+      await supabase.from("profiles").upsert(
+        {
+          id: user.id,
+          credit: 0,
+        },
+        { onConflict: "id", ignoreDuplicates: true },
+      );
 
       // Busca o perfil
       const { data, error } = await supabase
@@ -95,29 +120,26 @@ export default function Pagamento({ navigation }) {
 
   const finalizarPagamento = async (paymentMethod: string) => {
     if (cartItems.length === 0) {
-      Alert.alert("Carrinho vazio", "Adicione produtos antes de finalizar");
+      showAlert("Carrinho vazio", "Adicione produtos antes de finalizar");
       return;
     }
 
-    // Verifica se o usuário selecionou usar crédito mas não tem saldo suficiente
     if (usarCredito && creditoUsuario < totalCarrinho && totalFinal > 0) {
-      Alert.alert(
+      showAlert(
         "Crédito Insuficiente",
-        `Seu crédito disponível (R$ ${creditoUsuario.toFixed(2)}) não é suficiente para cobrir o valor total (R$ ${totalCarrinho.toFixed(2)}).\n\nVocê pode:\n• Adicionar mais crédito\n• Pagar R$ ${totalFinal.toFixed(2)} com ${paymentMethod}`,
-        [
-          {
-            text: "Adicionar Crédito",
-            onPress: () => navigation.navigate("Credito"),
-          },
-          {
-            text: "Pagar Restante",
-            onPress: () => processarPagamento(paymentMethod),
-          },
-          {
-            text: "Cancelar",
-            style: "cancel",
-          },
-        ]
+        `Seu crédito disponível (R$ ${creditoUsuario.toFixed(2)}) não é suficiente para cobrir o valor total (R$ ${totalCarrinho.toFixed(2)}).\n\nDeseja adicionar mais crédito ou pagar R$ ${totalFinal.toFixed(2)} com ${paymentMethod}?`,
+        () => {
+          
+          setAlertVisible(false);
+          processarPagamento(paymentMethod);
+        },
+        () => {
+          
+          setAlertVisible(false);
+          navigation.navigate("Credito");
+        },
+        "Pagar Restante", 
+        "Adicionar Crédito",
       );
       return;
     }
@@ -134,31 +156,34 @@ export default function Pagamento({ navigation }) {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        Alert.alert("Erro", "Usuário não autenticado");
+        showAlert("Erro", "Usuário não autenticado");
         setLoading(false);
         return;
       }
 
-      const { data: order, error: orderError } = await supabase
+      const { data: order, error: orderError } = (await supabase
         .from("orders")
-        .insert([{
-          user_id: user.id,
-          location_id: locationId,
-          status: "pending",
-          total: totalCarrinho,
-          payment_method: usarCredito && creditoAplicado > 0 
-            ? `Crédito + ${paymentMethod}` 
-            : paymentMethod,
-          observacoes: observacoes || null,
-          mesa: mesa || null,
-        }] as any)
+        .insert([
+          {
+            user_id: user.id,
+            location_id: locationId,
+            status: "pending",
+            total: totalCarrinho,
+            payment_method:
+              usarCredito && creditoAplicado > 0
+                ? `Crédito + ${paymentMethod}`
+                : paymentMethod,
+            observacoes: observacoes || null,
+            mesa: mesa || null,
+          },
+        ] as any)
         .select()
-        .single() as any;
+        .single()) as any;
 
       if (orderError) throw orderError;
 
       if (!order) {
-        Alert.alert("Erro", "Falha ao criar o pedido");
+        showAlert("Erro", "Falha ao criar o pedido");
         setLoading(false);
         return;
       }
@@ -194,9 +219,9 @@ export default function Pagamento({ navigation }) {
       }
 
       setLoading(false);
-      
+
       let mensagemSucesso = `Pedido realizado com sucesso!\n\n`;
-      
+
       if (usarCredito && creditoAplicado > 0) {
         mensagemSucesso += `Crédito usado: R$ ${creditoAplicado.toFixed(2)}\n`;
         if (totalFinal > 0) {
@@ -207,19 +232,14 @@ export default function Pagamento({ navigation }) {
         mensagemSucesso += `Total pago: R$ ${totalFinal.toFixed(2)}`;
       }
 
-      Alert.alert("Sucesso!", mensagemSucesso, [
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.navigate("Main", {
-              screen: "Pedido",
-            });
-          },
-        },
-      ]);
+      showAlert("Sucesso!", mensagemSucesso, () => {
+        navigation.navigate("Main", {
+          screen: "Pedido",
+        });
+      });
     } catch (err: any) {
       setLoading(false);
-      Alert.alert("Erro", err.message);
+      showAlert("Erro", err.message);
       console.error(err);
     }
   };
@@ -233,12 +253,12 @@ export default function Pagamento({ navigation }) {
         await Linking.openURL(googleIntent);
       } else {
         await Linking.openURL(
-          "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel"
+          "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel",
         );
       }
     } catch (err) {
       console.log("Erro abrindo Google Wallet:", err);
-      Alert.alert("Ops", "Não foi possível abrir o Google Pay.");
+      showAlert("Ops", "Não foi possível abrir o Google Pay.");
     }
   }
 
@@ -250,12 +270,12 @@ export default function Pagamento({ navigation }) {
         await Linking.openURL(samsungScheme);
       } else {
         await Linking.openURL(
-          "https://play.google.com/store/apps/details?id=com.samsung.android.spay"
+          "https://play.google.com/store/apps/details?id=com.samsung.android.spay",
         );
       }
     } catch (err) {
       console.log("Erro abrindo Samsung Pay:", err);
-      Alert.alert("Ops", "Não foi possível abrir o Samsung Pay.");
+      showAlert("Ops", "Não foi possível abrir o Samsung Pay.");
     }
   }
 
@@ -267,12 +287,12 @@ export default function Pagamento({ navigation }) {
         await Linking.openURL(scheme);
       } else {
         await Linking.openURL(
-          "https://apps.apple.com/app/apple-wallet/id915056765"
+          "https://apps.apple.com/app/apple-wallet/id915056765",
         );
       }
     } catch (err) {
       console.log("Erro abrindo Apple Pay:", err);
-      Alert.alert("Ops", "Não foi possível abrir o Apple Pay.");
+      showAlert("Ops", "Não foi possível abrir o Apple Pay.");
     }
   }
 
@@ -299,7 +319,9 @@ export default function Pagamento({ navigation }) {
             <Text style={{ fontSize: 14, color: "#666", textAlign: "center" }}>
               Valor do carrinho: R$ {totalCarrinho.toFixed(2)}
             </Text>
-            <Text style={{ fontSize: 14, color: "#2E7D32", textAlign: "center" }}>
+            <Text
+              style={{ fontSize: 14, color: "#2E7D32", textAlign: "center" }}
+            >
               Crédito aplicado: - R$ {creditoAplicado.toFixed(2)}
             </Text>
           </View>
@@ -332,7 +354,11 @@ export default function Pagamento({ navigation }) {
         </TouchableOpacity>
 
         {loading ? (
-          <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+          <ActivityIndicator
+            size="large"
+            color="#000"
+            style={{ marginTop: 20 }}
+          />
         ) : (
           <>
             <TouchableOpacity
@@ -390,6 +416,28 @@ export default function Pagamento({ navigation }) {
           </>
         )}
       </View>
+
+     <CustomAlert
+        isVisible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          if (alertOnConfirm) {
+            alertOnConfirm();
+          } else {
+            setAlertVisible(false);
+          }
+        }}
+        onCancel={alertOnCancel ? () => {
+          if (alertOnCancel) {
+            alertOnCancel();
+          } else {
+            setAlertVisible(false);
+          }
+        } : undefined}
+        confirmText={alertConfirmText}
+        cancelText={alertCancelText}
+      />
     </View>
   );
 }

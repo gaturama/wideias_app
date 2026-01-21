@@ -14,6 +14,7 @@ import { Appbar } from "react-native-paper";
 import { supabase } from "../../utils/supabase";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { useLocation } from "../context/LocationContext";
+import CustomAlert from "../components/CustomAlert";
 
 type CarrinhoParams = {
   cart: any[];
@@ -36,6 +37,24 @@ export default function Carrinho({ navigation }: any) {
   const finalLocationId = routeLocationId || locationId;
   console.log("Using Location ID:", finalLocationId);
   console.log( tipoLocal);
+
+  const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertOnConfirmm, setAlertOnConfirm] = useState<(() => void) | null>(
+      null,
+    );
+  
+    const showAlert = (
+      title: string,
+      message: string,
+      onConfirm?: () => void,
+    ) => {
+      setAlertTitle(title);
+      setAlertMessage(message);
+      setAlertOnConfirm(() => onConfirm || (() => setAlertVisible(false)));
+      setAlertVisible(true);
+    };
   
   useEffect(() => {
     if (initialCart && Array.isArray(initialCart)) {
@@ -58,7 +77,7 @@ export default function Carrinho({ navigation }: any) {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
       if (userError || !user) {
-        Alert.alert("Erro", "Usuário não autenticado");
+        showAlert("Erro", "Usuário não autenticado");
         return;
       }
       setUserId(user.id);
@@ -136,13 +155,13 @@ export default function Carrinho({ navigation }: any) {
 
   const handleProximo = () => {
     if (cartItems.length === 0) {
-      Alert.alert("Carrinho vazio", "Adicione produtos antes de continuar");
+      showAlert("Carrinho vazio", "Adicione produtos antes de continuar");
       return;
     }
 
 
     if (!userId) {
-      Alert.alert("Erro", "Dados do usuário não encontrados. Tente fazer login novamente.");
+      showAlert("Erro", "Dados do usuário não encontrados. Tente fazer login novamente.");
       return;
     }
 
@@ -309,6 +328,20 @@ export default function Carrinho({ navigation }: any) {
           </View>
         </View>
       )}
+
+      <CustomAlert
+        isVisible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          if (alertOnConfirmm) {
+            alertOnConfirmm();
+          } else {
+            setAlertVisible(false);
+          }
+        }}      
+        confirmText="OK"
+      />
     </View>
   );
 }

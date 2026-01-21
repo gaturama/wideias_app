@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { Appbar } from "react-native-paper";
 import { useMesa } from "../context/MesaContext";
 import { supabase } from "../../utils/supabase";
 import { styles } from "../styles/stylesMesa";
+import CustomAlert from "../components/CustomAlert";
 
 export default function Mesa({ navigation, route }) {
   const { setMesa } = useMesa();
@@ -18,6 +26,24 @@ export default function Mesa({ navigation, route }) {
   const observacoes = route.params?.observacoes || "";
   const total = route.params?.total || 0;
 
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertOnConfirmm, setAlertOnConfirm] = useState<(() => void) | null>(
+    null,
+  );
+
+  const showAlert = (
+    title: string,
+    message: string,
+    onConfirm?: () => void,
+  ) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertOnConfirm(() => onConfirm || (() => setAlertVisible(false)));
+    setAlertVisible(true);
+  };
+
   // Buscar dados do usuário ao montar o componente
   useEffect(() => {
     fetchUserData();
@@ -26,17 +52,17 @@ export default function Mesa({ navigation, route }) {
   const fetchUserData = async () => {
     try {
       // Buscar usuário autenticado
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
       if (userError || !user) {
-        Alert.alert("Erro", "Usuário não autenticado");
+        showAlert("Erro", "Usuário não autenticado");
         return;
       }
 
       setUserId(user.id);
-
-     
-    
     } catch (error) {
       console.error("Erro ao buscar dados do usuário:", error);
     }
@@ -45,12 +71,12 @@ export default function Mesa({ navigation, route }) {
   // Função para confirmar mesa e ir para pagamento
   const handleConfirm = () => {
     if (!mesaLocal.trim()) {
-      Alert.alert("Atenção", "Por favor, informe o número da mesa!");
+     showAlert("Atenção", "Por favor, informe o número da mesa!");
       return;
     }
 
     if (!userId) {
-      Alert.alert("Erro", "Dados do usuário não encontrados. Tente novamente.");
+     showAlert("Erro", "Dados do usuário não encontrados. Tente novamente.");
       return;
     }
 
@@ -71,14 +97,14 @@ export default function Mesa({ navigation, route }) {
 
   return (
     <View style={{ flex: 1 }}>
-      <Appbar.Header >
+      <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content title="Escolher Mesa" color="white" />
       </Appbar.Header>
 
       <View style={styles.container}>
         <Text style={styles.title}>Informe o número da sua mesa</Text>
-        
+
         {/* Input da mesa */}
         <TextInput
           style={styles.input}
@@ -101,6 +127,20 @@ export default function Mesa({ navigation, route }) {
           )}
         </TouchableOpacity>
       </View>
+      
+      <CustomAlert
+        isVisible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          if (alertOnConfirmm) {
+            alertOnConfirmm();
+          } else {
+            setAlertVisible(false);
+          }
+        }}      
+        confirmText="OK"
+      />
     </View>
   );
 }

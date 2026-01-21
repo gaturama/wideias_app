@@ -12,6 +12,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "../styles/stylesLogin";
 import { AuthService } from "../services/AuthServices";
+import CustomAlert from "../components/CustomAlert";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -27,21 +28,39 @@ export default function Login({ navigation }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertOnConfirmm, setAlertOnConfirm] = useState<(() => void) | null>(
+    null,
+  );
+
+  const showAlert = (
+    title: string,
+    message: string,
+    onConfirm?: () => void,
+  ) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertOnConfirm(() => onConfirm || (() => setAlertVisible(false)));
+    setAlertVisible(true);
+  };
+
   useFocusEffect(
     useCallback(() => {
       setEmail("");
       setPassword("");
       setShowPassword(false);
-    }, [])
+    }, []),
   );
 
   const validateForm = (): boolean => {
     if (!email.trim()) {
-      alert("Informe o email");
+      showAlert("Erro", "Informe o email");
       return false;
     }
     if (!password.trim()) {
-      alert("Informe a senha");
+      showAlert("Erro", "Informe a senha");
       return false;
     }
     return true;
@@ -59,7 +78,7 @@ export default function Login({ navigation }: Props) {
     if (response.success) {
       navigation.navigate("Localizacao");
     } else {
-      alert(response.error || "Erro ao autenticar");
+      showAlert(response.error || "Erro", "Erro ao autenticar");
     }
   };
 
@@ -114,9 +133,7 @@ export default function Login({ navigation }: Props) {
         onPress={handleLogin}
         disabled={isLoading}
       >
-        <Text style={styles.buttonText}>
-          { "Entrar"}
-        </Text>
+        <Text style={styles.buttonText}>{"Entrar"}</Text>
       </TouchableOpacity>
 
       <Text
@@ -125,6 +142,19 @@ export default function Login({ navigation }: Props) {
       >
         Realizar Cadastro
       </Text>
+      <CustomAlert
+        isVisible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          if (alertOnConfirmm) {
+            alertOnConfirmm();
+          } else {
+            setAlertVisible(false);
+          }
+        }}
+        confirmText="OK"
+      />
     </View>
   );
 }

@@ -4,25 +4,16 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  Alert,
   ScrollView,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";
 import { styles } from "../styles/stylesCadastro";
-import { RootStackParamList } from "../navigation/types"; 
+import { RootStackParamList } from "../navigation/types";
 import { authCadastro } from "../services/AuthServiceCadastro";
+import CustomAlert from "../components/CustomAlert";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Cadastro">;
-
-// type PerfilUpdate = {
-//   id?: string | null;
-//   nome?: string | null;
-//   cpf?: string | null;
-//   telefone?: string | null;
-//   data_nascimento?: string | null;
-//   credit?: number | null;
-// };
 
 export default function Cadastro({ navigation }: Props) {
   const [name, setName] = useState("");
@@ -33,32 +24,53 @@ export default function Cadastro({ navigation }: Props) {
   const [cpf, setCpf] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertOnConfirmm, setAlertOnConfirm] = useState<(() => void) | null>(
+    null,
+  );
+
+  const showAlert = (
+    title: string,
+    message: string,
+    onConfirm?: () => void,
+  ) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertOnConfirm(() => onConfirm || (() => setAlertVisible(false)));
+    setAlertVisible(true);
+  };
+
   const handleCadastro = async () => {
     if (!name || !email || !password || !phoneNumber || !cpf || !date) {
-      Alert.alert("Erro", "Preencha todos os campos!");
+      showAlert("Erro", "Preencha todos os campos!");
       return;
     }
 
     if (password.length < 3) {
-      Alert.alert("Erro", "A senha deve ter pelo menos 4 caracteres!");
+      showAlert("Erro", "A senha deve ter pelo menos 4 caracteres!");
       return;
     }
 
     const cpfNumeros = cpf.replace(/\D/g, "");
     if (cpfNumeros.length !== 11) {
-      Alert.alert("Erro", "CPF inválido! Digite apenas números (11 dígitos)");
+      showAlert("Erro", "CPF inválido! Digite apenas números (11 dígitos)");
       return;
     }
 
     const telefoneNumeros = phoneNumber.replace(/\D/g, "");
     if (telefoneNumeros.length < 10) {
-      Alert.alert("Erro", "Telefone inválido!");
+      showAlert("Erro", "Telefone inválido!");
       return;
     }
 
     const dataRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dataRegex.test(date)) {
-      Alert.alert("Erro", "Data inválida! Use o formato AAAA-MM-DD (ex: 2001-12-31)");
+      showAlert(
+        "Erro",
+        "Data inválida! Use o formato AAAA-MM-DD (ex: 2001-12-31)",
+      );
       return;
     }
 
@@ -72,37 +84,32 @@ export default function Cadastro({ navigation }: Props) {
         senha: password,
         telefone: telefoneNumeros,
         nascimento: date,
-      }); 
+      });
 
       setLoading(false);
 
       if (resultado.sucesso) {
-        Alert.alert(
+        showAlert(
           "Cadastro realizado com sucesso!",
           `Bem vindo, ${name}!`,
-          [
-            {
-              text: "OK", 
-              onPress: () => {
-                setName("");
-                setEmail("");
-                setPassword("");
-                setPhoneNumber("");
-                setDate("");
-                setCpf("");
+          () => {
+            setName("");
+            setEmail("");
+            setPassword("");
+            setPhoneNumber("");
+            setDate("");
+            setCpf("");
 
-                navigation.navigate("Login");
-              },
-            },
-          ]
+            navigation.navigate("Login");
+          },
         );
       } else {
-        Alert.alert("Erro no cadastro", resultado.erro)
+        showAlert("Erro no cadastro", resultado.erro);
       }
     } catch (err: any) {
       setLoading(false);
       console.error("Erro inesperado", err);
-      Alert.alert("Erro", "Ocorreu um erro inesperado. Tente novamente");
+      showAlert("Erro", "Ocorreu um erro inesperado. Tente novamente");
     }
   };
 
@@ -205,11 +212,23 @@ export default function Cadastro({ navigation }: Props) {
           onPress={handleCadastro}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>
-            {"Cadastrar"}
-          </Text>
+          <Text style={styles.buttonText}>{"Cadastrar"}</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <CustomAlert 
+        isVisible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          if (alertOnConfirmm) {
+            alertOnConfirmm();
+          } else {
+            setAlertVisible(false);
+          }
+        }}      
+        confirmText="OK"
+      />
     </View>
   );
 }

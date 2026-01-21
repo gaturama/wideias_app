@@ -15,7 +15,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useFocusEffect, useRoute, RouteProp } from "@react-navigation/native";
 import { RootTabParamList } from "../navigation/types";
 import { useLocation } from "../context/LocationContext";
-  
+import CustomAlert from "../components/CustomAlert";
+
 interface OrderItem {
   id: string;
   order_id: string;
@@ -49,16 +50,41 @@ export default function Pedido({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [credito, setCredito] = useState(0);
   const { locationId, locationName } = useLocation();
-  
+
   const route = useRoute<pedidoRouteProp>();
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertOnConfirm, setAlertOnConfirm] = useState<(() => void) | null>(
+    null,
+  );
+  const [alertOnCancel, setAlertOnCancel] = useState<(() => void) | null>(null);
+  const [alertConfirmText, setAlertConfirmText] = useState("OK");
+  const [alertCancelText, setAlertCancelText] = useState("Cancelar");
+
+  const showAlert = (
+     title: string,
+    message: string,
+    onConfirm?: () => void,
+    onCancel?: () => void,
+    confirmText?: string,
+    cancelText?: string,
+  ) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertOnConfirm(() => onConfirm || (() => setAlertVisible(false)));
+    setAlertOnCancel(() => onCancel);
+    setAlertConfirmText(confirmText || "OK");
+    setAlertCancelText(cancelText || "Cancelar");
+    setAlertVisible(true);
+  };
 
   const carregarCredito = async () => {
     try {
-      
       const {
         data: { user },
       } = await supabase.auth.getUser();
-
 
       if (!user) {
         console.log("Nenhum usuário autenticado");
@@ -81,7 +107,6 @@ export default function Pedido({ navigation }) {
 
       const creditValue = profile?.credit || 0;
       setCredito(creditValue);
-      
     } catch (error: any) {
       console.error("Erro CATCH ao carregar crédito:", error);
       setCredito(0);
@@ -103,7 +128,8 @@ export default function Pedido({ navigation }) {
 
       const { data, error } = await supabase
         .from("order_items")
-        .select(`
+        .select(
+          `
           *,
           products (
             id,
@@ -122,7 +148,8 @@ export default function Pedido({ navigation }) {
               address
             )
           )
-        `)
+        `,
+        )
         .eq("orders.user_id", user.id)
         .eq("status", "pending")
         .order("created_at", { ascending: false });
@@ -132,7 +159,7 @@ export default function Pedido({ navigation }) {
       setOrderItems(data || []);
     } catch (error: any) {
       console.error("Erro ao carregar pedidos:", error);
-      Alert.alert("Erro", "Não foi possível carregar os pedidos");
+      showAlert("Erro", "Não foi possível carregar os pedidos");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -146,7 +173,7 @@ export default function Pedido({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       carregarPedidos();
-    }, [])
+    }, []),
   );
 
   const onRefresh = () => {
@@ -159,53 +186,55 @@ export default function Pedido({ navigation }) {
   };
 
   const handleRetirada = async (item: OrderItem) => {
-    Alert.alert(
+    showAlert(
       "Confirmar retirada",
       `Você está retirando "${item.products?.name}"?`,
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Sim",
-          onPress: async () => {
-            try {
-              const { error: itemError } = await supabase
-                .from("order_items")
-                .update({ status: "completed" })
-                .eq("id", item.id);
+      async () => {
+        setAlertVisible(false);
+        try {
+          const { error: itemError } = await supabase
+            .from("order_items")
+            .update({ status: "completed" })
+            .eq("id", item.id);
 
-              if (itemError) throw itemError;
+          if (itemError) throw itemError;
 
-              const { data: remainingItems, error: checkError } = await supabase
-                .from("order_items")
-                .select("id")
-                .eq("order_id", item.order_id)
-                .eq("status", "pending");
+          const { data: remainingItems, error: checkError } = await supabase
+            .from("order_items")
+            .select("id")
+            .eq("order_id", item.order_id)
+            .eq("status", "pending");
 
-              if (checkError) throw checkError;
-              
-              if (remainingItems.length === 0) {
-                const { error: orderError } = await supabase
-                  .from("orders")
-                  .update({ status: "completed" })
-                  .eq("id", item.order_id);
+          if (checkError) throw checkError;
 
-                if (orderError) throw orderError;
-              }
+          if (remainingItems.length === 0) {
+            const { error: orderError } = await supabase
+              .from("orders")
+              .update({ status: "completed" })
+              .eq("id", item.order_id);
 
-              Alert.alert(
-                "Item retirado",
-                "Esse item foi movido para histórico!"
-              );
-              
+            if (orderError) throw orderError;
+          }
+
+          showAlert(
+            "Item retirado",
+            "Esse item foi movido para histórico!",
+            () => {
+              setAlertVisible(false);
               carregarPedidos();
               navigation.navigate("Historico");
-            } catch (error: any) {
-              console.error("Erro ao concluir item:", error);
-              Alert.alert("Erro", "Não foi possível concluir o item");
             }
-          },
-        },
-      ]
+          );
+        } catch (error: any) {
+          console.error("Erro ao concluir item:", error);
+          showAlert("Erro", "Não foi possível concluir o item");
+        }
+      },
+      () => {
+        setAlertVisible(false);
+      },
+      "Sim",
+      "Cancelar"
     );
   };
 
@@ -250,7 +279,12 @@ export default function Pedido({ navigation }) {
           <Text style={styles.emptyText}>Nenhum pedido pendente</Text>
           <TouchableOpacity
             onPress={onRefresh}
-            style={{ marginTop: 16, padding: 12, backgroundColor: "#000", borderRadius: 8 }}
+            style={{
+              marginTop: 16,
+              padding: 12,
+              backgroundColor: "#000",
+              borderRadius: 8,
+            }}
           >
             <Text style={{ color: "#fff", fontWeight: "bold" }}>Atualizar</Text>
           </TouchableOpacity>
@@ -276,7 +310,9 @@ export default function Pedido({ navigation }) {
                 }
               >
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.title}>{item.products?.name || "Produto"}</Text>
+                  <Text style={styles.title}>
+                    {item.products?.name || "Produto"}
+                  </Text>
                   <Text style={styles.subtitle}>
                     Local: {item.orders?.locations?.name || "N/A"}
                   </Text>
@@ -287,7 +323,12 @@ export default function Pedido({ navigation }) {
                     Valor: R$ {(item.price * item.quantity).toFixed(2)}
                   </Text>
                   {item.observations && (
-                    <Text style={[styles.subtitle, { fontStyle: "italic", marginTop: 4 }]}>
+                    <Text
+                      style={[
+                        styles.subtitle,
+                        { fontStyle: "italic", marginTop: 4 },
+                      ]}
+                    >
                       Obs: {item.observations}
                     </Text>
                   )}
@@ -307,6 +348,28 @@ export default function Pedido({ navigation }) {
           }
         />
       )}
+
+      <CustomAlert
+        isVisible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          if (alertOnConfirm) {
+            alertOnConfirm();
+          } else {
+            setAlertVisible(false);
+          }
+        }}
+        onCancel={alertOnCancel ? () => {
+          if (alertOnCancel) {
+            alertOnCancel();
+          } else {
+            setAlertVisible(false);
+          }
+        } : undefined}
+        confirmText={alertConfirmText}
+        cancelText={alertCancelText}
+      />
     </View>
   );
 }

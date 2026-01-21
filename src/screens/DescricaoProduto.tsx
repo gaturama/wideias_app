@@ -11,6 +11,7 @@ import {
 import { Appbar, TextInput } from "react-native-paper";
 import { styles } from "../styles/stylesDescProduto";
 import { supabase } from "../../utils/supabase";
+import CustomAlert from "../components/CustomAlert";
 
 interface Ingrediente {
   id: string;
@@ -40,6 +41,24 @@ export default function DescricaoProduto({ route, navigation }: any) {
   const [adicionais, setAdicionais] = useState<Adicional[]>([]);
   const [observacao, setObservacao] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertOnConfirmm, setAlertOnConfirm] = useState<(() => void) | null>(
+    null,
+  );
+
+  const showAlert = (
+    title: string,
+    message: string,
+    onConfirm?: () => void,
+  ) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertOnConfirm(() => onConfirm || (() => setAlertVisible(false)));
+    setAlertVisible(true);
+  };
 
   useEffect(() => {
     if (!produto?.id) return;
@@ -85,7 +104,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
         // Restaurar ingredientes removidos
         if (produtoEditado.ingredientes_removidos) {
           const idsRemovidos = produtoEditado.ingredientes_removidos.map(
-            (i: any) => i.id
+            (i: any) => i.id,
           );
           ingredientesCarregados.forEach((ing) => {
             if (idsRemovidos.includes(ing.id)) {
@@ -96,9 +115,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
 
         // Restaurar adicionais selecionados
         if (produtoEditado.adicionais) {
-          const idsAdicionais = produtoEditado.adicionais.map(
-            (a: any) => a.id
-          );
+          const idsAdicionais = produtoEditado.adicionais.map((a: any) => a.id);
           adicionaisCarregados.forEach((add) => {
             if (idsAdicionais.includes(add.id)) {
               add.selecionado = true;
@@ -116,7 +133,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
       setAdicionais(adicionaisCarregados);
     } catch (err) {
       console.error(err);
-      Alert.alert("Erro", "Erro ao carregar ingredientes e adicionais");
+      showAlert("Erro", "Erro ao carregar ingredientes e adicionais");
     } finally {
       setLoading(false);
     }
@@ -124,15 +141,15 @@ export default function DescricaoProduto({ route, navigation }: any) {
 
   const toggleIngrediente = (id: string) => {
     setIngredientes((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, incluso: !i.incluso } : i))
+      prev.map((i) => (i.id === id ? { ...i, incluso: !i.incluso } : i)),
     );
   };
 
   const toggleAdicional = (id: string) => {
     setAdicionais((prev) =>
       prev.map((a) =>
-        a.id === id ? { ...a, selecionado: !a.selecionado } : a
-      )
+        a.id === id ? { ...a, selecionado: !a.selecionado } : a,
+      ),
     );
   };
 
@@ -154,7 +171,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
       price: precoTotal,
       qty: editar && cart[editIndex]?.qty ? cart[editIndex].qty : 1,
       ingredientes_removidos: ingredientes.filter(
-        (i) => i.removable && !i.incluso
+        (i) => i.removable && !i.incluso,
       ),
       adicionais: adicionais.filter((a) => a.selecionado),
       observacao,
@@ -208,9 +225,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
         <Text style={styles.productDesc}>
           {produto.description || "Produto delicioso"}
         </Text>
-        <Text>
-          Preço base: R$ {produto.price.toFixed(2)}
-        </Text>
+        <Text>Preço base: R$ {produto.price.toFixed(2)}</Text>
 
         {/* INGREDIENTES */}
         {ingredientes.some((i) => i.removable) && (
@@ -221,10 +236,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
               .map((item) => (
                 <TouchableOpacity
                   key={item.id}
-                  style={[
-                    styles.option,
-                    !item.incluso && styles.removedOption,
-                  ]}
+                  style={[styles.option, !item.incluso && styles.removedOption]}
                   onPress={() => toggleIngrediente(item.id)}
                 >
                   <Text style={styles.optionText}>{item.nome}</Text>
@@ -252,9 +264,7 @@ export default function DescricaoProduto({ route, navigation }: any) {
                 <Text style={styles.optionText}>
                   {item.nome} (+ R$ {item.preco.toFixed(2)})
                 </Text>
-                {item.selecionado && (
-                  <Text style={styles.toggleText}>✓</Text>
-                )}
+                {item.selecionado && <Text style={styles.toggleText}>✓</Text>}
               </TouchableOpacity>
             ))}
           </>
@@ -284,6 +294,20 @@ export default function DescricaoProduto({ route, navigation }: any) {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <CustomAlert
+        isVisible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          if (alertOnConfirmm) {
+            alertOnConfirmm();
+          } else {
+            setAlertVisible(false);
+          }
+        }}
+        confirmText="OK"
+      />
     </View>
   );
 }
