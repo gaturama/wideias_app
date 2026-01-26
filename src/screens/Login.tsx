@@ -11,8 +11,8 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "../styles/stylesLogin";
-import { AuthService } from "../services/AuthServices";
 import CustomAlert from "../components/CustomAlert";
+import { authCadastro } from "../services/AuthServiceCadastro";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -71,14 +71,28 @@ export default function Login({ navigation }: Props) {
 
     setIsLoading(true);
 
-    const response = await AuthService.login({ email, password });
+    try {
+      const resultado = await authCadastro.loginUsuario({
+        email: email.trim().toLowerCase(),
+        senha: password,
+      });
 
-    setIsLoading(false);
+      setIsLoading(false);
 
-    if (response.success) {
-      navigation.navigate("Localizacao");
-    } else {
-      showAlert(response.error || "Erro", "Erro ao autenticar");
+      if (resultado.sucesso) {
+        console.log("Login realizado: ", resultado.dados);
+
+        showAlert("Bem vindo!", "Login realizado com sucesso", () => {
+          setAlertVisible(false);
+          navigation.navigate("Localizacao");
+        });
+      } else {
+        showAlert("Erro na autenticação", resultado.erro);
+      }
+    } catch (error: any) {
+      setIsLoading(false);
+      console.error("Erro inesperado no login", error);
+      showAlert("Erro", "Ocorreu um erro inesperado. Tente novamente.")
     }
   };
 

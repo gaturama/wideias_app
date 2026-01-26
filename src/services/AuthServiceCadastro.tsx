@@ -64,4 +64,56 @@ export const authCadastro = {
       };
     }
   },
+
+  loginUsuario: async (dados: { email: string; senha: string }) => {
+    try {
+      const formData = new FormData();
+      formData.append("email", dados.email);
+      formData.append("senha", dados.senha);
+
+      console.log("Enviando dados para API (Login):", {
+        url: `${API_URL}/login`,
+        dados: {
+          email: dados.email,
+        },
+      });
+
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          Authorization: AUTH_TOKEN,
+        },
+        body: formData,
+      });
+
+      console.log("Status da resposta: ", response.status);
+
+      const data = await response.json();
+      console.log("Resposta da API: ", data);
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            data.erro ||
+            data.Resultado ||
+            "Email ou senha incorretos",
+        );
+      }
+
+      return {
+        sucesso: true,
+        dados: data,
+        mensagem:
+          data.mensagem || data.message || "Login realizado com sucesso!",
+        token: data.token || null,
+        usuario: data.usuario || null,
+      };
+    } catch (error: any) {
+      console.error("Erro ao fazer login:", error);
+      return {
+        sucesso: false,
+        erro: error.message || "Erro ao fazer login",
+      };
+    }
+  },
 };
