@@ -32,4 +32,5 @@ export type RootStackParamList = {
   QrScanner: undefined;
   Historico: undefined;
   DividirConta: undefined;
+  LoadingScreen: undefined;
 };

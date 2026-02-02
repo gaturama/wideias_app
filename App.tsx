@@ -22,106 +22,112 @@ import { PedidosProvider } from "./src/context/PedidosContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { CreditoProvider } from "./src/context/CreditoContext";
 import { LocationProvider } from "./src/context/LocationContext";
+import LoadingScreen from "./src/screens/LoadingScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-    <LocationProvider>  
-    <CreditoProvider>
-    <PedidosProvider>
-      <NavigationContainer>
-        {/*Inicialização definida para tela de Login || Para testes, substituir para a tela desejada*/}
-        <Stack.Navigator initialRouteName="Login" id={undefined}>
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Cadastro"
-            component={Cadastro}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Localizacao"
-            component={Localizacao}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Main"
-            component={TabsNavigator}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Perfil"
-            component={Perfil}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="DescricaoProduto"
-            component={DescricaoProduto}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Carrinho"
-            component={Carrinho}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Pagamento"
-            component={Pagamento}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="QrCode"
-            component={QRCodeScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Pix"
-            component={Pix}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Mesa"
-            component={Mesa}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Credito"
-            component={Credito}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Pedido"
-            component={Pedido}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="QrScanner"
-            component={QrScanner}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Historico"
-            component={Historico}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="DividirConta"
-            component={DividirConta}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-           name="Produto"
-           component={Produto}
-           options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PedidosProvider>
-    </CreditoProvider>
+    <LocationProvider>
+      <CreditoProvider>
+        <PedidosProvider>
+          <NavigationContainer>
+            {/*Inicialização definida para tela de Login || Para testes, substituir para a tela desejada*/}
+            <Stack.Navigator initialRouteName="Login" id={undefined}>
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Cadastro"
+                component={Cadastro}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Localizacao"
+                component={Localizacao}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Main"
+                component={TabsNavigator}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Perfil"
+                component={Perfil}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="DescricaoProduto"
+                component={DescricaoProduto}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Carrinho"
+                component={Carrinho}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Pagamento"
+                component={Pagamento}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="QrCode"
+                component={QRCodeScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Pix"
+                component={Pix}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Mesa"
+                component={Mesa}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Credito"
+                component={Credito}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Pedido"
+                component={Pedido}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="QrScanner"
+                component={QrScanner}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Historico"
+                component={Historico}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="DividirConta"
+                component={DividirConta}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Produto"
+                component={Produto}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="LoadingScreen"
+                component={LoadingScreen}
+                options={{ headerShown: false }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </PedidosProvider>
+      </CreditoProvider>
     </LocationProvider>
   );
 }

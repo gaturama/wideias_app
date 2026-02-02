@@ -18,6 +18,7 @@ export type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
   Localizacao: undefined;
+  LoadingScreen: { userData?: any };
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
@@ -80,11 +81,12 @@ export default function Login({ navigation }: Props) {
       setIsLoading(false);
 
       if (resultado.sucesso) {
-        console.log("Login realizado: ", resultado.dados);
-
         showAlert("Bem vindo!", "Login realizado com sucesso", () => {
           setAlertVisible(false);
-          navigation.navigate("Localizacao");
+
+          navigation.navigate("LoadingScreen", {
+            userData: resultado.dados,
+          });
         });
       } else {
         showAlert("Erro na autenticação", resultado.erro);
@@ -92,7 +94,7 @@ export default function Login({ navigation }: Props) {
     } catch (error: any) {
       setIsLoading(false);
       console.error("Erro inesperado no login", error);
-      showAlert("Erro", "Ocorreu um erro inesperado. Tente novamente.")
+      showAlert("Erro", "Ocorreu um erro inesperado. Tente novamente.");
     }
   };
 
