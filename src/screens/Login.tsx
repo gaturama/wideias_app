@@ -84,9 +84,7 @@ export default function Login({ navigation }: Props) {
         showAlert("Bem vindo!", "Login realizado com sucesso", () => {
           setAlertVisible(false);
 
-          navigation.navigate("LoadingScreen", {
-            userData: resultado.dados,
-          });
+          navigation.navigate("LoadingScreen");
         });
       } else {
         showAlert("Erro na autenticação", resultado.erro);

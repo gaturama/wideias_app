@@ -4,25 +4,24 @@ import Mesa from "./src/screens/Mesa";
 import Login from "./src/screens/Login";
 import Perfil from "./src/screens/Perfil";
 import Pedido from "./src/screens/Pedido";
+import Produto from "./src/screens/Produto";
 import Credito from "./src/screens/Credito";
 import Carrinho from "./src/screens/Carrinho";
 import Cadastro from "./src/screens/Cadastro";
 import Pagamento from "./src/screens/Pagamento";
-import QRCodeScreen from "./src/screens/QrCode";
 import QrScanner from "./src/screens/QrScanner";
 import Historico from "./src/screens/Historico";
 import Localizacao from "./src/screens/Localizacao";
 import DividirConta from "./src/screens/DividirConta";
+import QRCodeScreen from "./src/screens/QrCode";
 import TabsNavigator from "./src/navigation/TabsNavigator";
-import Produto from "./src/screens/Produto";
-import { RootStackParamList } from "./src/navigation/types";
 import DescricaoProduto from "./src/screens/DescricaoProduto";
-import { NavigationContainer } from "@react-navigation/native";
-import { PedidosProvider } from "./src/context/PedidosContext";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { CreditoProvider } from "./src/context/CreditoContext";
+import { PedidosProvider } from "./src/context/PedidosContext";
 import { LocationProvider } from "./src/context/LocationContext";
-import LoadingScreen from "./src/screens/LoadingScreen";
+import { RootStackParamList } from "./src/navigation/types";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -117,11 +116,6 @@ export default function App() {
               <Stack.Screen
                 name="Produto"
                 component={Produto}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="LoadingScreen"
-                component={LoadingScreen}
                 options={{ headerShown: false }}
               />
             </Stack.Navigator>
