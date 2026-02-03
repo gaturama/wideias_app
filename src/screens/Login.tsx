@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
@@ -18,7 +19,6 @@ export type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
   Localizacao: undefined;
-  LoadingScreen: { userData?: any };
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
@@ -84,7 +84,7 @@ export default function Login({ navigation }: Props) {
         showAlert("Bem vindo!", "Login realizado com sucesso", () => {
           setAlertVisible(false);
 
-          navigation.navigate("LoadingScreen");
+          navigation.replace("Localizacao");
         });
       } else {
         showAlert("Erro na autenticação", resultado.erro);
@@ -169,6 +169,23 @@ export default function Login({ navigation }: Props) {
         }}
         confirmText="OK"
       />
+      {isLoading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.4)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+          }}
+        >
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      )}
     </View>
   );
 }
